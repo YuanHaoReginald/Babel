@@ -1,6 +1,17 @@
 <template>
-  <div class="login">
-    <h2>{{ msg }}</h2>
+  <div class="root">
+    <div class="title"><h2>Login</h2></div>
+    <div class="input">
+      <h3>Username:</h3>
+      <Input v-model="username" style="width: 300px"> </Input>
+    </div>
+    <div class="input">
+      <h3>Password:</h3>
+      <Input v-model="password" style="width: 300px"> </Input>
+    </div>
+    <div class="button">
+      <Button size="large" type="primary">Sign in</Button>
+    </div>
   </div>
 </template>
 
@@ -9,7 +20,8 @@
     name: 'login',
     data () {
       return {
-        msg: 'Please enter your username & password'
+          username: '',
+          password: ''
       }
     }
   }
@@ -17,53 +29,24 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  .layout{
-    border: 1px solid #d7dde4;
-    background: #f5f7f9;
-    position: relative;
-    border-radius: 4px;
-    overflow: hidden;
+  .root {
+    margin-top: 160px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 300px;
   }
-  .layout-breadcrumb{
-    padding: 10px 15px 0;
+  .input {
+    margin-top: 30px;
   }
-  .layout-content{
-    min-height: 200px;
-    margin: 15px;
-    overflow: hidden;
-    background: #fff;
-    border-radius: 4px;
+  h2 {
+    font-size:30px;
   }
-  .layout-content-main{
-    padding: 10px;
+  h3 {
+    float: left;
+    margin-bottom: 10px;
   }
-  .layout-copy{
-    text-align: center;
-    padding: 10px 0 20px;
-    color: #9ea7b4;
-  }
-  .layout-menu-left{
-    background: #464c5b;
-  }
-  .layout-header{
-    height: 60px;
-    background: #fff;
-    box-shadow: 0 1px 1px rgba(0,0,0,.1);
-  }
-  .layout-logo-left{
-    width: 90%;
-    height: 30px;
-    background: #5b6270;
-    border-radius: 3px;
-    margin: 15px auto;
-  }
-  .layout-ceiling-main a{
-    color: #9ba7b5;
-  }
-  .layout-hide-text .layout-text{
-    display: none;
-  }
-  .ivu-col{
-    transition: width .2s ease-in-out;
+  Button {
+    margin-top: 30px;
+
   }
 </style>

@@ -1,36 +1,29 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from '@/components/Home'
 import Login from '@/components/Login'
 import Welcome from '@/components/Welcome'
-import EmployerPage from '@/components/EmployerPage'
+import SignUpSimple from '@/components/SignUpSimple'
 
-Vue.use(Router)
+Vue.use(Router);
 
 export default new Router({
-  // mode: 'history',
+  //mode: 'history',
   routes: [
     {
       path: '/',
       name: 'Welcome',
       component: Welcome
     },
-    {
-      path: '/home',
-      name: 'Home',
-      component: Home
-    },
-    {
+      {
       path: '/login',
       name: 'Login',
       component: Login
-    },
+    },//http://localhost:8080/#/login/
     {
-      path: '/employer/:id',
-      name: 'EmployerPage',
-      component: EmployerPage
-    }
-
-    // nginx:no 404 -> index.html(history)
+      path: '/signup',
+      name: 'Signup',
+      component: SignUpSimple
+    },
+    //nginx:no 404 -> index.html(history)
   ]
 })
