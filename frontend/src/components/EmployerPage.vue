@@ -1,7 +1,9 @@
 <template>
   <div id='employerpage'>
-    <UserInfo></UserInfo>
-    <Tasks></Tasks>
+    <Row>
+      <Col span="4"><UserInfo></UserInfo></Col>
+      <Col span="8"><Tasks></Tasks></Col>
+    </Row>
   </div>
 </template>
 
@@ -16,21 +18,11 @@ export default {
   },
   data () {
     return {
-      spanLeft: 5,
-      spanRight: 19
     }
   }
 }
 </script>
 
 <style scoped>
-.userinfo {
-  float: left;
-  width: 30%;
-}
-.tasks {
-  margin-left: 30%;
-  width: 70%;
-}
 
 </style>

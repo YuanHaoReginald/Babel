@@ -3,25 +3,25 @@
     <div class="container">
     <div class="title"><h2>Join Babel</h2></div>
       <br>
-    <div class="input">
-      <h3>Username:</h3>
-      <Input v-model="username" style="width: 400px"> </Input>
+      <div class="input">
+        <h3>Username:</h3>
+        <Input v-model="username" style="width: 400px"> </Input>
+      </div>
+      <br>
+      <div class="input">
+        <h3>Password:</h3>
+        <Input v-model="password" style="width: 400px"> </Input>
+      </div>
+      <br>
+      <div class="input">
+        <h3>Email:</h3>
+        <Input v-model="email" style="width: 400px"> </Input>
+      </div>
+      <br>
+      <div class="button">
+        <Button size="large" type="primary" v-on:click="sign_in">Sign in</Button>
+      </div>
     </div>
-    <br>
-    <div class="input">
-      <h3>Password:</h3>
-      <Input v-model="password" style="width: 400px"> </Input>
-    </div>
-    <br>
-    <div class="input">
-      <h3>Email:</h3>
-      <Input v-model="email" style="width: 400px"> </Input>
-    </div>
-    <br>
-    <div class="button">
-      <Button size="large" type="primary">Sign in</Button>
-    </div>
-  </div>
   </div>
 </template>
 
@@ -31,8 +31,24 @@
     data () {
       return {
         username: '',
-        password: '',
-        email: ''
+        password: ''
+      }
+    },
+    methods: {
+      sign_in: function () {
+        let body = JSON.stringify({username: '123', password: '890'})
+        const headers = new Headers({
+          'Content-Type': 'application/json'
+        })
+        fetch('api/TranslaterSignUp', { method: 'POST',
+          headers,
+          credentials: 'include',
+          body: body })
+        .then(function (response) {
+          return response.json().then(function (data) {
+            console.log(data['id'])
+          })
+        })
       }
     }
   }

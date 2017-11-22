@@ -1,8 +1,8 @@
 <template>
-  <div class="userinfo">
-    <img src="../assets/logo.png" width='100px' height='100px'>
-    <h2>{{ nickname }}</h2>
-    <h3>{{ email }}</h3>
+  <div class="root">
+    <Card shadow>
+      <h2>hahahhaha</h2>
+    </Card>
   </div>
 </template>
 
@@ -11,7 +11,7 @@
     name: 'userinfo',
     data () {
       return {
-        nickname: 'UserInfoTest',
+        username: 'm_username',
         email: 'abcdefg@163.com'
       }
     }
@@ -20,7 +20,11 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h2 {
-  font-size:40px;
-}
+  Card {
+    margin: 30px;
+    width: auto;
+  }
+  h2 {
+    color: black;
+  }
 </style>
