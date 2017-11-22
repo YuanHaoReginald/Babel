@@ -121,4 +121,4 @@ selenium-debug.log
 *.sln
 
 # my
-!frontend/build/
+!frontend/build/	

@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Login from '@/components/Login'
 import Welcome from '@/components/Welcome'
 import SignUpSimple from '@/components/SignUpSimple'
+import EmployerPage from '@/components/EmployerPage'
 
 Vue.use(Router)
 
@@ -23,6 +24,11 @@ export default new Router({
       path: '/signup',
       name: 'Signup',
       component: SignUpSimple
+    },
+    {
+      path: '/employer',
+      name: 'employer',
+      component: EmployerPage
     }
     // nginx:no 404 -> index.html(history)
   ]

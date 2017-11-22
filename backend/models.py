@@ -1,6 +1,6 @@
 from django.db import models
 
-# 管理员
+# admin user
 class Admin(models.Model):
     username = models.CharField(max_length = 20, unique=True, db_index=True)
     password = models.CharField(max_length = 20, unique=True)
@@ -8,24 +8,22 @@ class Admin(models.Model):
     email = models.CharField(max_length = 20, unique = False)
     avatarImageUrl = models.ImageField(max_length = 256)
 
-# 翻译者
+# translater
 class Translater(models.Model):
     username = models.CharField(max_length = 20, unique=True, db_index=True)
-    password = models.CharField(max_length = 20, unique=True)
-    telephone = models.CharField(max_length = 20, unique = True)
+    password = models.CharField(max_length = 20)
+    telephone = models.CharField(max_length = 20)
     email = models.CharField(max_length = 20, unique = False)
     avatarImageUrl = models.ImageField(max_length = 256)
     level = models.IntegerField()
 
     # 在license和language里实现了两个方法，输入translaterId返回它们各自的license表和language表
-    # licenseField = models.CharField(max_length = 20)
-    # language = models.CharField(max_length = 20)
 
     alipayNumber = models.CharField(max_length = 30)
     wechatNumber = models.CharField(max_length = 30)
     experienceNumber = models.IntegerField()
 
-# 雇佣者
+# employer
 class Employer(models.Model):
     username = models.CharField(max_length = 20, unique=True, db_index=True)
     password = models.CharField(max_length = 20, unique=True)
@@ -38,7 +36,7 @@ class Employer(models.Model):
     alipayNumber = models.CharField(max_length = 30)
     wechatNumber = models.CharField(max_length = 30)
 
-# 任务表 task
+# task table
 class Task(models.Model):
     title = models.CharField(max_length = 30, unique=True)
     description = models.CharField(max_length = 100, unique=True)
@@ -60,7 +58,7 @@ class Task(models.Model):
 
 #  Assignments
 class Assignment(models.Model):
-    # 状态维护(saved：0/published：1/running：2/finished：3/submitted：4/arguing：5)
+    # (saved：0/published：1/running：2/finished：3/submitted：4/arguing：5)
     status = models.IntegerField()
     testTextFinished = models.TextField(max_length = 600)
     traslaterId = models.IntegerField()
@@ -101,7 +99,8 @@ class Language(models.Model):
 #license type
 CET4 = 0
 CET6 = 1
-
+TOFEL100 = 2
+TOFEL110 = 3
 class License(models.Model):
     licenseType = models.IntegerField()
     licenseImage = models.ImageField(max_length = 256)
@@ -115,3 +114,13 @@ class License(models.Model):
         except cls.DoesNotExist:
             #raise LogicError('User not found')
             return
+
+
+
+
+
+
+
+
+
+
