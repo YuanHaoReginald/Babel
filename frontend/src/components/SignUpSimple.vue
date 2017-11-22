@@ -31,16 +31,17 @@
     data () {
       return {
         username: '',
-        password: ''
+        password: '',
+        email: ''
       }
     },
     methods: {
       sign_in: function () {
-        let body = JSON.stringify({username: '123', password: '890'})
+        let body = JSON.stringify({username: this.username, password: this.password, email: this.email})
         const headers = new Headers({
           'Content-Type': 'application/json'
         })
-        fetch('api/TranslaterSignUp', { method: 'POST',
+        fetch('api/TranslatorSignUp', { method: 'POST',
           headers,
           credentials: 'include',
           body: body })

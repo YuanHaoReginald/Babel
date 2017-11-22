@@ -10,7 +10,7 @@
       <Input v-model="password" style="width: 300px"> </Input>
     </div>
     <div class="button">
-      <Button size="large" type="primary">Sign in</Button>
+      <Button size="large" type="primary" v-on:click="login">Sign in</Button>
     </div>
   </div>
 </template>
@@ -22,6 +22,32 @@
       return {
         username: '',
         password: ''
+      }
+    },
+    methods: {
+      login: function () {
+        let body = JSON.stringify({username: this.username, password: this.password})
+        const headers = new Headers({
+          'Content-Type': 'application/json'
+        })
+        fetch('api/UserSignIn', { method: 'POST',
+          headers,
+          mode: 'cors',
+          // credentials: 'include',
+          body: body })
+        .then(function (response) {
+          console.log(response.status)
+          console.log('response=', response)
+          return response.json()
+        }).then(function (data) {
+          console.log(123)
+          if (data['id'] === 0) {
+            alert('Username or Password Error')
+          }
+        }).catch(function (ex) {
+          console.log(ex)
+          console.log('failure')
+        })
       }
     }
   }

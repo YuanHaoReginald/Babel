@@ -14,20 +14,21 @@ import json
 # Create your views here.
 # translator sign up
 def TranslatorSignUp(request):
-
+    response_dict = {'id': 0}
+    return JsonResponse(response_dict)
     if request.method == 'POST':
 
         info_dict = json.loads(request.body.decode())
         new_username = info_dict['username']
         new_password = info_dict['password']
-        new_avatarImageUrl = info_dict['avatarImageUrl']
+        new_avatarImageUrl = info_dict['email']
 
         existedTranslator = Translator.objects.filter(username = new_username)
 
         # fail to sign up because there exists a user
         if(len(existedTranslator) >= 1):
-            response_dict = {'id':0}
-        elif: # succeed and insert
+            response_dict = {'id': 0}
+        else: # succeed and insert
             translator = Translator.objects.create(username = new_username, password = new_password, email = new_email)
             response_dict = {'id': translator.id}
         return JsonResponse(response_dict)
@@ -66,7 +67,7 @@ def EmployerSignUp(request):
         # fail to sign up because there exists a user
         if( len(existedEmployer) >= 1 ):
             response_dict = {'id': 0}
-        elif: # succeed and insert
+        else: # succeed and insert
             employer = Employer.objects.create(username = new_username,password = new_password, email = new_email)
             response_dict = {'id': employer.id}
         return JsonResponse(response_dict)
@@ -90,3 +91,12 @@ def EmployerSignIn(request):
         else:
             response_dict = {'id':0}
             return JsonResponse(response_dict)
+
+def UserSignIn(request):
+    print(JsonResponse({'id': 0, 'utype': 'Translator'}))
+    return JsonResponse({'id': 0, 'utype': 'Translator'})
+    print("I am executed!")
+    if request.method == 'POST':
+        data = {'id': 0, 'utype': 'Translator'}
+        return HttpResponse(json.dumps(data), content_type="application/json")
+    
