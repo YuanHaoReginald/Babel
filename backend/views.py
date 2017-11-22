@@ -5,23 +5,26 @@ from django import forms
 from django.http import HttpResponse
 from django.contrib import messages
 from .models import *
+
 import os
+import json
 
 # Create your views here.
-
 # translater sign up
 def TranslaterSignUp(request):
     if request.method == 'POST':
-        new_username = request.POST.get('username')
-        new_password = request.POST.get('password')
-        new_telephone = request.POST.get('telephone')
-        new_email = request.POST.get('email')
-        new_avatarImageUrl = request.POST.get('avatarImageUrl')
+
+        info_dict = json.load(request.body.decode())
+        new_username = info_dict['username']
+        new_password = info_dict['password']
+        new_telephone = info_dict['telephone']
+        new_email = info_dict['email']
+        new_avatarImageUrl = info_dict['avatarImageUrl']
 
         existedTranslater = Translater.objects.filter(username = new_username)
 
         # fail to sign up because there exists a user
-        if(len(existedTranslater) >= 0):
+        if(len(existedTranslater) >= 1):
             return HttpResponse(0)
 
         # succeed and insert
@@ -33,8 +36,11 @@ def TranslaterSignUp(request):
 # translater login in
 def TranslaterSignIn(request):
     if request.method == 'POST':
-        current_username = request.GET.get('username')
-        current_password = request.GET.get('password')
+
+        info_dict = json.load(request.body.decode())
+        current_username = info_dict['username']
+        current_password = info_dict['password']
+
         existedTranslater = Translater.objects.filter(username=current_username,password = current_password)
         if(len(existedTranslater) == 1):
             # get it
@@ -46,16 +52,18 @@ def TranslaterSignIn(request):
  # employer sign up
 def EmployerSignUp(request):
     if request.method == 'POST':
-        new_username = request.POST.get('username')
-        new_password = request.POST.get('password')
-        new_telephone = request.POST.get('telephone')
-        new_email = request.POST.get('email')
-        new_avatarImageUrl = request.POST.get('avatarImageUrl')
+
+        info_dict = json.load(request.body.decode())
+        new_username = info_dict['username']
+        new_password = info_dict['password']
+        new_telephone = info_dict['telephone']
+        new_email = info_dict['email']
+        new_avatarImageUrl = info_dict['avatarImageUrl']
 
         existedEmployer = Employer.objects.filter(username = new_username)
 
         # fail to sign up because there exists a user
-        if(len(existedEmployer) >= 0):
+        if( len(existedEmployer) >= 1 ):
             return HttpResponse(0)
 
         # succeed and insert
@@ -69,8 +77,11 @@ def EmployerSignUp(request):
 # Employer login in
 def EmployerSignIn(request):
     if request.method == 'POST':
-        current_username = request.GET.get('username')
-        current_password = request.GET.get('password')
+
+        info_dict = json.load(request.body.decode())
+        current_username = info_dict['username']
+        current_password = info_dict['password']
+
         existedEmployer = Employer.objects.filter(username=current_username,password = current_password)
 
         if(len(existedEmployer) == 1):
