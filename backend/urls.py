@@ -7,5 +7,7 @@ urlpatterns = [
 
 	url(r'^TranslaterSignUp$', views.TranslaterSignUp , name='TranslaterSignUp'),
     url(r'^TranslaterSignIn$', views.TranslaterSignIn , name='TranslaterSignIn'),
+    url(r'^EmployerSignUp$', views.EmployerSignUp , name='EmployerSignUp'),
+    url(r'^EmployerSignIn$', views.EmployerSignIn , name='EmployerSignIn'),
 
 ]
