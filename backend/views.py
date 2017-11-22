@@ -13,7 +13,7 @@ import json
 
 # Create your views here.
 # translater sign up
-def TranslaterSignUp(request):
+def TranslatorSignUp(request):
     if request.method == 'POST':
 
         info_dict = json.loads(request.body.decode())
@@ -23,17 +23,17 @@ def TranslaterSignUp(request):
         new_email = info_dict['email']
         new_avatarImageUrl = info_dict['avatarImageUrl']
 
-        existedTranslater = Translater.objects.filter(username = new_username)
+        existedTranslator = Translator.objects.filter(username = new_username)
 
         # fail to sign up because there exists a user
-        if(len(existedTranslater) >= 1):
+        if(len(existedTranslator) >= 1):
             response_dict = {'id':0}
             return JsonResponse(response_dict)
 
         # succeed and insert
-        models.Translater.objects.create(username = new_username,password = new_password, telephone = new_telephone,email = new_email,avatarImageUrl = new_avatarImageUrl )
-        existedTranslater = Translater.objects.filter(username = new_username)
-        current_translater = existedTranslater[0]
+        models.Translator.objects.create(username = new_username,password = new_password, telephone = new_telephone,email = new_email,avatarImageUrl = new_avatarImageUrl )
+        existedTranslator = Translator.objects.filter(username = new_username)
+        current_translater = existedTranslator[0]
         response_dict = {'id': current_translater.id}
         return JsonResponse(response_dict)
 
@@ -100,3 +100,7 @@ def EmployerSignIn(request):
         else:
             response_dict = {'id':0}
             return JsonResponse(response_dict)
+
+# get user info
+def GetUserInfo(request):
+    
