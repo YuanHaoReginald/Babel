@@ -12,81 +12,71 @@ import json
 
 
 # Create your views here.
-# translater sign up
-def TranslaterSignUp(request):
+# translator sign up
+def TranslatorSignUp(request):
+
     if request.method == 'POST':
 
-        info_dict = json.load(request.body.decode())
+        info_dict = json.loads(request.body.decode())
         new_username = info_dict['username']
         new_password = info_dict['password']
-        new_telephone = info_dict['telephone']
-        new_email = info_dict['email']
         new_avatarImageUrl = info_dict['avatarImageUrl']
 
-        existedTranslater = Translater.objects.filter(username = new_username)
+        existedTranslator = Translator.objects.filter(username = new_username)
 
         # fail to sign up because there exists a user
-        if(len(existedTranslater) >= 1):
+        if(len(existedTranslator) >= 1):
             response_dict = {'id':0}
-            return JsonResponse(response_dict)
-
-        # succeed and insert
-        models.Translater.objects.create(username = new_username,password = new_password, telephone = new_telephone,email = new_email,avatarImageUrl = new_avatarImageUrl )
-        existedTranslater = Translater.objects.filter(username = new_username)
-        current_translater = existedTranslater[0]
-        response_dict = {'id': current_translater.id}
+        elif: # succeed and insert
+            translator = Translator.objects.create(username = new_username, password = new_password, email = new_email)
+            response_dict = {'id': translator.id}
         return JsonResponse(response_dict)
 
-# translater login in
-def TranslaterSignIn(request):
+# translator login in
+def TranslatorSignIn(request):
+
     if request.method == 'POST':
 
-        info_dict = json.load(request.body.decode())
+        info_dict = json.loads(request.body.decode())
         current_username = info_dict['username']
         current_password = info_dict['password']
 
-        existedTranslater = Translater.objects.filter(username=current_username,password = current_password)
-        if(len(existedTranslater) == 1):
+        existedTranslator = Translator.objects.filter(username=current_username,password = current_password)
+        if(len(existedTranslator) == 1):
             # get it
-            current_translater = existedTranslater[0]
-            response_dict = {'id': current_translater.id}
+            current_translator = existedTranslator[0]
+            response_dict = {'id': current_translator.id}
             return JsonResponse(response_dict)
         else:
             response_dict = {'id': 0}
             return JsonResponse(response_dict)
 
- # employer sign up
+# employer sign up
 def EmployerSignUp(request):
+
     if request.method == 'POST':
 
-        info_dict = json.load(request.body.decode())
+        info_dict = json.loads(request.body.decode())
         new_username = info_dict['username']
         new_password = info_dict['password']
-        new_telephone = info_dict['telephone']
         new_email = info_dict['email']
-        new_avatarImageUrl = info_dict['avatarImageUrl']
 
         existedEmployer = Employer.objects.filter(username = new_username)
 
         # fail to sign up because there exists a user
         if( len(existedEmployer) >= 1 ):
-            response_dict = {'id':0}
-            return JsonResponse(response_dict)
-
-        # succeed and insert
-        models.existedEmployer.objects.create(username = new_username,password = new_password, telephone = new_telephone,email = new_email,avatarImageUrl = new_avatarImageUrl )
-
-        existedEmployer = Employer.objects.filter(username=new_username)
-        current_employer = existedEmployer[0]
-        # return its primary key
-        response_dict = {'id': current_employer.id}
+            response_dict = {'id': 0}
+        elif: # succeed and insert
+            employer = Employer.objects.create(username = new_username,password = new_password, email = new_email)
+            response_dict = {'id': employer.id}
         return JsonResponse(response_dict)
 
 # Employer login in
 def EmployerSignIn(request):
+    
     if request.method == 'POST':
 
-        info_dict = json.load(request.body.decode())
+        info_dict = json.loads(request.body.decode())
         current_username = info_dict['username']
         current_password = info_dict['password']
 
