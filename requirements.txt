@@ -1,0 +1,5 @@
+Django
+django
+uwsgi
+mysqlclient
+django-cors-headers
