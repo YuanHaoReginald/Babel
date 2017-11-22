@@ -16,7 +16,7 @@ import json
 def TranslaterSignUp(request):
     if request.method == 'POST':
 
-        info_dict = json.load(request.body.decode())
+        info_dict = json.loads(request.body.decode())
         new_username = info_dict['username']
         new_password = info_dict['password']
         new_telephone = info_dict['telephone']
@@ -41,7 +41,7 @@ def TranslaterSignUp(request):
 def TranslaterSignIn(request):
     if request.method == 'POST':
 
-        info_dict = json.load(request.body.decode())
+        info_dict = json.loads(request.body.decode())
         current_username = info_dict['username']
         current_password = info_dict['password']
 
@@ -59,7 +59,7 @@ def TranslaterSignIn(request):
 def EmployerSignUp(request):
     if request.method == 'POST':
 
-        info_dict = json.load(request.body.decode())
+        info_dict = json.loads(request.body.decode())
         new_username = info_dict['username']
         new_password = info_dict['password']
         new_telephone = info_dict['telephone']
@@ -86,7 +86,7 @@ def EmployerSignUp(request):
 def EmployerSignIn(request):
     if request.method == 'POST':
 
-        info_dict = json.load(request.body.decode())
+        info_dict = json.loads(request.body.decode())
         current_username = info_dict['username']
         current_password = info_dict['password']
 
