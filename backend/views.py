@@ -3,11 +3,13 @@ from django.contrib import auth
 from django.shortcuts import render, render_to_response, redirect
 from django import forms
 from django.http import HttpResponse
+from django.http import JsonResponse
 from django.contrib import messages
 from .models import *
 
 import os
 import json
+
 
 # Create your views here.
 # translater sign up
@@ -25,13 +27,15 @@ def TranslaterSignUp(request):
 
         # fail to sign up because there exists a user
         if(len(existedTranslater) >= 1):
-            return HttpResponse(0)
+            response_dict = {'id':0}
+            return JsonResponse(response_dict)
 
         # succeed and insert
         models.Translater.objects.create(username = new_username,password = new_password, telephone = new_telephone,email = new_email,avatarImageUrl = new_avatarImageUrl )
         existedTranslater = Translater.objects.filter(username = new_username)
         current_translater = existedTranslater[0]
-        return HttpResponse(current_translater.id)
+        response_dict = {'id': current_translater.id}
+        return JsonResponse(response_dict)
 
 # translater login in
 def TranslaterSignIn(request):
@@ -45,9 +49,11 @@ def TranslaterSignIn(request):
         if(len(existedTranslater) == 1):
             # get it
             current_translater = existedTranslater[0]
-            return HttpResponse(current_translater.id)
+            response_dict = {'id': current_translater.id}
+            return JsonResponse(response_dict)
         else:
-            return HttpResponse(0)
+            response_dict = {'id': 0}
+            return JsonResponse(response_dict)
 
  # employer sign up
 def EmployerSignUp(request):
@@ -64,7 +70,8 @@ def EmployerSignUp(request):
 
         # fail to sign up because there exists a user
         if( len(existedEmployer) >= 1 ):
-            return HttpResponse(0)
+            response_dict = {'id':0}
+            return JsonResponse(response_dict)
 
         # succeed and insert
         models.existedEmployer.objects.create(username = new_username,password = new_password, telephone = new_telephone,email = new_email,avatarImageUrl = new_avatarImageUrl )
@@ -72,7 +79,8 @@ def EmployerSignUp(request):
         existedEmployer = Employer.objects.filter(username=new_username)
         current_employer = existedEmployer[0]
         # return its primary key
-        return HttpResponse(current_employer.id)
+        response_dict = {'id': current_employer.id}
+        return JsonResponse(response_dict)
 
 # Employer login in
 def EmployerSignIn(request):
@@ -87,6 +95,8 @@ def EmployerSignIn(request):
         if(len(existedEmployer) == 1):
             # get it
             current_employer = existedEmployer[0]
-            return HttpResponse(current_employer.id)
+            response_dict = {'id': current_employer.id}
+            return JsonResponse(response_dict)
         else:
-            return HttpResponse(0)
+            response_dict = {'id':0}
+            return JsonResponse(response_dict)
