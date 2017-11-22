@@ -5,7 +5,7 @@
       <Col span="10" offset="1">
         <Input v-model="search"  icon="search"> </Input>
       </Col>
-      <Col span="3"offset="8">
+      <Col span="3"offset="8" v-if="status">
         <Submenu name="3">
         <template slot="title">
           <Icon type="stats-bars"></Icon>
@@ -16,6 +16,9 @@
         <MenuItem>登出</MenuItem>
       </Submenu>
       </Col>
+      <Col span="3"offset="8" v-else="status">
+      <MenuItem><h3>Login</h3></MenuItem>
+      </Col>
     </Row>
   </Menu>
 </template>
@@ -24,7 +27,8 @@
     data () {
       return {
         theme1: 'dark',
-        serach: ''
+        serach: '',
+        status: false
       }
     }
   }
@@ -32,6 +36,9 @@
 <style>
   h2 {
     font-size:24px;
+    color: floralwhite;
+  }
+  h3 {
     color: floralwhite;
   }
 </style>
