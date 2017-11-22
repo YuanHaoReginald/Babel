@@ -73,10 +73,12 @@
     margin: 0;
   }
   h2 {
+    color: #1c2438;
     text-align: left;
     font-size:40px;
   }
   h3 {
+    color: #1c2438;
     text-align: left;
   }
 
