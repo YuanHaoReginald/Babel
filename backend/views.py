@@ -24,7 +24,7 @@ def TranslaterSignUp(request):
         existedTranslater = Translater.objects.filter(username = new_username)
 
         # fail to sign up because there exists a user
-        if(len(existedTranslater) >= 0):
+        if(len(existedTranslater) >= 1):
             return HttpResponse(0)
 
         # succeed and insert
@@ -36,7 +36,7 @@ def TranslaterSignUp(request):
 # translater login in
 def TranslaterSignIn(request):
     if request.method == 'POST':
-        
+
         info_dict = json.load(request.body.decode())
         current_username = info_dict['username']
         current_password = info_dict['password']
@@ -63,7 +63,7 @@ def EmployerSignUp(request):
         existedEmployer = Employer.objects.filter(username = new_username)
 
         # fail to sign up because there exists a user
-        if(len(existedEmployer) >= 0):
+        if( len(existedEmployer) >= 1 ):
             return HttpResponse(0)
 
         # succeed and insert
