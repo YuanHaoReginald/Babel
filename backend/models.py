@@ -4,19 +4,8 @@ from django.contrib.auth.models import AbstractUser
 # Base User
 class CommonUser(AbstractUser):
     telephone = models.CharField(max_length = 20, unique = True)
-    email = models.CharField(max_length = 20, unique = True)
     avatarImageUrl = models.ImageField(max_length = 256)
     utype = models.CharField(max_length = 30)
-
-
-# Translator
-class Translator(models.Model):
-    username = models.CharField(max_length = 20, unique=True, db_index=True)
-    password = models.CharField(max_length = 20)
-    telephone = models.CharField(max_length = 20)
-    email = models.CharField(max_length = 20, unique = False)
-    avatarImageUrl = models.ImageField(max_length = 256)
-    level = models.IntegerField()
 
 # admin user
 class Admin(CommonUser):
@@ -25,7 +14,6 @@ class Admin(CommonUser):
 # translator
 class Translator(CommonUser):
     level = models.IntegerField()
-
     alipayNumber = models.CharField(max_length = 30)
     wechatNumber = models.CharField(max_length = 30)
     experienceNumber = models.IntegerField()
@@ -33,9 +21,10 @@ class Translator(CommonUser):
 # employer
 class Employer(CommonUser):
     level = models.IntegerField()
-    experienceNumber = models.IntegerField()
     alipayNumber = models.CharField(max_length = 30)
     wechatNumber = models.CharField(max_length = 30)
+    experienceNumber = models.IntegerField()
+
 
 # task table
 class Task(models.Model):
@@ -72,7 +61,6 @@ class Assignment(models.Model):
 
 # dispute
 class Dispute(models.Model):
-
     assignment = models.ForeignKey(Assignment)
     employerStatement = models.TextField(max_length = 1000)
     translatorStatement = models.TextField(max_length = 1000)
@@ -90,8 +78,6 @@ SPAINISH = 5
 class Language(models.Model):
     languageType = models.IntegerField()
     TranslatorId = models.ForeignKey(Translator)
-
-
     @classmethod
     def get_by_translatorId(cls,transId):
         try:
@@ -105,6 +91,7 @@ CET4 = 0
 CET6 = 1
 TOFEL100 = 2
 TOFEL110 = 3
+
 class License(models.Model):
     licenseType = models.IntegerField()
     licenseImage = models.ImageField(max_length = 256)
