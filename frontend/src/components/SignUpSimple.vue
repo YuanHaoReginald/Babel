@@ -31,7 +31,8 @@
     data () {
       return {
         username: '',
-        password: ''
+        password: '',
+        email:''
       }
     },
     methods: {

@@ -1,8 +1,8 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import User
 
 # Base User
-class CommonUser(AbstractUser):
+class CommonUser(User):
     telephone = models.CharField(max_length = 20, unique = True)
     avatarImageUrl = models.ImageField(max_length = 256)
     utype = models.CharField(max_length = 30)
@@ -25,19 +25,16 @@ class Employer(CommonUser):
     wechatNumber = models.CharField(max_length = 30)
     experienceNumber = models.IntegerField()
 
-
 # task table
 class Task(models.Model):
     title = models.CharField(max_length = 30)
     description = models.CharField(max_length = 512)
-    fileUrl = models.FilePathField(max_length = 256)
+    fileUrl = models.FileField(max_length = 256)
     fileType = models.IntegerField() # 0:文本；1:音频
-    
-    employerId = models.ForeignKey(Employer)
+    employerId = models.ForeignKey(Employer, related_name = 'partyA')
     # time
     publishTime = models.DateTimeField()
     ddlTime = models.DateTimeField()
-
     # tags
     tags = models.CharField(max_length = 128)
     language = models.IntegerField()
@@ -52,11 +49,10 @@ class Assignment(models.Model):
     status = models.IntegerField()
     task = models.ForeignKey(Task)
     testTextFinished = models.TextField(max_length = 600)
-
-    translator = models.ForeignKey(Translator)
+    translator = models.ForeignKey(Translator, related_name = 'partyB')
     scores = models.IntegerField()
     price = models.IntegerField()
-    submissionFileUrl = models.CharField(max_length = 50)
+    submission = models.FileField(max_length = 50)
     experience = models.IntegerField()
 
 # dispute
