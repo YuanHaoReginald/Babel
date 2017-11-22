@@ -30,7 +30,7 @@
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
   .root {
-    margin-top: 160px;
+    margin-top: 100px;
     margin-left: auto;
     margin-right: auto;
     width: 300px;
@@ -39,9 +39,11 @@
     margin-top: 30px;
   }
   h2 {
+    color: #1c2438;
     font-size:30px;
   }
   h3 {
+    color: #1c2438;
     float: left;
     margin-bottom: 10px;
   }
