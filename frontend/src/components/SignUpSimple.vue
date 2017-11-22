@@ -14,7 +14,7 @@
       </div>
       <br>
       <div class="button">
-        <Button size="large" type="primary">Sign in</Button>
+        <Button size="large" type="primary" v-on:click="sign_in">Sign in</Button>
       </div>
       </Col>
       <Col span="8"></Col>
@@ -27,7 +27,25 @@
     name: 'sign_up_simple',
     data () {
       return {
-
+        username: '',
+        password: ''
+      }
+    },
+    methods: {
+      sign_in: function () {
+        let body = JSON.stringify({username: '123', password: '890'})
+        const headers = new Headers({
+          'Content-Type': 'application/json'
+        })
+        fetch('api/TranslaterSignUp', { method: 'POST',
+          headers,
+          credentials: 'include',
+          body: body })
+        .then(function (response) {
+          return response.json().then(function (data) {
+            console.log(data['id'])
+          })
+        })
       }
     }
   }
