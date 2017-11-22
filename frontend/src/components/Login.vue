@@ -33,20 +33,18 @@
         fetch('api/UserSignIn', { method: 'POST',
           headers,
           mode: 'cors',
-          // credentials: 'include',
+          credentials: 'include',
           body: body })
         .then(function (response) {
-          console.log(response.status)
-          console.log('response=', response)
-          return response.json()
-        }).then(function (data) {
-          console.log(123)
-          if (data['id'] === 0) {
-            alert('Username or Password Error')
-          }
-        }).catch(function (ex) {
-          console.log(ex)
-          console.log('failure')
+          return response.json().then(function (data) {
+            if (data['id'] === 0) {
+              alert('Username or Password Error')
+            } else {
+              
+            }
+          }).catch(function (ex) {
+            alert("Network Error")
+          })
         })
       }
     }

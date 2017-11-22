@@ -49,6 +49,8 @@
           return response.json().then(function (data) {
             console.log(data['id'])
           })
+        }).catch(function (ex) {
+          alert("Network Error")
         })
       }
     }
