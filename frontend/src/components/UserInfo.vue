@@ -1,7 +1,10 @@
 <template>
   <div class="root">
     <Card shadow>
-      <h2>hahahhaha</h2>
+      <div>
+        <img v-bind:src="headSrc" class="head">
+        <h2>{{ username }}</h2>
+      </div>
     </Card>
   </div>
 </template>
@@ -11,8 +14,9 @@
     name: 'userinfo',
     data () {
       return {
-        username: 'm_username',
-        email: 'abcdefg@163.com'
+        username: '王小明',
+        email: 'abcdefg@163.com',
+        headSrc: '/src/assets/head_sample.jpg'
       }
     }
   }
@@ -20,9 +24,15 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  Card {
-    margin: 30px;
-    width: auto;
+  .root {
+    float: left;
+    width: 300px;
+    padding: 20px;
+    margin-left: 180px;
+  }
+  .head {
+    width: 40%;
+    margin: 10%;
   }
   h2 {
     color: black;

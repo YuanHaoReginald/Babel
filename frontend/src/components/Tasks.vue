@@ -1,12 +1,14 @@
 <template>
-  <div class="tasks">
-    <ul id="add_new_task">
-      <Icon type="plus"></Icon>
-      Add New
-    </ul>
-    <li v-for="task in tasks">
-      {{ task }}
-    </li>
+  <div class="root">
+    <div id="add" class="card">
+      <Card shadow class="add" padding=10>
+        <div id="addIcon"><Icon type="plus-circled" size=35></Icon></div>
+        <div id="addText"><h2>Add a new task</h2></div>
+      </Card>
+    </div>
+    <div id="tasks" class="card">
+      <Card shadow class="tasks"></Card>
+    </div>
   </div>
 </template>
 
@@ -23,8 +25,22 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.tasks {
-  padding-top: 50px;
-  font-size:20px;
-}
+  .root {
+    margin-left: 460px;
+    width: 600px;
+    padding: 20px;
+  }
+  .card {
+    margin-bottom: 20px;
+  }
+  #addIcon {
+    float: left;
+  }
+  #addText {
+    text-align: left;
+    margin-left: 60px;
+  }
+  h2 {
+    color: #1c2438;
+  }
 </style>

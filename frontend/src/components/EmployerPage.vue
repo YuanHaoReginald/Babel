@@ -1,9 +1,7 @@
 <template>
   <div id='employerpage'>
-    <Row>
-      <Col span="4"><UserInfo></UserInfo></Col>
-      <Col span="8"><Tasks></Tasks></Col>
-    </Row>
+    <UserInfo></UserInfo>
+    <Tasks></Tasks>
   </div>
 </template>
 
