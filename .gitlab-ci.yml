@@ -1,8 +1,5 @@
 image: python:3-onbuild
 
-services:
-  - mysql:latest
-
 cache:
   paths:
   - ~/.cache/pip/
