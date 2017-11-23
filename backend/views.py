@@ -78,7 +78,6 @@ def UserSignUp(request):
 
 # translator login in
 def UserSignIn(request):
-
     if request.method == 'POST':
         info_dict = json.loads(request.body.decode())
         current_username = info_dict['username']
@@ -90,7 +89,7 @@ def UserSignIn(request):
             response_dict = {'id': current_user.id, 'utype' :current_user.utype }
             return JsonResponse(response_dict)
         else:
-            response_dict = {'id':0 }
+            response_dict = {'id': 0}
             return JsonResponse(response_dict)
 
 # get user info

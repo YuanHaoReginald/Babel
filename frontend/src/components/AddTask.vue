@@ -52,8 +52,8 @@
     data () {
       return {
         title: '',
-        language:'',
-        level:0,
+        language: '',
+        level: 0,
         languageList: [
           {
             value: 'English',
@@ -85,7 +85,7 @@
             value: '专业八级',
             label: '专业八级'
           }
-        ],
+        ]
       }
     }
   }

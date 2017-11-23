@@ -27,7 +27,7 @@ export default new Router({
       component: SignUpSimple
     },
     {
-      path: '/employer',
+      path: '/employer/:id',
       name: 'employer',
       component: EmployerPage
     },
