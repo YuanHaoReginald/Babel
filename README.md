@@ -1,0 +1,2 @@
+# Babel
+Translation crowdsourcing platform.
