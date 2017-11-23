@@ -1,4 +1,5 @@
 Django
 django
+Pillow
 mysqlclient
 django-cors-headers
