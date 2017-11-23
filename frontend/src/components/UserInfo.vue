@@ -59,7 +59,7 @@
     padding: 5px;
   }
   h2 {
-    color: black;
+    color: #1c2438;
     padding: 5px;
   }
 
