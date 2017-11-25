@@ -1,0 +1,9 @@
+{
+  "SECRET_KEY": "ThisIsSucureKeyThatDjangoUse",
+  "DEBUG": true,
+  "DB_NAME": "babel",
+  "DB_USER": "root",
+  "DB_PASS": "",
+  "DB_HOST": "127.0.0.1",
+  "DB_PORT": "3306"
+}
