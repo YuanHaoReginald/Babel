@@ -57,9 +57,7 @@ def UserSignUp(request):
         new_password = info_dict['password']
         new_email = info_dict['email']
         user_type = info_dict['utype']
-
         existedUser = CommonUser.objects.filter(username = new_username)
-
         if(len(existedUser) == 1):
             # get it
             response_dict = {'id': 0}
@@ -72,18 +70,16 @@ def UserSignUp(request):
                 response_dict = {'id' : new_user.id}
             else:
                 response_dict = {'id': 0}
-
         return JsonResponse(response_dict)
 
 
 # translator login in
 def UserSignIn(request):
-
     if request.method == 'POST':
         info_dict = json.loads(request.body.decode())
         current_username = info_dict['username']
         current_password = info_dict['password']
-        existedUser = CommonUser.objects.filter(username=current_username,password = current_password)
+        existedUser = CommonUser.objects.filter(username = current_username,password = current_password)
         if(len(existedUser) == 1):
             # get it
             current_user = existedUser[0]
@@ -98,7 +94,19 @@ def GetUserInfo(request):
     if request.method == 'POST':
         info_dict = json.loads(request.body.decode())
         user_id = info_dict['id']
-        #response_dict =
+        # response_dict =
+        existedUser = CommonUser.objects.filter(id = user_id)
+
+        if(len(existedUser) == 1):
+            # get it
+            current_user = existedUser[0]
+            response_dict = {'id': current_user.id, 'username':current_user.username,'email':current_user.email, 'headSrc':current_user.avatarImageUrl}
+            return JsonResponse(response_dict)
+        else:
+            response_dict = {'id':0 }
+            return JsonResponse(response_dict)
         return
+
+# get
 
 

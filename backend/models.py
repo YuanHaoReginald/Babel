@@ -82,18 +82,18 @@ class Language(models.Model):
             #raise LogicError('User not found')
             return
 
-#license type
+# license type
 CET4 = 0
 CET6 = 1
 TOFEL100 = 2
 TOFEL110 = 3
 
+# license
 class License(models.Model):
     licenseType = models.IntegerField()
     licenseImage = models.ImageField(max_length = 256)
     description = models.CharField(max_length = 100)
     belonger = models.ForeignKey(Translator)
-
     @classmethod
     def get_by_belongerId(cls,transId):
         try:
