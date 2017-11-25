@@ -41,6 +41,9 @@
           <h3>任务描述：</h3>
           <div class="input"><Input v-model="description" type="textarea"></Input></div>
         </div>
+        <div class="box">
+          <Button type="success" id="submitButton" v-on:click="createTask">提交</Button>
+        </div>
       </div>
     </Card>
   </div>
@@ -86,6 +89,25 @@
             label: '专业八级'
           }
         ]
+      }
+    },
+    methods: {
+      sign_in: function () {
+        let body = JSON.stringify({title: this.title, language: this.language, level: this.level})
+        const headers = new Headers({
+          'Content-Type': 'application/json'
+        })
+        fetch('api/CreateTask', { method: 'POST',
+          headers,
+          credentials: 'include',
+          body: body })
+        .then(function (response) {
+          return response.json().then(function (data) {
+            this.$router.push({name: 'employer', id: data['id']})
+          })
+        }).catch(function (ex) {
+          alert('Network Error')
+        })
       }
     }
   }

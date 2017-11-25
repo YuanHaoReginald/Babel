@@ -2,7 +2,7 @@
   <div class="root">
     <div id="add" class="card">
       <Card shadow class="add" padding=10>
-        <div id="addIcon"><Icon type="plus-circled" size=35></Icon></div>
+        <router-link to="/addtask"><div id="addIcon"><Icon type="plus-circled" size=35></Icon></div></router-link>
         <div id="addText"><h2>Add a new task</h2></div>
       </Card>
     </div>
