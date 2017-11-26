@@ -1,15 +1,27 @@
 <template>
   <div class="root">
-    <div id="add" class="card">
-      <Card class="add" padding=10>
-        <router-link to="/addtask"><div id="addIcon"><Icon type="android-add-circle" size=35></Icon></div></router-link>
-        <div id="addText"><h2>创建新任务</h2></div>
-
-      </Card>
-    </div>
     <div id="tasks" class="card">
       <Card shadow class="tasks" padding=0>
         <div id="taskListTitle"><h2>我的任务</h2></div>
+        <div id="bigCheckBox">
+          <Row>
+            <Col span="3"><div id="checkText"><h4>筛选：</h4></div></Col>
+            <Col span="15">
+              <div id="checkBox">
+                <CheckboxGroup v-model="filter">
+                  <Checkbox label="艺术"></Checkbox>
+                  <Checkbox label="历史"></Checkbox>
+                  <Checkbox label="文学"></Checkbox>
+                </CheckboxGroup>
+              </div>
+            </Col>
+            <Col span="5">
+              <Select v-model="sort" placeholder="<排序方式>">
+                <Option v-for="item in sortList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+              </Select>
+            </Col>
+          </Row>
+        </div>
         <div>
           <ul>
             <li v-for="task in tasklist">
@@ -34,6 +46,18 @@
     name: 'tasks',
     data () {
       return {
+        filter: [],
+        sort: '',
+        sortList: [
+          {
+            label: '按发布时间',
+            value: 'publishTime'
+          },
+          {
+            label: '按最后动态时间',
+            value: 'changeTime'
+          }
+        ],
         tasklist: [
           {
             title: '中法信件翻译任务',
@@ -48,7 +72,7 @@
             title: 'title',
             publishTime: 'publishTime',
             ddlTime: 'ddlTime',
-            tags: ['art', 'math'],
+            tags: ['art', 'history'],
             language: 'English',
             description: 'I am the description.I am the description.I am the description.' +
             'I am the description.I am the description.I am the description.I am the description.'
@@ -69,16 +93,21 @@
   .card {
     margin-bottom: 20px;
   }
-  #addIcon {
-    float: left;
+  #checkText {
+    margin-top: 3px;
   }
-  #addText {
-    text-align: left;
-    margin-left: 60px;
+  #checkBox {
+    float: left;
+    margin-bottom: 15px;
+  }
+  #bigCheckBox {
+    height: 20px;
+    margin-top: 10px;
+    margin-bottom: 20px;
   }
   #taskListTitle {
     text-align: left;
-    padding: 10px 0 10px 20px;
+    padding: 20px 0 10px 20px;
   }
   #taskTitle {
     font-size: 16px;
@@ -94,7 +123,7 @@
     color: #80848f;
   }
   h2 {
-    font-size: 24px;
+    font-size: 20px;
     color: #1c2438;
   }
   h4 {

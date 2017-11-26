@@ -79,11 +79,13 @@ def UserSignIn(request):
         info_dict = json.loads(request.body.decode())
         current_username = info_dict['username']
         current_password = info_dict['password']
+        print(info_dict)
         existedUser = CommonUser.objects.filter(username = current_username,password = current_password)
+        print(existedUser)
         if(len(existedUser) == 1):
             # get it
             current_user = existedUser[0]
-            response_dict = {'id': current_user.id, 'utype' :current_user.utype }
+            response_dict = {'id': current_user.id, 'utype' :'Employer' }
             return JsonResponse(response_dict)
         else:
             response_dict = {'id': 0}
@@ -100,7 +102,7 @@ def GetUserInfo(request):
         if(len(existedUser) == 1):
             # get it
             current_user = existedUser[0]
-            response_dict = {'id': current_user.id, 'username':current_user.username,'email':current_user.email, 'headSrc':current_user.avatarImageUrl}
+            response_dict = {'id': current_user.id, 'username':current_user.username,'email':current_user.email, 'headSrc':current_user.avatar}
             return JsonResponse(response_dict)
         else:
             response_dict = {'id':0 }

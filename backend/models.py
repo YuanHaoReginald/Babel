@@ -3,8 +3,8 @@ from django.contrib.auth.models import User
 
 # Base User
 class CommonUser(User):
-    telephone = models.CharField(max_length = 20, unique = True,null = True)
-    avatarImageUrl = models.ImageField(max_length = 256 , null = True)
+    telephone = models.CharField(max_length = 20, unique = True, null = True)
+    avatar = models.ImageField(max_length = 256, null = True)
     utype = models.CharField(max_length = 30)
 
 # admin user
@@ -20,10 +20,19 @@ class Translator(CommonUser):
 
 # employer
 class Employer(CommonUser):
-    level = models.IntegerField(null = True)
+
+    level = models.IntegerField()
     alipayNumber = models.CharField(max_length = 30, null = True)
     wechatNumber = models.CharField(max_length = 30, null = True)
-    experienceNumber = models.IntegerField(null = True)
+    experience = models.IntegerField(default = 0)
+
+# employer
+class Employer(CommonUser):
+    level = models.IntegerField(default = 0)
+    alipayNumber = models.CharField(max_length = 30, null = True)
+    wechatNumber = models.CharField(max_length = 30, null = True)
+    experience = models.IntegerField(default = 0)
+
 
 # task table
 class Task(models.Model):
@@ -32,6 +41,7 @@ class Task(models.Model):
     fileUrl = models.FileField(max_length = 256)
     fileType = models.IntegerField() # 0:文本；1:音频
     employerId = models.ForeignKey(Employer, related_name = 'partyA', null = True)
+
     # time
     publishTime = models.DateTimeField()
     ddlTime = models.DateTimeField()
@@ -39,7 +49,6 @@ class Task(models.Model):
     tags = models.CharField(max_length = 128 , null = True)
     language = models.IntegerField( null = True)
     requirementsLicense = models.IntegerField( null = True)
-
     requirementsLevel = models.IntegerField( null = True)
     testText = models.TextField(max_length = 300, null = True)
 
@@ -53,7 +62,7 @@ class Assignment(models.Model):
     scores = models.IntegerField( null = True)
     price = models.IntegerField( null = True)
     submission = models.FileField(max_length = 50, null = True)
-    experience = models.IntegerField(null = True)
+    experience = models.IntegerField(default = 0)
 
 # dispute
 class Dispute(models.Model):
@@ -94,7 +103,7 @@ class License(models.Model):
     licenseImage = models.ImageField(max_length = 256, null = True)
     description = models.CharField(max_length = 100, null = True)
     belonger = models.ForeignKey(Translator)
-    adminVerify = models.BooleanField( null = True)
+    adminVerify = models.BooleanField( default = False)
     @classmethod
     def get_by_belongerId(cls,transId):
         try:

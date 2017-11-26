@@ -38,9 +38,31 @@
           <div class="input"><Input v-model="tagsStr" placeholder="请输入标签名称，各标签以#分隔"></Input></div>
         </div>
         <div class="box">
-          <h3>任务描述：</h3>
+          <h3>任务总体描述：</h3>
           <div class="input"><Input v-model="description" type="textarea"></Input></div>
         </div>
+        <div class="box">
+          <h3>任务切分：</h3>
+          <ul>
+            <li v-for="a in assignments">
+              <Row>
+                <Col span="1">
+                  <div id="addTaskButton" v-if="a.id == assignment_num">
+                  <Button type="primary" size="small" shape="circle" icon="plus" @click="addAssignment">
+                  </Button>
+                  </div>
+                  <div v-else>
+                    <h4>&nbsp</h4>
+                  </div>
+                </Col>
+                <Col span="4"><div class="task_text"><h4>细分任务{{ a.id }}:</h4></div></Col>
+                <Col span="17"><div class="input_assignment"><Input v-model="a.text" type="textarea"></Input></div></Col>
+                <Col span="2"><div class="delete_button"><Button type="ghost">删除</Button></div></Col>
+              </Row>
+            </li>
+          </ul>
+        </div>
+        <div id="submitButton"><Button type="primary">创建任务</Button></div>
       </div>
     </Card>
   </div>
@@ -85,8 +107,44 @@
             value: '专业八级',
             label: '专业八级'
           }
+        ],
+        assignment_num: 1,
+        assignments: [
+          {
+            id: 1,
+            text: ''
+          }
         ]
       }
+    },
+    methods: {
+      sign_in: function () {
+        let body = JSON.stringify({title: this.title, language: this.language, level: this.level})
+        const headers = new Headers({
+          'Content-Type': 'application/json'
+        })
+        fetch('api/CreateTask', { method: 'POST',
+          headers,
+          credentials: 'include',
+          body: body })
+        .then(function (response) {
+          return response.json().then(function (data) {
+            this.$router.push({name: 'employer', id: data['id']})
+          })
+        }).catch(function (ex) {
+          alert('Network Error')
+        })
+      },
+      addAssignment () {
+        this.assignment_num = this.assignment_num + 1
+        this.assignments.push(
+          {
+            id: this.assignment_num,
+            text: ''
+          }
+        )
+      }
+      // TODO:deleteAssignment function
     }
   }
 </script>
@@ -109,6 +167,17 @@
   }
   .input {
     margin-top:5px;
+  }
+  .input_assignment {
+    margin-top: 5px;
+    width: 450px;
+  }
+  .task_text {
+    text-align: center;
+    margin:10px;
+  }
+  .delete_button {
+    margin-top: 5px;
   }
   #languageSelect {
     float:left;
@@ -134,6 +203,12 @@
     margin-bottom: 20px;
     margin-right: 600px;
   }
+  #addTaskButton {
+    margin: 10px;
+  }
+  #submitButton {
+    margin-top: 50px;
+  }
   .rate {
     float:left;
     margin-top: 5px;
@@ -148,5 +223,11 @@
     font-size: 16px;
     color: #80848f;
     text-align: left;
+  }
+  h4 {
+    color: #80848f;
+  }
+  li {
+    margin-bottom: 20px;
   }
 </style>

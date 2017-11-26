@@ -27,8 +27,8 @@
         username: '王小明',
         email: 'abcdefg@163.com',
         headSrc: '/src/assets/head_sample.jpg',
-        level: 2,
-        experienceNumber: 30,
+        level: 4,
+        experienceNumber: 60,
         maxExperience: 200
       }
     },
@@ -36,6 +36,27 @@
       experiencePercent: function () {
         return this.experienceNumber * 100 / this.maxExperience
       }
+    },
+    created: function () {
+      let body = JSON.stringify({id: this.$route.params.id})
+      const headers = new Headers({
+        'Content-Type': 'application/json'
+      })
+      fetch('api/EmployerSignUp', { method: 'GET',
+        headers,
+        credentials: 'include',
+        body: body })
+      .then(function (response) {
+        return response.json().then(function (data) {
+          this.username = data['username']
+          this.email = data['email']
+          this.headSrc = data['avatarImageUrl']
+          this.level = data['level']
+          this.experienceNumber = data['experience']
+        })
+      }).catch(function (ex) {
+        alert('Network Error')
+      })
     }
   }
 </script>
