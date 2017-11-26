@@ -100,11 +100,11 @@
         ],
         licenseList: [
           {
-            value: '专业四级',
+            value: 'cet4',
             label: '专业四级'
           },
           {
-            value: '专业八级',
+            value: 'cet8',
             label: '专业八级'
           }
         ],
