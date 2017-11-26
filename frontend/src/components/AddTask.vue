@@ -118,6 +118,23 @@
       }
     },
     methods: {
+      sign_in: function () {
+        let body = JSON.stringify({title: this.title, language: this.language, level: this.level})
+        const headers = new Headers({
+          'Content-Type': 'application/json'
+        })
+        fetch('api/CreateTask', { method: 'POST',
+          headers,
+          credentials: 'include',
+          body: body })
+        .then(function (response) {
+          return response.json().then(function (data) {
+            this.$router.push({name: 'employer', id: data['id']})
+          })
+        }).catch(function (ex) {
+          alert('Network Error')
+        })
+      },
       addAssignment () {
         this.assignment_num = this.assignment_num + 1
         this.assignments.push(

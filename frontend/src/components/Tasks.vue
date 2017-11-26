@@ -2,8 +2,9 @@
   <div class="root">
     <div id="add" class="card">
       <Card class="add" padding=10>
-        <div id="addIcon"><Icon type="android-add-circle" size=35></Icon></div>
+        <router-link to="/addtask"><div id="addIcon"><Icon type="android-add-circle" size=35></Icon></div></router-link>
         <div id="addText"><h2>创建新任务</h2></div>
+
       </Card>
     </div>
     <div id="tasks" class="card">
