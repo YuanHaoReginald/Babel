@@ -27,7 +27,7 @@ def TranslatorSignUp(request):
         if(len(existedTranslator) >= 1):
             response_dict = {'id':0}
         else: # succeed and insert
-            translator = Translator.objects.create(username = new_username, password = new_password, email = new_email)
+            translator = Translator.objects.create(username = new_username, password = new_password, email = new_email, utype='Translator')
             response_dict = {'id': translator.id}
         return JsonResponse(response_dict)
 
@@ -44,7 +44,7 @@ def EmployerSignUp(request):
         if (len(existedEmployer) >= 1):
             response_dict = {'id': 0}
         else:  # succeed and insert
-            employer = Employer.objects.create(username=new_username, password=new_password, email=new_email)
+            employer = Employer.objects.create(username=new_username, password=new_password, email=new_email, utype='Employer')
             response_dict = {'id': employer.id}
         return JsonResponse(response_dict)
 
@@ -65,10 +65,10 @@ def UserSignUp(request):
             response_dict = {'id': 0}
         else:
             if(user_type == 'Translater'):
-                new_user = Translator.objects.create( username = new_username, password = new_password, email = new_email,  utype = user_type)
+                new_user = Translator.objects.create(username = new_username, password = new_password, email = new_email,  utype = user_type)
                 response_dict = {'id': new_user.id }
             elif(user_type == 'Employer'):
-                new_user = Employer.objects.create( username = new_username, password = new_password, email = new_email,  utype = user_type)
+                new_user = Employer.objects.create(username = new_username, password = new_password, email = new_email,  utype = user_type)
                 response_dict = {'id' : new_user.id}
             else:
                 response_dict = {'id': 0}
@@ -86,7 +86,7 @@ def UserSignIn(request):
         if(len(existedUser) == 1):
             # get it
             current_user = existedUser[0]
-            response_dict = {'id': current_user.id, 'utype' :current_user.utype }
+            response_dict = {'id': current_user.id, 'utype': current_user.utype }
             return JsonResponse(response_dict)
         else:
             response_dict = {'id': 0}

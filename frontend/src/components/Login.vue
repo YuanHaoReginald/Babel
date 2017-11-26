@@ -30,6 +30,7 @@
         const headers = new Headers({
           'Content-Type': 'application/json'
         })
+        let that = this
         fetch('api/UserSignIn', { method: 'POST',
           headers,
           mode: 'cors',
@@ -37,13 +38,16 @@
           body: body })
         .then(function (response) {
           return response.json().then(function (data) {
+            console.log(123)
             if (data['id'] === 0) {
               alert('Username or Password Error')
             } else {
               if (data['utype'] === 'Employer') {
-                this.$router.push({name: 'employer', id: data['id']})
+                console.log('emp')
+                that.$router.push({name: 'employer', params: {id: data['id']}})
               } else if (data['utype'] === 'Translator') {
-                this.$router.push({name: 'translator', id: data['id']})
+                console.log('tra')
+                that.$router.push({name: 'translator', params: {id: data['id']}})
               }
             }
           }).catch(function (ex) {
