@@ -7,6 +7,7 @@ import SignUpMore from '@/components/SignUpMore'
 import EmployerPage from '@/components/EmployerPage'
 import TranslatorPage from '@/components/TranslatorPage'
 import AddTask from '@/components/AddTask'
+import Task from '@/components/TaskPage'
 
 Vue.use(Router)
 
@@ -47,6 +48,11 @@ export default new Router({
       path: '/addTask',
       name: 'addTask',
       component: AddTask
+    },
+    {
+      path: '/task',
+      name: 'task',
+      component: Task
     }
     // nginx:no 404 -> index.html(history)
   ]
