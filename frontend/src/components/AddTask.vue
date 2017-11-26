@@ -61,7 +61,6 @@
               </Row>
             </li>
           </ul>
-
         </div>
         <div id="submitButton"><Button type="primary">创建任务</Button></div>
       </div>

@@ -27,8 +27,8 @@
         username: '王小明',
         email: 'abcdefg@163.com',
         headSrc: '/src/assets/head_sample.jpg',
-        level: 2,
-        experienceNumber: 30,
+        level: 4,
+        experienceNumber: 60,
         maxExperience: 200
       }
     },

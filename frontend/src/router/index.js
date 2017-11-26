@@ -4,6 +4,7 @@ import Login from '@/components/Login'
 import Welcome from '@/components/Welcome'
 import SignUpSimple from '@/components/SignUpSimple'
 import EmployerPage from '@/components/EmployerPage'
+import TranslatorPage from '@/components/TranslatorPage'
 import AddTask from '@/components/AddTask'
 
 Vue.use(Router)
@@ -30,6 +31,11 @@ export default new Router({
       path: '/employer/:id',
       name: 'employer',
       component: EmployerPage
+    },
+    {
+      path: '/translator',
+      name: 'translator',
+      component: TranslatorPage
     },
     {
       path: '/addTask',
