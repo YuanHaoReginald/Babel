@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 # Base User
 class CommonUser(User):
     telephone = models.CharField(max_length = 20, unique = True)
-    avatarImageUrl = models.ImageField(max_length = 256)
+    avatar = models.ImageField(max_length = 256)
     utype = models.CharField(max_length = 30)
 
 # admin user
@@ -14,16 +14,16 @@ class Admin(CommonUser):
 # translator
 class Translator(CommonUser):
     level = models.IntegerField()
-    alipayNumber = models.CharField(max_length = 30)
-    wechatNumber = models.CharField(max_length = 30)
-    experienceNumber = models.IntegerField()
+    alipayNumber = models.CharField(max_length = 30, null = True)
+    wechatNumber = models.CharField(max_length = 30, null = True)
+    experience = models.IntegerField(default = 0)
 
 # employer
 class Employer(CommonUser):
-    level = models.IntegerField()
-    alipayNumber = models.CharField(max_length = 30)
-    wechatNumber = models.CharField(max_length = 30)
-    experienceNumber = models.IntegerField()
+    level = models.IntegerField(default = 0)
+    alipayNumber = models.CharField(max_length = 30, null = True)
+    wechatNumber = models.CharField(max_length = 30, null = True)
+    experience = models.IntegerField(default = 0)
 
 # task table
 class Task(models.Model):
@@ -31,25 +31,24 @@ class Task(models.Model):
     description = models.CharField(max_length = 512)
     fileUrl = models.FileField(max_length = 256)
     fileType = models.IntegerField() # 0:文本；1:音频
-    employerId = models.ForeignKey(Employer, related_name = 'partyA')
+    employer = models.ForeignKey(Employer)
     # time
     publishTime = models.DateTimeField()
     ddlTime = models.DateTimeField()
     # tags
-    tags = models.CharField(max_length = 128)
+    tags = models.CharField(max_length = 128, null = True)
     language = models.IntegerField()
     requirementsLicense = models.IntegerField()
-
     requirementsLevel = models.IntegerField()
-    testText = models.TextField(max_length = 300)
+    testText = models.TextField(max_length = 300, null = True)
 
 #  Assignments
 class Assignment(models.Model):
     # (saved：0/published：1/running：2/finished：3/submitted：4/arguing：5)
     status = models.IntegerField()
     task = models.ForeignKey(Task)
-    testTextFinished = models.TextField(max_length = 600)
-    translator = models.ForeignKey(Translator, related_name = 'partyB')
+    testTextFinished = models.TextField(max_length = 1000)
+    translator = models.ForeignKey(Translator)
     scores = models.IntegerField()
     price = models.IntegerField()
     submission = models.FileField(max_length = 50)
