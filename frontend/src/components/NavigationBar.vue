@@ -17,7 +17,7 @@
       </Submenu>
       </Col>
       <Col span="3"offset="8" v-else="status">
-      <MenuItem><h3>Login</h3></MenuItem>
+      <router-link to="/login"><MenuItem><h3>Login</h3></MenuItem></router-link>
       </Col>
     </Row>
   </Menu>

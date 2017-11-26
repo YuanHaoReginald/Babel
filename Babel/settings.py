@@ -11,21 +11,29 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
 import os
+import json
+import logging
+import urllib.parse
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+# Configurations load from file
+if os.path.exists(os.path.join(BASE_DIR, 'configs.json')):
+    CONFIGS = json.loads(open(os.path.join(BASE_DIR, 'configs.json')).read())
+else:
+    CONFIGS = json.loads(open(os.path.join(BASE_DIR, 'configs.example.json')).read())
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'e30ff*9a=87fs&h^y_te2ww9op(1^yt94rr#v!ghw=30_j+%^s'
+SECRET_KEY = CONFIGS['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = CONFIGS['DEBUG']
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -80,11 +88,12 @@ WSGI_APPLICATION = 'Babel.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        # 'USER': 'root',
-        # 'PASSWORD': '',
-
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': CONFIGS['DB_NAME'],
+        'USER': CONFIGS['DB_USER'],
+        'PASSWORD': CONFIGS['DB_PASS'],
+        'DB_HOST': CONFIGS['DB_HOST'],
+        'DB_PORT': CONFIGS['DB_PORT'],
     }
 }
 

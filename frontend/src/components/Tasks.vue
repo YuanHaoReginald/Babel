@@ -7,17 +7,52 @@
       </Card>
     </div>
     <div id="tasks" class="card">
-      <Card shadow class="tasks"></Card>
+      <Card shadow class="tasks" padding=0>
+        <div id="taskListTitle"><h2>My Tasks</h2></div>
+        <div>
+          <ul>
+            <li v-for="task in tasklist">
+              <Card padding=10>
+                <p slot="title" id="taskTitle">
+                  {{ task.title }}&nbsp;&nbsp;&nbsp;<Tag v-for="tag in task.tags"><h4>{{ tag }}</h4></Tag>
+                </p>
+                <p id="taskTime">起始时间：{{ task.publishTime }}&nbsp;&nbsp;&nbsp;截止时间：{{ task.ddlTime }}</p>
+                <p id="taskDescription">{{ task.description }}</p>
+              </Card>
+            </li>
+          </ul>
+        </div>
+      </Card>
     </div>
   </div>
 </template>
 
 <script>
+  /* eslint-disable no-new */
   export default {
     name: 'tasks',
     data () {
       return {
-        tasks: ['ENG', 'ESP', 'ARB']
+        tasklist: [
+          {
+            title: '中法信件翻译任务',
+            publishTime: '2017-3-1',
+            ddlTime: '2017-5-10',
+            tags: ['art', 'math'],
+            language: 'French',
+            description: 'I am the description.I am the description.I am the description.' +
+            'I am the description.I am the description.I am the description.I am the description.'
+          },
+          {
+            title: 'title',
+            publishTime: 'publishTime',
+            ddlTime: 'ddlTime',
+            tags: ['art', 'math'],
+            language: 'English',
+            description: 'I am the description.I am the description.I am the description.' +
+            'I am the description.I am the description.I am the description.I am the description.'
+          }
+        ]
       }
     }
   }
@@ -40,7 +75,27 @@
     text-align: left;
     margin-left: 60px;
   }
+  #taskListTitle {
+    text-align: left;
+    padding: 10px 0 10px 20px;
+  }
+  #taskTitle {
+    font-size: 16px;
+    text-align: left;
+  }
+  #taskDescription {
+    text-align: left;
+    color: #495060;
+  }
+  #taskTime {
+    font-size: 12px;
+    text-align: left;
+    color: #80848f;
+  }
   h2 {
     color: #1c2438;
+  }
+  h4 {
+    font-size: 12px;
   }
 </style>

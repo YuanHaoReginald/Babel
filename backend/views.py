@@ -86,7 +86,7 @@ def UserSignIn(request):
             response_dict = {'id': current_user.id, 'utype' :current_user.utype }
             return JsonResponse(response_dict)
         else:
-            response_dict = {'id':0 }
+            response_dict = {'id': 0}
             return JsonResponse(response_dict)
 
 # get user info

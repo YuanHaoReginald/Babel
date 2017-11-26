@@ -32,23 +32,29 @@
       return {
         username: '',
         password: '',
-        email:''
+        email: ''
       }
     },
     methods: {
       sign_in: function () {
-        let body = JSON.stringify({username: '123', password: '890'})
+        let body = JSON.stringify({username: this.username, password: this.password, email: this.email})
         const headers = new Headers({
           'Content-Type': 'application/json'
         })
-        fetch('api/TranslaterSignUp', { method: 'POST',
+        fetch('api/EmployerSignUp', { method: 'POST',
           headers,
           credentials: 'include',
           body: body })
         .then(function (response) {
           return response.json().then(function (data) {
-            console.log(data['id'])
+            if (data['id'] === 0) {
+              alert('Invalid username or password, please retry')
+            } else {
+              this.$router.push({name: 'employer', id: data['id']})
+            }
           })
+        }).catch(function (ex) {
+          alert('Network Error')
         })
       }
     }

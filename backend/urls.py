@@ -5,9 +5,9 @@ from django.conf import settings
 
 urlpatterns = [
 
-	url(r'^TranslaterSignUp$', views.TranslaterSignUp , name = 'TranslaterSignUp'),
-    url(r'^EmployerSignUp$', views.EmployerSignUp , name = 'EmployerSignUp'),
-    url(r'^UserSignIn$', views.UserSignIn , name = 'UserSignIn'),
-    url(r'^UserSignUp$', views.UserSignUp , name = 'UserSignUp'),
+	url(r'^TranslatorSignUp$', views.TranslatorSignUp , name='TransloterSignUp'),
+    url(r'^UserSignIn$', views.UserSignIn , name='UserSignIn'),
+    url(r'^EmployerSignUp$', views.EmployerSignUp , name='EmployerSignUp'),
+    url(r'^GetUserInfo$', views.GetUserInfo, name='GetUserInfo'),
 
 ]
