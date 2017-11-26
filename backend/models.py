@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 
 # Base User
 class CommonUser(User):
-    telephone = models.CharField(max_length = 20, unique = True)
+    telephone = models.CharField(max_length = 20, unique = True, null = True)
     avatar = models.ImageField(max_length = 256)
     utype = models.CharField(max_length = 30)
 
@@ -13,7 +13,7 @@ class Admin(CommonUser):
 
 # translator
 class Translator(CommonUser):
-    level = models.IntegerField()
+    level = models.IntegerField(default = 0)
     alipayNumber = models.CharField(max_length = 30, null = True)
     wechatNumber = models.CharField(max_length = 30, null = True)
     experience = models.IntegerField(default = 0)

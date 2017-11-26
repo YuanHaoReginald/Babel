@@ -11,9 +11,9 @@
                 <Col span="2"><h3>{{ a.id }}</h3></Col>
                 <Col span="22">
                   <p>任务状态: {{ a.status }}</p>
-                  <p v-if="a.status == '已完成'">任务评分:&nbsp<Rate disabled v-model="a.score"></Rate></p>
+                  <p v-if="a.status == '已完成'">任务评分:&nbsp;<Rate disabled v-model="a.score"></Rate></p>
                   <p>任务描述： </p>
-                  <p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp{{ a.description }}</p>
+                  <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ a.description }}</p>
                 </Col>
               </Row>
             </Card>

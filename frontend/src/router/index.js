@@ -25,12 +25,12 @@ export default new Router({
       component: Login
     },
     {
-      path: '/signup',
+      path: '/signup/:utype',
       name: 'Signup',
       component: SignUpSimple
     },
     {
-      path: '/signupmore',
+      path: '/signupmore/:id',
       name: 'Signupmore',
       component: SignUpMore
     },
@@ -40,7 +40,7 @@ export default new Router({
       component: EmployerPage
     },
     {
-      path: '/translator',
+      path: '/translator/:id',
       name: 'translator',
       component: TranslatorPage
     },
@@ -50,7 +50,7 @@ export default new Router({
       component: AddTask
     },
     {
-      path: '/task',
+      path: '/task/:tid',
       name: 'task',
       component: Task
     }

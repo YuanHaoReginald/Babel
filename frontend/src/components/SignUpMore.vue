@@ -12,10 +12,6 @@
           <div class="input"><Input v-model="telephone"></Input></div>
         </div>
         <div class="box">
-          <h3>邮箱：</h3>
-          <div class="input"><Input v-model="email"></Input></div>
-        </div>
-        <div class="box">
           <h3>支付宝账号：</h3>
           <div class="input"><Input v-model="alipay"></Input></div>
         </div>
@@ -51,7 +47,6 @@
     data () {
       return {
         telephone: '',
-        email: '',
         alipay: '',
         wechat: '',
         language: '',
@@ -101,8 +96,35 @@
               label: '专业八级',
               src: ''
             }
-          ],
+          ]
         }
+      }
+    },
+    methods: {
+      sign_up_simple: function () {
+        let body = JSON.stringify({telephone: this.telephone,
+          alipayNumber: this.alipay,
+          wechatNumber: this.wechat,
+          language: this.language})
+        const headers = new Headers({
+          'Content-Type': 'application/json'
+        })
+        let that = this
+        fetch('api/UserModify', { method: 'POST',
+          headers,
+          credentials: 'include',
+          body: body })
+        .then(function (response) {
+          return response.json().then(function (data) {
+            if (data['status'] === 0) {
+              alert('Modify failed.')
+            } else {
+              that.$router.push({name: data['utype'], params: {id: this.$route.params.id}})
+            }
+          })
+        }).catch(function (ex) {
+          alert('Network Error')
+        })
       }
     }
   }

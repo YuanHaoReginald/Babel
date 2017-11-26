@@ -42,10 +42,10 @@
             if (data['id'] === 0) {
               alert('Username or Password Error')
             } else {
-              if (data['utype'] === 'Employer') {
+              if (data['utype'] === 'employer') {
                 console.log('emp')
                 that.$router.push({name: 'employer', params: {id: data['id']}})
-              } else if (data['utype'] === 'Translator') {
+              } else if (data['utype'] === 'translator') {
                 console.log('tra')
                 that.$router.push({name: 'translator', params: {id: data['id']}})
               }

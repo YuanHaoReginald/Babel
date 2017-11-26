@@ -37,12 +37,15 @@
     },
     methods: {
       sign_up_simple: function () {
-        let body = JSON.stringify({username: this.username, password: this.password, email: this.email})
+        let body = JSON.stringify({username: this.username,
+          password: this.password,
+          email: this.email,
+          utype: this.$route.params.utype})
         const headers = new Headers({
           'Content-Type': 'application/json'
         })
         let that = this
-        fetch('api/EmployerSignUp', { method: 'POST',
+        fetch('api/UserSignUp', { method: 'POST',
           headers,
           credentials: 'include',
           body: body })
@@ -51,7 +54,7 @@
             if (data['id'] === 0) {
               alert('Invalid username or password, please retry.')
             } else {
-              that.$router.push('/signupmore')
+              that.$router.push({name: 'Signupmore', params: {id: data['id']}})
             }
           })
         }).catch(function (ex) {

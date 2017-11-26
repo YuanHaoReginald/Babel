@@ -10,8 +10,8 @@
     </div>
     <br>
     <div v-if="status" class="new_buttons">
-      <router-link to="/signup"><Button shape="circle" size="large" >I am a translator.</Button></router-link>
-      <router-link to="/signup"><Button shape="circle" size="large" >I am an employer.</Button></router-link>
+      <router-link to="/signup/translator"><Button shape="circle" size="large" >I am a translator.</Button></router-link>
+      <router-link to="/signup/employer"><Button shape="circle" size="large" >I am an employer.</Button></router-link>
     </div>
   </div>
 </template>
