@@ -92,8 +92,8 @@ DATABASES = {
         'NAME': CONFIGS['DB_NAME'],
         'USER': CONFIGS['DB_USER'],
         'PASSWORD': CONFIGS['DB_PASS'],
-        'DB_HOST': CONFIGS['DB_HOST'],
-        'DB_PORT': CONFIGS['DB_PORT'],
+        'HOST': CONFIGS['DB_HOST'],
+        'PORT': CONFIGS['DB_PORT'],
     }
 }
 

@@ -16,21 +16,11 @@ export default {
   },
   data () {
     return {
-      spanLeft: 5,
-      spanRight: 19
     }
   }
 }
 </script>
 
 <style scoped>
-.userinfo {
-  float: left;
-  width: 30%;
-}
-.tasks {
-  margin-left: 30%;
-  width: 70%;
-}
 
 </style>

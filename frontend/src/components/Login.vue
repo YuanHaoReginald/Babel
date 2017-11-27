@@ -10,7 +10,7 @@
       <Input v-model="password" style="width: 300px"> </Input>
     </div>
     <div class="button">
-      <Button size="large" type="primary">Sign in</Button>
+      <Button size="large" type="primary" v-on:click="login">Sign in</Button>
     </div>
   </div>
 </template>
@@ -23,6 +23,38 @@
         username: '',
         password: ''
       }
+    },
+    methods: {
+      login: function () {
+        let body = JSON.stringify({username: this.username, password: this.password})
+        const headers = new Headers({
+          'Content-Type': 'application/json'
+        })
+        let that = this
+        fetch('api/UserSignIn', { method: 'POST',
+          headers,
+          mode: 'cors',
+          credentials: 'include',
+          body: body })
+        .then(function (response) {
+          return response.json().then(function (data) {
+            console.log(123)
+            if (data['id'] === 0) {
+              alert('Username or Password Error')
+            } else {
+              if (data['utype'] === 'employer') {
+                console.log('emp')
+                that.$router.push({name: 'employer', params: {id: data['id']}})
+              } else if (data['utype'] === 'translator') {
+                console.log('tra')
+                that.$router.push({name: 'translator', params: {id: data['id']}})
+              }
+            }
+          }).catch(function (ex) {
+            alert('Network Error')
+          })
+        })
+      }
     }
   }
 </script>
@@ -30,7 +62,7 @@
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
   .root {
-    margin-top: 160px;
+    margin-top: 100px;
     margin-left: auto;
     margin-right: auto;
     width: 300px;
@@ -39,9 +71,11 @@
     margin-top: 30px;
   }
   h2 {
+    color: #1c2438;
     font-size:30px;
   }
   h3 {
+    color: #1c2438;
     float: left;
     margin-bottom: 10px;
   }

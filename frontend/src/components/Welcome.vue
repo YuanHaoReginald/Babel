@@ -6,12 +6,12 @@
     <br>
     <div class="buttons">
       <Button shape="circle" size="large" v-on:click="status=true">Register</Button>
-      <Button type="primary" shape="circle" size="large">Sign in</Button>
+      <router-link to="/login"><Button type="primary" shape="circle" size="large">Sign in</Button></router-link>
     </div>
     <br>
     <div v-if="status" class="new_buttons">
-      <Button shape="circle" size="large" >I am a translator.</Button>
-      <Button shape="circle" size="large" >I am an employer.</Button>
+      <router-link to="/signup/translator"><Button shape="circle" size="large" >I am a translator.</Button></router-link>
+      <router-link to="/signup/employer"><Button shape="circle" size="large" >I am an employer.</Button></router-link>
     </div>
   </div>
 </template>
@@ -30,7 +30,7 @@
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
   .welcome {
-    margin-top: 200px;
+    margin-top: 170px;
   }
   .buttons {
     margin-top: 100px;
@@ -43,5 +43,6 @@
   }
   h2 {
     font-size:40px;
+    color: black;
   }
 </style>

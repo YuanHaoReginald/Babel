@@ -1,82 +1,66 @@
 from django.db import models
+from django.contrib.auth.models import User
 
-# 管理员
-class Admin(models.Model):
-    username = models.CharField(max_length = 20, unique=True, db_index=True)
-    password = models.CharField(max_length = 20, unique=True)
-    telephone = models.CharField(max_length = 20, unique = True)
-    email = models.CharField(max_length = 20, unique = False)
-    avatarImageUrl = models.ImageField(max_length = 256)
+# Base User
+class CommonUser(User):
+    telephone = models.CharField(max_length = 20, unique = True, null = True)
+    avatar = models.ImageField(max_length = 256)
+    utype = models.CharField(max_length = 30)
 
-# 翻译者
-class Translater(models.Model):
-    username = models.CharField(max_length = 20, unique=True, db_index=True)
-    password = models.CharField(max_length = 20, unique=True)
-    telephone = models.CharField(max_length = 20, unique = True)
-    email = models.CharField(max_length = 20, unique = False)
-    avatarImageUrl = models.ImageField(max_length = 256)
-    level = models.IntegerField()
+# admin user
+class Admin(CommonUser):
+    pass
 
-    # 在license和language里实现了两个方法，输入translaterId返回它们各自的license表和language表
-    # licenseField = models.CharField(max_length = 20)
-    # language = models.CharField(max_length = 20)
+# translator
+class Translator(CommonUser):
+    level = models.IntegerField(default = 0)
+    alipayNumber = models.CharField(max_length = 30, null = True)
+    wechatNumber = models.CharField(max_length = 30, null = True)
+    experience = models.IntegerField(default = 0)
 
-    alipayNumber = models.CharField(max_length = 30)
-    wechatNumber = models.CharField(max_length = 30)
-    experienceNumber = models.IntegerField()
+# employer
+class Employer(CommonUser):
+    level = models.IntegerField(default = 0)
+    alipayNumber = models.CharField(max_length = 30, null = True)
+    wechatNumber = models.CharField(max_length = 30, null = True)
+    experience = models.IntegerField(default = 0)
 
-# 雇佣者
-class Employer(models.Model):
-    username = models.CharField(max_length = 20, unique=True, db_index=True)
-    password = models.CharField(max_length = 20, unique=True)
-    telephone = models.CharField(max_length = 20, unique = True)
-    email = models.CharField(max_length = 20, unique = False)
-    avatarImageUrl = models.ImageField(max_length = 256)
-
-    level = models.IntegerField()
-    experienceNumber = models.IntegerField()
-    alipayNumber = models.CharField(max_length = 30)
-    wechatNumber = models.CharField(max_length = 30)
-
-# 任务表 task
+# task table
 class Task(models.Model):
-    title = models.CharField(max_length = 30, unique=True)
-    description = models.CharField(max_length = 100, unique=True)
-    fileUrl = models.FilePathField(max_length = 256)
+    title = models.CharField(max_length = 30)
+    description = models.CharField(max_length = 512)
+    fileUrl = models.FileField(max_length = 256)
     fileType = models.IntegerField() # 0:文本；1:音频
-    # 甲方
-    employerId = models.IntegerField()
+    employer = models.ForeignKey(Employer)
     # time
     publishTime = models.DateTimeField()
     ddlTime = models.DateTimeField()
-
     # tags
-    tags = models.CharField(max_length = 128)
+    tags = models.CharField(max_length = 128, null = True)
     language = models.IntegerField()
     requirementsLicense = models.IntegerField()
-
     requirementsLevel = models.IntegerField()
-    testText = models.TextField(max_length = 300)
+    testText = models.TextField(max_length = 300, null = True)
 
 #  Assignments
 class Assignment(models.Model):
-    # 状态维护(saved：0/published：1/running：2/finished：3/submitted：4/arguing：5)
+    # (saved：0/published：1/running：2/finished：3/submitted：4/arguing：5)
     status = models.IntegerField()
-    testTextFinished = models.TextField(max_length = 600)
-    traslaterId = models.IntegerField()
+    task = models.ForeignKey(Task)
+    testTextFinished = models.TextField(max_length = 1000)
+    translator = models.ForeignKey(Translator)
     scores = models.IntegerField()
     price = models.IntegerField()
-    submissionFileUrl = models.CharField(max_length = 50)
+    submission = models.FileField(max_length = 50)
     experience = models.IntegerField()
 
 # dispute
 class Dispute(models.Model):
-    taskId = models.IntegerField()
-    assignmentId = models.IntegerField()
-    employerStatement = models.CharField(max_length = 300)
-    translaterStatement = models.CharField(max_length = 300)
-    status = models.IntegerField()#0:未处理；1：已处理
-    adminStatement = models.CharField(max_length = 300)
+    assignment = models.ForeignKey(Assignment)
+    employerStatement = models.TextField(max_length = 1000)
+    translatorStatement = models.TextField(max_length = 1000)
+    status = models.IntegerField() #0:未处理；1：已处理
+    adminStatement = models.TextField(max_length = 1000)
 
 #language type
 CHINESE = 0
@@ -88,12 +72,11 @@ SPAINISH = 5
 # language
 class Language(models.Model):
     languageType = models.IntegerField()
-    translaterId = models.ForeignKey(Translater)
-
+    TranslatorId = models.ForeignKey(Translator)
     @classmethod
-    def get_by_translaterId(cls,transId):
+    def get_by_translatorId(cls,transId):
         try:
-            return cls.objects.filter(translaterId = transId)
+            return cls.objects.filter(translatorId = transId)
         except cls.DoesNotExist:
             #raise LogicError('User not found')
             return
@@ -101,12 +84,14 @@ class Language(models.Model):
 #license type
 CET4 = 0
 CET6 = 1
+TOFEL100 = 2
+TOFEL110 = 3
 
 class License(models.Model):
     licenseType = models.IntegerField()
     licenseImage = models.ImageField(max_length = 256)
     description = models.CharField(max_length = 100)
-    belonger = models.ForeignKey(Translater)
+    belonger = models.ForeignKey(Translator)
 
     @classmethod
     def get_by_belongerId(cls,transId):
@@ -115,3 +100,13 @@ class License(models.Model):
         except cls.DoesNotExist:
             #raise LogicError('User not found')
             return
+
+
+
+
+
+
+
+
+
+
