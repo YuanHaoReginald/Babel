@@ -1,0 +1,34 @@
+image: python:3-onbuild
+
+cache:
+  paths:
+  - ~/.cache/pip/
+  # - /frontend/node_modules/
+
+before_script:
+  - python -V
+  - pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+  # - apt-get update -q && apt-get install nodejs -yqq
+  # - npm install vue-cli -g
+  # - cd frontend
+  # - npm install npm install chromedriver --chromedriver_cdnurl=http://cdn.npm.taobao.org/dist/chromedriver
+  # - npm install 
+  # - cd ..
+
+stages:
+  - build
+  - test
+
+job1:
+  stage: build
+  script:
+    - echo "finish build!"
+    # - python manage.py makemigrations
+    # - cd frontend
+    # - npm run build
+    # - cd ..
+
+job2:
+  stage: test
+  script:
+    - python manage.py test

@@ -123,3 +123,7 @@ selenium-debug.log
 # my
 !frontend/build/
 /configs.json
+/static/
+/media/
+/nginx.conf
+/uwsgi_params
