@@ -123,4 +123,3 @@ selenium-debug.log
 # my
 !frontend/build/
 /configs.json
-/backend/migrations/
