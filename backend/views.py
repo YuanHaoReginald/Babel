@@ -27,7 +27,7 @@ def TranslatorSignUp(request):
         if(len(existedTranslator) >= 1):
             response_dict = {'id':0}
         else: # succeed and insert
-            translator = Translator.objects.create(username = new_username, password = new_password, email = new_email)
+            translator = Translator.objects.create(username = new_username, password = new_password, email = new_email, utype='Translator')
             response_dict = {'id': translator.id}
         return JsonResponse(response_dict)
 
@@ -44,7 +44,7 @@ def EmployerSignUp(request):
         if (len(existedEmployer) >= 1):
             response_dict = {'id': 0}
         else:  # succeed and insert
-            employer = Employer.objects.create(username=new_username, password=new_password, email=new_email)
+            employer = Employer.objects.create(username=new_username, password=new_password, email=new_email, utype='Employer')
             response_dict = {'id': employer.id}
         return JsonResponse(response_dict)
 
@@ -63,10 +63,10 @@ def UserSignUp(request):
             response_dict = {'id': 0}
         else:
             if(user_type == 'Translater'):
-                new_user = Translator.objects.create( username = new_username, password = new_password, email = new_email,  utype = user_type)
+                new_user = Translator.objects.create(username = new_username, password = new_password, email = new_email,  utype = user_type)
                 response_dict = {'id': new_user.id }
             elif(user_type == 'Employer'):
-                new_user = Employer.objects.create( username = new_username, password = new_password, email = new_email,  utype = user_type)
+                new_user = Employer.objects.create(username = new_username, password = new_password, email = new_email,  utype = user_type)
                 response_dict = {'id' : new_user.id}
             else:
                 response_dict = {'id': 0}
@@ -85,7 +85,7 @@ def UserSignIn(request):
         if(len(existedUser) == 1):
             # get it
             current_user = existedUser[0]
-            response_dict = {'id': current_user.id, 'utype' :'Employer' }
+            response_dict = {'id': current_user.id, 'utype': current_user.utype }
             return JsonResponse(response_dict)
         else:
             response_dict = {'id': 0}
@@ -107,8 +107,36 @@ def GetUserInfo(request):
         else:
             response_dict = {'id':0 }
             return JsonResponse(response_dict)
-        return
 
-# get
+# sign up more
+def UserModify(request):
+    if request.method == 'POST':
+        info_dict = json.loads(request.body.decode())
+
+        user_id =  info_dict['id']
+
+        user_telephone = info_dict['telephone']
+        user_alipay = info_dict['alipayNumber']
+        user_wechat = info_dict['wechatNumber']
+        user_language = info_dict['language']
+
+        existedUser = CommonUser.objects.filter(user_id)
+
+        if(len(existedUser) == 1):
+            # get it
+            # change the user information
+            current_user = existedUser[0]
+            current_user.telephone = user_telephone
+            current_user.alipayNumber = user_alipay
+            current_user.wechatNumber = user_wechat
+            current_user.save()
+            # language
+            Language.objects.create(languageType = user_language, TranslatorId = user_id)
+            #
+            response_dict = {'status':1,"id":user_id,"utype":current_user.utype}
+        else:
+            response_dict = {'status': 0, "id": user_id}
+
+        return JsonResponse(response_dict)
 
 

@@ -19,7 +19,7 @@
       </div>
       <br>
       <div class="button">
-        <Button size="large" type="primary" v-on:click="sign_in">Sign in</Button>
+        <Button size="large" type="primary" v-on:click="sign_up_simple">Sign Up</Button>
       </div>
     </div>
   </div>
@@ -36,11 +36,12 @@
       }
     },
     methods: {
-      sign_in: function () {
+      sign_up_simple: function () {
         let body = JSON.stringify({username: this.username, password: this.password, email: this.email})
         const headers = new Headers({
           'Content-Type': 'application/json'
         })
+        let that = this
         fetch('api/EmployerSignUp', { method: 'POST',
           headers,
           credentials: 'include',
@@ -48,9 +49,9 @@
         .then(function (response) {
           return response.json().then(function (data) {
             if (data['id'] === 0) {
-              alert('Invalid username or password, please retry')
+              alert('Invalid username or password, please retry.')
             } else {
-              this.$router.push({name: 'employer', id: data['id']})
+              that.$router.push('/signupmore')
             }
           })
         }).catch(function (ex) {

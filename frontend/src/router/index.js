@@ -3,9 +3,11 @@ import Router from 'vue-router'
 import Login from '@/components/Login'
 import Welcome from '@/components/Welcome'
 import SignUpSimple from '@/components/SignUpSimple'
+import SignUpMore from '@/components/SignUpMore'
 import EmployerPage from '@/components/EmployerPage'
 import TranslatorPage from '@/components/TranslatorPage'
 import AddTask from '@/components/AddTask'
+import Task from '@/components/TaskPage'
 
 Vue.use(Router)
 
@@ -28,6 +30,11 @@ export default new Router({
       component: SignUpSimple
     },
     {
+      path: '/signupmore',
+      name: 'Signupmore',
+      component: SignUpMore
+    },
+    {
       path: '/employer/:id',
       name: 'employer',
       component: EmployerPage
@@ -41,6 +48,11 @@ export default new Router({
       path: '/addTask',
       name: 'addTask',
       component: AddTask
+    },
+    {
+      path: '/task',
+      name: 'task',
+      component: Task
     }
     // nginx:no 404 -> index.html(history)
   ]

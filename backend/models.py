@@ -20,19 +20,10 @@ class Translator(CommonUser):
 
 # employer
 class Employer(CommonUser):
-
-    level = models.IntegerField()
-    alipayNumber = models.CharField(max_length = 30, null = True)
-    wechatNumber = models.CharField(max_length = 30, null = True)
-    experience = models.IntegerField(default = 0)
-
-# employer
-class Employer(CommonUser):
     level = models.IntegerField(default = 0)
     alipayNumber = models.CharField(max_length = 30, null = True)
     wechatNumber = models.CharField(max_length = 30, null = True)
     experience = models.IntegerField(default = 0)
-
 
 # task table
 class Task(models.Model):
@@ -41,7 +32,6 @@ class Task(models.Model):
     fileUrl = models.FileField(max_length = 256)
     fileType = models.IntegerField() # 0:文本；1:音频
     employerId = models.ForeignKey(Employer, related_name = 'partyA', null = True)
-
     # time
     publishTime = models.DateTimeField()
     ddlTime = models.DateTimeField()
