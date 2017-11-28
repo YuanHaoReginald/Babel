@@ -42,7 +42,7 @@
       const headers = new Headers({
         'Content-Type': 'application/json'
       })
-      fetch('api/EmployerSignUp', { method: 'GET',
+      fetch('api/GetUserInfo', { method: 'GET',
         headers,
         credentials: 'include',
         body: body })
@@ -50,7 +50,7 @@
         return response.json().then(function (data) {
           this.username = data['username']
           this.email = data['email']
-          this.headSrc = data['avatarImageUrl']
+          this.headSrc = data['avatar']
           this.level = data['level']
           this.experienceNumber = data['experience']
         })

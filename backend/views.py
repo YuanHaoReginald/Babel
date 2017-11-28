@@ -57,15 +57,16 @@ def UserSignUp(request):
         new_password = info_dict['password']
         new_email = info_dict['email']
         user_type = info_dict['utype']
+        print(user_type)
         existedUser = CommonUser.objects.filter(username = new_username)
         if(len(existedUser) == 1):
             # get it
             response_dict = {'id': 0}
         else:
-            if(user_type == 'Translater'):
+            if (user_type == 'translator'):
                 new_user = Translator.objects.create(username = new_username, password = new_password, email = new_email,  utype = user_type)
                 response_dict = {'id': new_user.id }
-            elif(user_type == 'Employer'):
+            elif (user_type == 'employer'):
                 new_user = Employer.objects.create(username = new_username, password = new_password, email = new_email,  utype = user_type)
                 response_dict = {'id' : new_user.id}
             else:

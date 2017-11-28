@@ -13,8 +13,9 @@ class Admin(CommonUser):
 
 # translator
 class Translator(CommonUser):
-    level = models.IntegerField(null = True)
-    alipayNumber = models.CharField(max_length = 30 , null = True)
+
+    level = models.IntegerField(default = 0)
+    alipayNumber = models.CharField(max_length = 30, null = True)
     wechatNumber = models.CharField(max_length = 30, null = True)
     experienceNumber = models.IntegerField( null = True)
 
