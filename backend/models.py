@@ -13,7 +13,6 @@ class Admin(CommonUser):
 
 # translator
 class Translator(CommonUser):
-
     level = models.IntegerField(default = 0)
     alipayNumber = models.CharField(max_length = 30, null = True)
     wechatNumber = models.CharField(max_length = 30, null = True)
@@ -87,7 +86,6 @@ CET4 = 0
 CET6 = 1
 TOFEL100 = 2
 TOFEL110 = 3
-
 # license
 class License(models.Model):
     licenseType = models.IntegerField()
@@ -102,13 +100,3 @@ class License(models.Model):
         except cls.DoesNotExist:
             #raise LogicError('User not found')
             return
-
-
-
-
-
-
-
-
-
-
