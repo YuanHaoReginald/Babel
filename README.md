@@ -6,3 +6,6 @@ Translation crowdsourcing platform.
 
 ## 小组会议守则
 [小组会议守则](https://hackmd.io/s/ByVTFc8xG).
+
+## Commit Mesaage规范
+[Commit Message规范](https://hackmd.io/KwRgbALApgTAhgEwLQAYoHYVOgIwkndAZgGMkiFicdgAzWuGEIA=)
