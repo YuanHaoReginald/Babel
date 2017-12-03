@@ -116,10 +116,10 @@
           body: body })
         .then(function (response) {
           return response.json().then(function (data) {
-            if (data['status'] === 0) {
+            if (!data['status']) {
               alert('Modify failed.')
             } else {
-              that.$router.push({name: data['utype'], params: {id: this.$route.params.id}})
+              that.$router.push({name: data['utype']})
             }
           })
         }).catch(function (ex) {

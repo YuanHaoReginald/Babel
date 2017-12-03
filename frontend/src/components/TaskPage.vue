@@ -35,7 +35,7 @@
 
 <script>
   export default {
-    name: 'signUpMore',
+    name: 'taskpage',
     data () {
       return {
         title: '法语文件翻译任务',
@@ -65,6 +65,23 @@
           }
         ]
       }
+    },
+    created: function () {
+      let body = JSON.stringify({taskid: this.$route.params.tid})
+      const headers = new Headers({
+        'Content-Type': 'application/json'
+      })
+      fetch('api/GetTaskDetail', { method: 'GET',
+        headers,
+        credentials: 'include',
+        body: body })
+      .then(function (response) {
+        return response.json().then(function (data) {
+          alert(0)
+        })
+      }).catch(function (ex) {
+        alert('Network Error')
+      })
     }
   }
 </script>

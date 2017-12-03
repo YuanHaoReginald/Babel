@@ -26,7 +26,6 @@
     },
     methods: {
       login: function () {
-        this.$router.push({name: 'employer', params: {id: 2}})
         let body = JSON.stringify({username: this.username, password: this.password})
         const headers = new Headers({
           'Content-Type': 'application/json'
@@ -39,25 +38,12 @@
           body: body })
         .then(function (response) {
           return response.json().then(function (data) {
-            console.log(123)
             if (data['id'] === 0) {
               alert('Username or Password Error')
             } else {
-<<<<<<< HEAD
-<<<<<<< HEAD
-              alert(data['id'])
-=======
-              if (data['utype'] === 'Employer') {
-=======
-              if (data['utype'] === 'employer') {
->>>>>>> e110df25a0b137a3c6181ca7deee1d33a10eed70
-                console.log('emp')
-                that.$router.push({name: 'employer', params: {id: data['id']}})
-              } else if (data['utype'] === 'translator') {
-                console.log('tra')
-                that.$router.push({name: 'translator', params: {id: data['id']}})
-              }
->>>>>>> bed454ed1472fb7c76e854a62386172f363e425c
+              sessionStorage.setItem('userid', data['id'])
+              sessionStorage.setItem('utype', data['utype'])              
+              that.$router.push({name: data['utype']})
             }
           }).catch(function (ex) {
             alert('Network Error')
