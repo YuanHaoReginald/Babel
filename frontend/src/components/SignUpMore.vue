@@ -5,7 +5,7 @@
         <div class="title"><h2>完善个人信息</h2></div>
         <div class="box">
           <h3>上传头像：</h3>
-          <Button type="primary" id="fileButton">选择文件</Button>
+          <Upload><Button type="primary" id="fileButton">选择文件</Button></Upload>
         </div>
         <div class="box">
           <h3>电话：</h3>
@@ -28,12 +28,10 @@
             <li v-for="l in licenseList[language]">
               <Row>
                 <Col span="4"><h4>{{ l.label }}:</h4></Col>
-                <Col span="6"><Button>上传证书扫描件</Button></Col>
+                <Col span="6"><Upload><Button>上传证书扫描件</Button></Upload></Col>
               </Row>
-
             </li>
           </ul>
-
         </div>
         <div id="submitButton"><Button type="primary">提交修改</Button></div>
       </div>

@@ -10,7 +10,7 @@
       <br>
       <div class="input">
         <h3>Password:</h3>
-        <Input v-model="password" style="width: 400px"> </Input>
+        <Input v-model="password" type="password" style="width: 400px"> </Input>
       </div>
       <br>
       <div class="input">
