@@ -30,17 +30,17 @@ export default new Router({
       component: SignUpSimple
     },
     {
-      path: '/signupmore/:id',
+      path: '/signupmore',
       name: 'Signupmore',
       component: SignUpMore
     },
     {
-      path: '/employer/:id',
+      path: '/employer',
       name: 'employer',
       component: EmployerPage
     },
     {
-      path: '/translator/:id',
+      path: '/translator',
       name: 'translator',
       component: TranslatorPage
     },

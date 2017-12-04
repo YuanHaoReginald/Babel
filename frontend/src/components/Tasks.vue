@@ -55,6 +55,23 @@
           }
         ]
       }
+    },
+    created: function () {
+      let body = JSON.stringify({id: Number(sessionStorage.getItem("userid"))})
+      const headers = new Headers({
+        'Content-Type': 'application/json'
+      })
+      fetch('api/GetEmployerTasks', { method: 'GET',
+        headers,
+        credentials: 'include',
+        body: body })
+      .then(function (response) {
+        return response.json().then(function (data) {
+          alert(0)
+        })
+      }).catch(function (ex) {
+        alert('Network Error')
+      })
     }
   }
 </script>

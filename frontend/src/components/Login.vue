@@ -38,17 +38,12 @@
           body: body })
         .then(function (response) {
           return response.json().then(function (data) {
-            console.log(123)
             if (data['id'] === 0) {
               alert('Username or Password Error')
             } else {
-              if (data['utype'] === 'employer') {
-                console.log('emp')
-                that.$router.push({name: 'employer', params: {id: data['id']}})
-              } else if (data['utype'] === 'translator') {
-                console.log('tra')
-                that.$router.push({name: 'translator', params: {id: data['id']}})
-              }
+              sessionStorage.setItem('userid', data['id'])
+              sessionStorage.setItem('utype', data['utype'])              
+              that.$router.push({name: data['utype']})
             }
           }).catch(function (ex) {
             alert('Network Error')
