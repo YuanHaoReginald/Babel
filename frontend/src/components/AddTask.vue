@@ -47,17 +47,17 @@
             <li v-for="a in assignments">
               <Row>
                 <Col span="1">
-                  <div id="addTaskButton" v-if="a.id == assignment_num">
+                  <div id="addTaskButton" v-if="a.order == assignment_num">
                   <Button type="primary" size="small" shape="circle" icon="plus" @click="addAssignment">
                   </Button>
                   </div>
                   <div v-else>
-                    <h4>&nbsp</h4>
+                    <h4>&nbsp;</h4>
                   </div>
                 </Col>
-                <Col span="4"><div class="task_text"><h4>细分任务{{ a.id }}:</h4></div></Col>
+                <Col span="4"><div class="task_text"><h4>细分任务{{ a.order }}:</h4></div></Col>
                 <Col span="17"><div class="input_assignment"><Input v-model="a.text" type="textarea"></Input></div></Col>
-                <Col span="2"><div class="delete_button"><Button type="ghost">删除</Button></div></Col>
+                <Col span="2"><div class="delete_button" v-if="assignment_num > 1"><Button type="ghost" @click="deleteAssignment(a.order)">删除</Button></div></Col>
               </Row>
             </li>
           </ul>
@@ -111,7 +111,7 @@
         assignment_num: 1,
         assignments: [
           {
-            id: 1,
+            order: 1,
             text: ''
           }
         ]
@@ -139,12 +139,18 @@
         this.assignment_num = this.assignment_num + 1
         this.assignments.push(
           {
-            id: this.assignment_num,
+            order: this.assignment_num,
             text: ''
           }
         )
+      },
+      deleteAssignment (num) {
+        --num
+        this.assignment_num = this.assignment_num - 1
+        this.assignments.splice(num, 1)
+        while (num < this.assignment_num)
+          this.assignments[num].order = ++num
       }
-      // TODO:deleteAssignment function
     }
   }
 </script>
