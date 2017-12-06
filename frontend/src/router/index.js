@@ -8,6 +8,7 @@ import EmployerPage from '@/components/EmployerPage'
 import TranslatorPage from '@/components/TranslatorPage'
 import AddTask from '@/components/AddTask'
 import Task from '@/components/TaskPage'
+import Square from '@/components/Square'
 
 Vue.use(Router)
 
@@ -53,6 +54,11 @@ export default new Router({
       path: '/task/:tid',
       name: 'task',
       component: Task
+    },
+    {
+      path: '/square',
+      name: 'square',
+      component: Square
     }
     // nginx:no 404 -> index.html(history)
   ]
