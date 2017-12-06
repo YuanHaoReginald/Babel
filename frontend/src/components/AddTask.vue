@@ -148,8 +148,9 @@
         --num
         this.assignment_num = this.assignment_num - 1
         this.assignments.splice(num, 1)
-        while (num < this.assignment_num)
+        while (num < this.assignment_num) {
           this.assignments[num].order = ++num
+        }
       }
     }
   }

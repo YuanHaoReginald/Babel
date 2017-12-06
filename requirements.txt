@@ -1,5 +1,4 @@
-Django
-django
+Django==1.11.4
 Pillow
 mysqlclient
 django-cors-headers
