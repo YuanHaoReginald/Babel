@@ -84,31 +84,31 @@
           that.ddlTime = data['ddlTime']
           that.language = data['language']
           for (let assignment of data) {
-            let tmp = new Array()
-            tmp['order'] = assignments.order
+            let tmp = []
+            tmp['order'] = assignment.order
             tmp['description'] = assignment.description
             tmp['translator'] = assignment.translator
             switch (assignment.status) {
               case 0:
                 tmp['status'] = '未发布'
-                break;
+                break
               case 1:
                 tmp['status'] = '未认领'
-                break;
+                break
               case 2:
                 tmp['status'] = '进行中'
-                break;
+                break
               case 3:
                 tmp['status'] = '已完成'
                 tmp['score'] = assignment.score
-                break;
+                break
               case 4:
                 tmp['status'] = '纠纷中'
                 tmp['score'] = assignment.score
-                break;
+                break
             }
-            tmp['price'] = price
-            tmp['submission'] = submission
+            tmp['price'] = assignment.price
+            tmp['submission'] = assignment.submission
             that.assignments.push(tmp)
           }
         })
