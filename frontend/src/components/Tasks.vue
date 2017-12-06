@@ -14,7 +14,7 @@
             <li v-for="task in tasklist">
               <Card padding=10>
                 <p slot="title" id="taskTitle">
-                  {{ task.title }}&nbsp;&nbsp;&nbsp;<Tag v-for="tag in task.tags"><h4>{{ tag }}</h4></Tag>
+                  {{ task.title }}&nbsp;&nbsp;&nbsp;<span v-for="tag in task.tags"><Tag><h4>{{ tag }}</h4></Tag></span>
                 </p>
                 <p id="taskTime">起始时间：{{ task.publishTime }}&nbsp;&nbsp;&nbsp;截止时间：{{ task.ddlTime }}</p>
                 <p id="taskDescription">{{ task.description }}</p>

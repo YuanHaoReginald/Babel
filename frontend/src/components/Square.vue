@@ -55,7 +55,7 @@
 </template>
 
 <script>
-  import Checkbox from "../../node_modules/iview/src/components/checkbox/checkbox";
+  import Checkbox from '../../node_modules/iview/src/components/checkbox/checkbox'
   export default {
     components: {Checkbox},
     name: 'square',
