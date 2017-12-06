@@ -8,7 +8,7 @@
           <li v-for="a in assignments">
             <Card>
               <Row>
-                <Col span="2"><h3>{{ a.id }}</h3></Col>
+                <Col span="2"><h3>{{ a.order }}</h3></Col>
                 <Col span="22">
                   <p>任务状态: {{ a.status }}</p>
                   <p v-if="a.status == '已完成'">任务评分:&nbsp;<Rate disabled v-model="a.score"></Rate></p>
@@ -45,23 +45,23 @@
         language: '法语',
         assignments: [
           {
-            id: 1,
+            order: 1,
             description: '这个任务需要翻译我给出的pdf文档的第20-40页，注意主要人名的翻' +
             '译要与附录中的统一。完成情况好的话我一定会好评的。',
             status: '已完成',
             translator: '2333',
             score: 4,
             price: '20元',
-            fileUrl: '/2333/455'
+            submission: '/2333/455'
           },
           {
-            id: 2,
+            order: 2,
             description: 'PartII PartII PartII PartII PartII PartII ',
             status: '进行中',
             translator: '2333',
             score: 4,
             price: '20元',
-            fileUrl: '/2333/455'
+            submission: '/2333/455'
           }
         ]
       }
@@ -71,13 +71,46 @@
       const headers = new Headers({
         'Content-Type': 'application/json'
       })
+      let that = this
       fetch('api/GetTaskDetail', { method: 'GET',
         headers,
         credentials: 'include',
         body: body })
       .then(function (response) {
         return response.json().then(function (data) {
-          alert(0)
+          that.title = data['title']
+          that.description = data['description']
+          that.publishTime = data['publishTime']
+          that.ddlTime = data['ddlTime']
+          that.language = data['language']
+          for (let assignment of data) {
+            let tmp = new Array()
+            tmp['order'] = assignments.order
+            tmp['description'] = assignment.description
+            tmp['translator'] = assignment.translator
+            switch (assignment.status) {
+              case 0:
+                tmp['status'] = '未发布'
+                break;
+              case 1:
+                tmp['status'] = '未认领'
+                break;
+              case 2:
+                tmp['status'] = '进行中'
+                break;
+              case 3:
+                tmp['status'] = '已完成'
+                tmp['score'] = assignment.score
+                break;
+              case 4:
+                tmp['status'] = '纠纷中'
+                tmp['score'] = assignment.score
+                break;
+            }
+            tmp['price'] = price
+            tmp['submission'] = submission
+            that.assignments.push(tmp)
+          }
         })
       }).catch(function (ex) {
         alert('Network Error')

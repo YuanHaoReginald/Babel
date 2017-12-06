@@ -36,21 +36,23 @@ class Task(models.Model):
     publishTime = models.DateTimeField()
     ddlTime = models.DateTimeField()
     # tags
-    tags = models.CharField(max_length = 128 , null = True)
-    language = models.IntegerField( null = True)
-    requirementsLicense = models.IntegerField( null = True)
+    tags = models.CharField(max_length = 128, null = True)
+    language = models.IntegerField(null = True)
+    requirementsLicense = models.IntegerField(null = True)
     requirementsLevel = models.IntegerField( null = True)
     testText = models.TextField(max_length = 300, null = True)
 
 #  Assignments
 class Assignment(models.Model):
-    # (saved：0/published：1/running：2/finished：3/submitted：4/arguing：5)
-    status = models.IntegerField()
+    # (saved：0/published：1/running：2/finished：3/arguing：4)
+    description = models.TextField(max_length = 1000)
+    status = models.IntegerField(default = 0)
     task = models.ForeignKey(Task)
+    order = models.IntegerField()
     testTextFinished = models.TextField(max_length = 600, null = True)
     translator = models.ForeignKey(Translator, related_name = 'partyB', null = True)
-    scores = models.IntegerField( null = True)
-    price = models.IntegerField( null = True)
+    scores = models.IntegerField(null = True)
+    price = models.IntegerField(null = True)
     submission = models.FileField(max_length = 50, null = True)
     experience = models.IntegerField(default = 0)
 
