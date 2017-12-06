@@ -56,7 +56,7 @@
       }
     },
     created: function () {
-      let body = JSON.stringify({id: Number(sessionStorage.getItem("userid"))})
+      let body = JSON.stringify({id: Number(sessionStorage.getItem('userid'))})
       const headers = new Headers({
         'Content-Type': 'application/json'
       })

@@ -38,21 +38,22 @@
       }
     },
     created: function () {
-      let body = JSON.stringify({id: Number(sessionStorage.getItem("userid"))})
+      let body = JSON.stringify({id: Number(sessionStorage.getItem('userid'))})
       const headers = new Headers({
         'Content-Type': 'application/json'
       })
+      let that = this
       fetch('api/GetUserInfo', { method: 'GET',
         headers,
         credentials: 'include',
         body: body })
       .then(function (response) {
         return response.json().then(function (data) {
-          this.username = data['username']
-          this.email = data['email']
-          this.headSrc = data['avatar']
-          this.level = data['level']
-          this.experienceNumber = data['experience']
+          that.username = data['username']
+          that.email = data['email']
+          that.headSrc = data['avatar']
+          that.level = data['level']
+          that.experienceNumber = data['experience']
         })
       }).catch(function (ex) {
         alert('Network Error')

@@ -54,7 +54,7 @@
             if (data['id'] === 0) {
               alert('Invalid username or password, please retry.')
             } else {
-              sessionStorage.setItem("userid", data['id']);
+              sessionStorage.setItem('userid', data['id'])
               that.$router.push('/signupmore')
             }
           })

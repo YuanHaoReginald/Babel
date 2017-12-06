@@ -42,7 +42,7 @@
               alert('Username or Password Error')
             } else {
               sessionStorage.setItem('userid', data['id'])
-              sessionStorage.setItem('utype', data['utype'])              
+              sessionStorage.setItem('utype', data['utype'])
               that.$router.push({name: data['utype']})
             }
           }).catch(function (ex) {
