@@ -105,4 +105,9 @@ def UserModify(request):
 
         return JsonResponse(response_dict)
 
-
+def UploadAvatar(request):
+    if request.method == 'POST':
+        avatar = request.FILES.get('avatar')
+        print(avatar)
+        print(request.POST.get('a'))
+    return HttpResponse(0)

@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('auth', '0008_alter_user_username_max_length'),
+        ('auth', '0007_alter_validators_add_error_messages'),
     ]
 
     operations = [
@@ -41,8 +41,8 @@ class Migration(migrations.Migration):
             ],
             options={
                 'verbose_name': 'user',
-                'verbose_name_plural': 'users',
                 'abstract': False,
+                'verbose_name_plural': 'users',
             },
             bases=('auth.user',),
             managers=[
@@ -101,8 +101,8 @@ class Migration(migrations.Migration):
             ],
             options={
                 'verbose_name': 'user',
-                'verbose_name_plural': 'users',
                 'abstract': False,
+                'verbose_name_plural': 'users',
             },
             bases=('backend.commonuser',),
             managers=[
@@ -120,8 +120,8 @@ class Migration(migrations.Migration):
             ],
             options={
                 'verbose_name': 'user',
-                'verbose_name_plural': 'users',
                 'abstract': False,
+                'verbose_name_plural': 'users',
             },
             bases=('backend.commonuser',),
             managers=[
@@ -139,8 +139,8 @@ class Migration(migrations.Migration):
             ],
             options={
                 'verbose_name': 'user',
-                'verbose_name_plural': 'users',
                 'abstract': False,
+                'verbose_name_plural': 'users',
             },
             bases=('backend.commonuser',),
             managers=[
