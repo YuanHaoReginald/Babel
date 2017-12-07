@@ -101,9 +101,6 @@ def UserModify(request):
                          'avatar': current_user.avatar}
         return JsonResponse(response_dict)
 
-
-    
-
 def UploadAvatar(request):
     if request.method == 'POST':
         avatar = request.FILES.get('avatar')
@@ -111,7 +108,7 @@ def UploadAvatar(request):
         current_user = CommonUser.objects.get(id=userid)
         file_extension = avatar.name.split('.')[-1]
         current_user.avatar.save(userid + '.' + file_extension, avatar)
-    return HttpResponse(current_user.avatar)
+    return JsonResponse({'url': '-------------What the fucking is it!--------------'})
 
 def CreateTask(request):
     if request.method == 'POST':

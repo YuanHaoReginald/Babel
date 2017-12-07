@@ -16,7 +16,7 @@ class Translator(CommonUser):
     level = models.IntegerField(default = 0)
     alipayNumber = models.CharField(max_length = 30, null = True)
     wechatNumber = models.CharField(max_length = 30, null = True)
-    experienceNumber = models.IntegerField( null = True)
+    experienceNumber = models.IntegerField(null = True)
 
 # employer
 class Employer(CommonUser):

@@ -9,4 +9,6 @@ urlpatterns = [
     url(r'^GetUserInfo$', views.GetUserInfo, name='GetUserInfo'),
     url(r'^UserModify$', views.UserModify, name='UserModify'),
     url(r'^UploadAvatar$', views.UploadAvatar, name='UploadAvatar'),
+    url(r'^CreateTask$', views.CreateTask, name='CreateTask'),
+    url(r'^UploadTaskFile$', views.UploadTaskFile, name='UploadTaskFile'),
 ]

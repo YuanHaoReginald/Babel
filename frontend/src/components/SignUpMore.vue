@@ -76,11 +76,11 @@
     data () {
       return {
         avatar: {
-          url: 'https://o5wwk8baw.qnssl.com/a42bdcc1178e62b4694c830f028db5c0/avatar',
-          status: 'finished',
+          url: '',
+          status: 'none',
           showProgress: false
         },
-        visible: false,
+        visible: true,
         telephone: '',
         alipay: '',
         wechat: '',
@@ -169,6 +169,8 @@
         this.avatar.url = ''
       },
       handleSuccess (res, file) {
+        console.log('abcdefg')
+        console.log(res.url)
         this.avatar.url = 'https://o5wwk8baw.qnssl.com/7eb99afb9d5f317c912f08b5212fd69a/avatar'
         this.avatar.status = 'finished'
       },

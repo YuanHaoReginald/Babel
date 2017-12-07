@@ -33,7 +33,7 @@
           <h3>任务文件：</h3>
           <Upload
             ref="upload"
-            name="avatar"
+            name="file"
             :before-upload="handleBeforeUpload"
             :data="{id: task_id}"
             action="api/UploadTaskFile">
@@ -41,7 +41,7 @@
           </Upload>
           <div v-if="file !== null">
             Upload file: {{ file.name }}
-            <Button type="text" :loading="loadingStatus">{{ loadingStatus ? 'Uploading' : 'Ready' }}</Button>
+            <Button type="text" :loading="loadingStatus" @click="handleUpload">{{ loadingStatus ? 'Uploading' : 'Ready' }}</Button>
           </div>
         </div>
         <div class="box">
@@ -138,15 +138,14 @@
     methods: {
       handleBeforeUpload (file) {
         this.file = file
+        return false
       },
-      upload () {
+      handleUpload () {
         console.log(this.task_id)
         this.loadingStatus = true
-        setTimeout(() => {
-          this.file = null
-          this.loadingStatus = false
-          this.$Message.success('Success')
-        }, 1500)
+        this.$refs.upload.post(this.file)
+        this.file = null
+        this.loadingStatus = false
       },
       addAssignment () {
         this.assignment_num = this.assignment_num + 1
@@ -184,7 +183,7 @@
         .then(function (response) {
           return response.json().then(function (data) {
             that.task_id = data.task_id
-            that.upload()
+            that.handleUpload()
             that.$router.push('/task/' + data.task_id)
           })
         }).catch(function (ex) {

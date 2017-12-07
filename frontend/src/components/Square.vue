@@ -86,8 +86,8 @@
         }
         return str
       },
-      checkTaskDetail : function (task_id) {
-        this.$router.push('/task/' + task_id)
+      checkTaskDetail: function (taskid) {
+        this.$router.push('/task/' + taskid)
       }
     },
     data () {
