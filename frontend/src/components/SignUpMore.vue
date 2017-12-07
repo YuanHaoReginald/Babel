@@ -80,11 +80,11 @@
           status: 'none',
           showProgress: false
         },
-        visible: true,
-        telephone: '',
-        alipay: '',
-        wechat: '',
-        language: '',
+        visible: false,
+        telephone: null,
+        alipay: null,
+        wechat: null,
+        language: null,
         languageList: [
           {
             value: 'English',
@@ -139,8 +139,7 @@
       modify_info: function () {
         let body = JSON.stringify({telephone: this.telephone,
           alipayNumber: this.alipay,
-          wechatNumber: this.wechat,
-          language: this.language})
+          wechatNumber: this.wechat})
         const headers = new Headers({
           'Content-Type': 'application/json'
         })
@@ -151,10 +150,10 @@
           body: body })
         .then(function (response) {
           return response.json().then(function (data) {
-            if (!data['status']) {
-              alert('Modify failed.')
+            if (data['status']) {
+              that.$Message.success('Modify successfully.')
             } else {
-              that.$router.push({name: data['utype']})
+              that.$Message.warning('Modify Failed.')
             }
           })
         }).catch(function (ex) {
@@ -262,7 +261,6 @@
     margin-bottom: 20px;
   }
   .avatar-upload{
-    float: left;
     display: inline-block;
     width: 60px;
     height: 60px;

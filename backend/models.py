@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.utils import timezone
 
 # Base User
 class User(AbstractUser):
@@ -16,6 +17,7 @@ class Admin(User):
 class CommonUser(User):
     creditLevel = models.FloatField(default=3)
     experience = models.IntegerField(default=0)
+    telephone = models.CharField(max_length=20, unique=True, null=True)
     alipayNumber = models.CharField(max_length=30, null=True)
     wechatNumber = models.CharField(max_length=30, null=True)
 
@@ -37,19 +39,19 @@ class Employer(CommonUser):
 class Task(models.Model):
     title = models.CharField(max_length=30)
     description = models.CharField(max_length=512, null=True)
-    fileUrl = models.FileField(max_length=256)
+    fileUrl = models.FileField(max_length=256, null=True)
     fileType = models.IntegerField()  # 0:文本；1:音频; 2:视频; 3:其他
     employer = models.ForeignKey(
         Employer, on_delete=models.CASCADE
     )
     # time
-    publishTime = models.DateTimeField()
+    publishTime = models.DateTimeField(default=timezone.now)
     ddlTime = models.DateTimeField()
-    # tags
-    languageOrigin = models.IntegerField()
+
+    languageOrigin = models.IntegerField(default = 0)
     languageTarget = models.IntegerField()
     requirementLicense = models.IntegerField(null=True)
-    requirementCreditLevel = models.IntegerField(null=True)
+    requirementCreditLevel = models.FloatField(null=True)
     testText = models.TextField(max_length=1000, null=True)
     testResult = models.TextField(max_length=1000, null=True)
 

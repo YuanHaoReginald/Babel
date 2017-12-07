@@ -55,7 +55,7 @@
               that.$Message.warning('The username has already been picked, please retry.')
             } else {
               sessionStorage.setItem('userid', data.id)
-              sessionStorage.setItem('utype', this.$route.params.utype)
+              sessionStorage.setItem('utype', that.$route.params.utype)
               that.$router.push('/signupmore')
             }
           })

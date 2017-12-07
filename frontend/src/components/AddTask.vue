@@ -41,7 +41,7 @@
           </Upload>
           <div v-if="file !== null">
             Upload file: {{ file.name }}
-            <Button type="text" :loading="loadingStatus" @click="handleUpload">{{ loadingStatus ? 'Uploading' : 'Ready' }}</Button>
+            <Button type="text" :loading="loadingStatus">{{ loadingStatus ? 'Uploading' : 'Ready' }}</Button>
           </div>
         </div>
         <div class="box">
@@ -170,6 +170,7 @@
           license: this.license,
           description: this.description,
           tags: this.tagsStr,
+          ddlTime: Date.parse(this.ddlTime),
           level: this.level,
           assignments: this.assignments})
         const headers = new Headers({
