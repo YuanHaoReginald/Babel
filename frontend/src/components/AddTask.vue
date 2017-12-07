@@ -15,7 +15,7 @@
         </div>
         <div class="box">
           <h3>截止时间：</h3>
-          <div id="datepicker"><DatePicker type="date" placeholder="Select date" style="width: 200px"></DatePicker></div>
+          <div id="datepicker"><DatePicker v-model="ddlTime" type="date" placeholder="Select date" style="width: 200px"></DatePicker></div>
         </div>
         <div class="box">
           <h3>译者资质：</h3>
@@ -31,7 +31,18 @@
         </div>
         <div class="box">
           <h3>任务文件：</h3>
-          <Button type="primary" id="fileButton">选择文件</Button>
+          <Upload
+            ref="upload"
+            name="avatar"
+            :before-upload="handleBeforeUpload"
+            :data="{id: task_id}"
+            action="api/UploadTaskFile">
+            <Button type="ghost" icon="ios-cloud-upload-outline" id="fileButton">选择文件</Button>
+          </Upload>
+          <div v-if="file !== null">
+            Upload file: {{ file.name }}
+            <Button type="text" :loading="loadingStatus">{{ loadingStatus ? 'Uploading' : 'Ready' }}</Button>
+          </div>
         </div>
         <div class="box">
           <h3>标签：</h3>
@@ -62,7 +73,7 @@
             </li>
           </ul>
         </div>
-        <div id="submitButton"><Button type="primary">创建任务</Button></div>
+        <div id="submitButton"><Button type="primary" @click="create_task">创建任务</Button></div>
       </div>
     </Card>
   </div>
@@ -73,9 +84,16 @@
     name: 'addTask',
     data () {
       return {
-        title: '',
-        language: '',
+        task_id: 0,
+        title: null,
+        language: null,
+        license: null,
+        description: null,
+        tagsStr: null,
+        ddlTime: null,
         level: 0,
+        file: null,
+        loadingStatus: false,
         languageList: [
           {
             value: 'English',
@@ -118,22 +136,17 @@
       }
     },
     methods: {
-      sign_in: function () {
-        let body = JSON.stringify({title: this.title, language: this.language, level: this.level})
-        const headers = new Headers({
-          'Content-Type': 'application/json'
-        })
-        fetch('api/CreateTask', { method: 'POST',
-          headers,
-          credentials: 'include',
-          body: body })
-        .then(function (response) {
-          return response.json().then(function (data) {
-            this.$router.push({name: 'employer', id: data['id']})
-          })
-        }).catch(function (ex) {
-          alert('Network Error')
-        })
+      handleBeforeUpload (file) {
+        this.file = file
+      },
+      upload () {
+        console.log(this.task_id)
+        this.loadingStatus = true
+        setTimeout(() => {
+          this.file = null
+          this.loadingStatus = false
+          this.$Message.success('Success')
+        }, 1500)
       },
       addAssignment () {
         this.assignment_num = this.assignment_num + 1
@@ -151,6 +164,32 @@
         while (num < this.assignment_num) {
           this.assignments[num].order = ++num
         }
+      },
+      create_task: function () {
+        let body = JSON.stringify({title: this.title,
+          language: this.language,
+          license: this.license,
+          description: this.description,
+          tags: this.tagsStr,
+          level: this.level,
+          assignments: this.assignments})
+        const headers = new Headers({
+          'Content-Type': 'application/json'
+        })
+        let that = this
+        fetch('api/CreateTask', { method: 'POST',
+          headers,
+          credentials: 'include',
+          body: body })
+        .then(function (response) {
+          return response.json().then(function (data) {
+            that.task_id = data.task_id
+            that.upload()
+            that.$router.push('/task/' + data.task_id)
+          })
+        }).catch(function (ex) {
+          that.$Message.warning('Create new Task Failed.')
+        })
       }
     }
   }

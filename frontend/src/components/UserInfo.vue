@@ -38,15 +38,13 @@
       }
     },
     created: function () {
-      let body = JSON.stringify({id: Number(sessionStorage.getItem('userid'))})
       const headers = new Headers({
         'Content-Type': 'application/json'
       })
       let that = this
       fetch('api/GetUserInfo', { method: 'GET',
         headers,
-        credentials: 'include',
-        body: body })
+        credentials: 'include'})
       .then(function (response) {
         return response.json().then(function (data) {
           that.username = data['username']
