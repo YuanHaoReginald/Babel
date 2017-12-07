@@ -9,6 +9,7 @@ from Babel import settings
 import os
 import json
 from urllib.parse import urljoin
+import datetime
 
 # Create your views here.
 
@@ -133,3 +134,24 @@ def UploadTaskFile(request):
         task = Task.objects.get(id = taskid)
         task.fileUrl.save(file)
     return HttpResponse(0)
+
+def GetEmployerTasks(request):
+    if request.method == 'GET':
+        print('-----------------------GetEmployerTasks-----------------')
+        current_user = auth.get_user(request).employer
+        task_set = current_user.task_set.all()
+        response_dict = {'taskList': []}
+        for task in task_set:
+            _task_tag = task.tag_set.all()
+            _temp_tag_list = []
+            for tag in _task_tag:
+                _temp_tag_list.append(tag)
+            response_dict['taskList'].append({
+                'title': task.title,
+                'publishTime': task.publishTime.timestamp(),
+                'ddlTime': task.ddlTime.timestamp(),
+                'tags': _temp_tag_list,
+                'language': task.languageOrigin if task.languageOrigin == 0 else task.languageTarget,
+                'description': task.description,
+            })
+        return JsonResponse(response_dict)
