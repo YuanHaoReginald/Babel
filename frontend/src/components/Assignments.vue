@@ -79,6 +79,31 @@
           }
         ]
       }
+    },
+    created: function () {
+      const headers = new Headers({
+        'Content-Type': 'application/json'
+      })
+      let that = this
+      fetch('api/GetUserAssignments', { method: 'GET',
+        headers,
+        credentials: 'include'})
+      .then(function (response) {
+        return response.json().then(function (data) {
+          for (let assignment of data) {
+            let tmp = []
+            tmp.title = assignment.title
+            tmp.publishTime = assignment.publishTime
+            tmp.ddlTime = assignment.ddlTime
+            tmp.language = assignment.language
+            tmp.description = assignment.description
+            tmp.tags = assignment.tags
+            that.tasklist.push(tmp)
+          }
+        })
+      }).catch(function (ex) {
+        alert('Network Error')
+      })
     }
   }
 </script>

@@ -52,9 +52,10 @@
         .then(function (response) {
           return response.json().then(function (data) {
             if (data['id'] === 0) {
-              alert('Invalid username or password, please retry.')
+              that.$Message.warning('The username has already been picked, please retry.')
             } else {
-              sessionStorage.setItem('userid', data['id'])
+              sessionStorage.setItem('userid', data.id)
+              sessionStorage.setItem('utype', this.$route.params.utype)
               that.$router.push('/signupmore')
             }
           })

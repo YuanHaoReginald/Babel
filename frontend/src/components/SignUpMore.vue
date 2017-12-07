@@ -10,7 +10,7 @@
               <img :src="avatar.url">
               <div class="upload-cover">
                 <Icon type="ios-eye-outline" @click.native="handleView"></Icon>
-                <Icon type="ios-trash-outline" @click.native="handleRemove(avartar)"></Icon>
+                <Icon type="ios-trash-outline" @click.native="handleRemove(avatar)"></Icon>
               </div>
             </template>
             <template v-else>
@@ -23,7 +23,7 @@
           <div v-else>
             <Upload
               name="avatar"
-              :data="{id: sessionStorage.getItem('userid'), utype: sessionStorage.getItem('utype')}"
+              :data="{id: userid()}"
               :on-success="handleSuccess"
               :format="['jpg','jpeg','png']"
               :max-size="2048"
@@ -78,7 +78,7 @@
         avatar: {
           url: 'https://o5wwk8baw.qnssl.com/a42bdcc1178e62b4694c830f028db5c0/avatar',
           status: 'finished',
-          showProgress: true
+          showProgress: false
         },
         visible: false,
         telephone: '',
@@ -166,11 +166,11 @@
       },
       handleRemove (file) {
         this.avatar.status = 'none'
+        this.avatar.url = ''
       },
       handleSuccess (res, file) {
         this.avatar.url = 'https://o5wwk8baw.qnssl.com/7eb99afb9d5f317c912f08b5212fd69a/avatar'
         this.avatar.status = 'finished'
-        console.log('successssss')
       },
       handleFormatError (file) {
         this.$Notice.warning({
@@ -183,7 +183,29 @@
           title: 'Exceeding file size limit',
           desc: 'File  ' + file.name + ' is too large, no more than 2M.'
         })
+      },
+      userid () {
+        return Number(sessionStorage.getItem('userid'))
       }
+    },
+    created: function () {
+      const headers = new Headers({
+        'Content-Type': 'application/json'
+      })
+      let that = this
+      fetch('api/UserModify', { method: 'GET',
+        headers,
+        credentials: 'include'})
+      .then(function (response) {
+        return response.json().then(function (data) {
+          that.telephone = data['telephone']
+          that.alipay = data['alipayNumber']
+          that.wechat = data['wechatNumber']
+          that.language = data['language']
+        })
+      }).catch(function (ex) {
+        alert('Network Error')
+      })
     }
   }
 </script>
@@ -238,6 +260,7 @@
     margin-bottom: 20px;
   }
   .avatar-upload{
+    float: left;
     display: inline-block;
     width: 60px;
     height: 60px;

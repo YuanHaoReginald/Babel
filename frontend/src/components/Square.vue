@@ -1,7 +1,7 @@
 <template>
   <div class="root">
     <div id="left">
-      <div class="card" v-for="task in tasklist"><Card dis-hover>
+      <div class="card" v-for="task in tasklist" @click="checkTaskDetail(task.id)"><Card dis-hover>
         <div class="task" >
           <h4>标签：{{ toStr(task.tags) }}</h4>
           <h2>{{ task.title }}</h2>
@@ -11,7 +11,7 @@
               <span class="words"><b>报酬</b>：{{ a.price }}</span>
               <span class="words"><b>状态</b>： {{ a.status }}</span>
               <span v-if="a.status == '已完成'"><b>任务评分</b>:&nbsp;<Rate disabled v-model="a.score"></Rate></span>
-              <span v-if="a.status == '未领取'"><Button type="primary" size="small">领取任务</Button></span>
+              <span v-if="a.status == '未领取'"><Button type="primary" size="small" @click="pickup(task.id, a.id)">领取任务</Button></span>
               <p class="description"><b>详情</b>： {{ a.description }}</p>
             </li>
           </ul>
@@ -60,12 +60,34 @@
     components: {Checkbox},
     name: 'square',
     methods: {
+      pickup: function (task, assignment) {
+        let body = JSON.stringify({userid: sessionStorage.getItem('userid'),
+          task_id: task,
+          assignment_order: assignment})
+        const headers = new Headers({
+          'Content-Type': 'application/json'
+        })
+        fetch('api/PickupAssignment', { method: 'POST',
+          headers,
+          credentials: 'include',
+          body: body })
+        .then(function (response) {
+          return response.json().then(function (data) {
+            console.log('Success')
+          })
+        }).catch(function (ex) {
+          alert('Network Error')
+        })
+      },
       toStr: function (tags) {
         let str = ''
         for (let i = 0; i < tags.length; i++) {
           str = str + ' ' + tags[i]
         }
         return str
+      },
+      checkTaskDetail : function (task_id) {
+        this.$router.push('/task/' + task_id)
       }
     },
     data () {
@@ -76,6 +98,7 @@
         chosen_price: [],
         tasklist: [
           {
+            id: 1,
             title: '中法信件翻译任务',
             publishTime: '2017-3-1',
             ddlTime: '2017-5-10',
@@ -110,6 +133,7 @@
             ]
           },
           {
+            id: 2,
             title: 'title',
             publishTime: 'publishTime',
             ddlTime: 'ddlTime',
@@ -138,6 +162,62 @@
         ]
         // TODO: 实现全选
       }
+    },
+    created: function () {
+      let body = JSON.stringify({taskid: this.$route.params.tid})
+      const headers = new Headers({
+        'Content-Type': 'application/json'
+      })
+      let that = this
+      fetch('api/GetSquareTasks', { method: 'GET',
+        headers,
+        credentials: 'include',
+        body: body })
+      .then(function (response) {
+        return response.json().then(function (data) {
+          for (let task in data) {
+            let tmptask = []
+            tmptask.id = task['id']
+            tmptask.title = task['title']
+            tmptask.publishTime = task['publishTime']
+            tmptask.ddlTime = task['ddlTime']
+            tmptask.language = task['language']
+            tmptask.tags = task['tags']
+            tmptask.assignments = []
+            for (let assignment of task) {
+              let tmpassignment = []
+              tmpassignment['order'] = assignment.order
+              tmpassignment['description'] = assignment.description
+              tmpassignment['translator'] = assignment.translator
+              switch (assignment.status) {
+                case 0:
+                  tmpassignment['status'] = '未发布'
+                  break
+                case 1:
+                  tmpassignment['status'] = '未认领'
+                  break
+                case 2:
+                  tmpassignment['status'] = '进行中'
+                  break
+                case 3:
+                  tmpassignment['status'] = '已完成'
+                  tmpassignment['score'] = assignment.score
+                  break
+                case 4:
+                  tmpassignment['status'] = '纠纷中'
+                  tmpassignment['score'] = assignment.score
+                  break
+              }
+              tmpassignment['price'] = assignment.price
+              tmpassignment['submission'] = assignment.submission
+              tmptask.assignments.push(tmpassignment)
+            }
+            that.tasklist.push(tmptask)
+          }
+        })
+      }).catch(function (ex) {
+        alert('Network Error')
+      })
     }
   }
 </script>
