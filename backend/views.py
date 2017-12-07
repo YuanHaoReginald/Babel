@@ -14,7 +14,6 @@ from urllib.parse import urljoin
 
 # user signup
 def UserSignUp(request):
-
     if request.method == 'POST':
         info_dict = json.loads(request.body.decode())
         new_username = info_dict['username']
@@ -22,15 +21,14 @@ def UserSignUp(request):
         new_email = info_dict['email']
         user_type = info_dict['utype']
         try:
-            existedUser = CommonUser.objects.get(username = new_username)
+            existedUser = User.objects.get(username=new_username)
             response_dict = {'id': 0}
         except:
-            if (user_type == 'translator'):
-                new_user = Translator.objects.create(username = new_username, password = new_password, email = new_email, utype = user_type)
-                response_dict = {'id': new_user.id}
-            elif (user_type == 'employer'):
-                new_user = Employer.objects.create(username = new_username, password = new_password, email = new_email, utype = user_type)
-                response_dict = {'id': new_user.id}
+            if user_type == 'translator':
+                new_user = Translator.objects.create_user(username=new_username, password=new_password, email=new_email, utype='translator')
+            elif user_type == 'employer':
+                new_user = Employer.objects.create_user(username=new_username, password=new_password, email=new_email, utype='employer')
+            response_dict = {'id': new_user.id}
         return JsonResponse(response_dict)
 
 
@@ -42,14 +40,14 @@ def UserSignIn(request):
         username = info_dict['username']
         password = info_dict['password']
         user = authenticate(username=username, password=password)
-        if user == None:
+        if user is None:
             print(0)
             return JsonResponse({'id': 0})
         else:
             print(1)
             login(request, user)
-            myuser = CommonUser.objects.get(username=username)
-            return JsonResponse({'id': user.id, 'utype': myuser.utype })
+            # myuser = CommonUser.objects.get(username=username)
+            return JsonResponse({'id': user.id, 'utype': user.utype})
 
 # get user info
 @login_required
@@ -64,7 +62,8 @@ def GetUserInfo(request):
                          'level': user.level,
                          'experience': user.experience}
         if user.avatar:
-            response_dict['headSrc'] = urljoin(settings.CONFIGS['SITE_DOMAIN'], os.path.join(settings.MEDIA_URL, name))
+            # response_dict['headSrc'] = urljoin(settings.CONFIGS['SITE_DOMAIN'], os.path.join(settings.MEDIA_URL, name))
+            response_dict['headSrc'] = user.avatar
         return JsonResponse(response_dict)
 
 

@@ -13,7 +13,7 @@ class Admin(User):
 
 
 # Commen User
-class CommenUser(User):
+class CommonUser(User):
     creditLevel = models.FloatField(default=3)
     experience = models.IntegerField(default=0)
     alipayNumber = models.CharField(max_length=30, null=True)
@@ -24,12 +24,12 @@ class CommenUser(User):
 
 
 # translator
-class Translator(CommenUser):
+class Translator(CommonUser):
     # wechatNumber = models.CharField(max_length=30, null=True)
     pass
 
 # employer
-class Employer(User):
+class Employer(CommonUser):
     # wechatNumber = models.CharField(max_length=30, null=True)
     pass
 
