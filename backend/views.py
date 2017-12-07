@@ -30,7 +30,7 @@ def UserSignUp(request):
             elif user_type == 'employer':
                 new_user = Employer.objects.create_user(username=new_username, password=new_password, email=new_email, utype='employer')
             response_dict = {'id': new_user.id}
-        login(request, new_user)
+            login(request, new_user)
         return JsonResponse(response_dict)
 
 
