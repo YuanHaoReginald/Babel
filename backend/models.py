@@ -3,9 +3,9 @@ from django.contrib.auth.models import User
 
 # Base User
 class CommonUser(User):
-    telephone = models.CharField(max_length = 20, unique = True, null = True)
-    avatar = models.ImageField(max_length = 256, null = True)
-    utype = models.CharField(max_length = 30)
+    telephone = models.CharField(max_length=20, unique=True, null=True)
+    avatar = models.ImageField(max_length=256, null=True)
+    utype = models.CharField(max_length=30)
 
 # admin user
 class Admin(CommonUser):
@@ -13,72 +13,75 @@ class Admin(CommonUser):
 
 # translator
 class Translator(CommonUser):
-    level = models.IntegerField(default = 0)
-    alipayNumber = models.CharField(max_length = 30, null = True)
-    wechatNumber = models.CharField(max_length = 30, null = True)
-    experienceNumber = models.IntegerField( null = True)
+    level = models.IntegerField(default=0)
+    alipayNumber = models.CharField(max_length=30, null=True)
+    wechatNumber = models.CharField(max_length=30, null=True)
+    experienceNumber = models.IntegerField(null=True)
 
 # employer
 class Employer(CommonUser):
-    level = models.IntegerField(default = 0)
-    alipayNumber = models.CharField(max_length = 30, null = True)
-    wechatNumber = models.CharField(max_length = 30, null = True)
-    experience = models.IntegerField(default = 0)
+    level = models.IntegerField(default=0)
+    alipayNumber = models.CharField(max_length=30, null=True)
+    wechatNumber = models.CharField(max_length=30, null=True)
+    experience = models.IntegerField(default=0)
 
 # task table
 class Task(models.Model):
-    title = models.CharField(max_length = 30)
-    description = models.CharField(max_length = 512)
-    fileUrl = models.FileField(max_length = 256)
-    fileType = models.IntegerField() # 0:文本；1:音频
-    employerId = models.ForeignKey(Employer, related_name = 'partyA', null = True)
+    title = models.CharField(max_length=30)
+    description = models.CharField(max_length=512)
+    fileUrl = models.FileField(max_length=256)
+    fileType = models.IntegerField()  # 0:文本；1:音频
+    employerId = models.ForeignKey(Employer, related_name='partyA', null=True, on_delete=models.CASCADE)
     # time
     publishTime = models.DateTimeField()
     ddlTime = models.DateTimeField()
     # tags
-    tags = models.CharField(max_length = 128, null = True)
-    language = models.IntegerField(null = True)
-    requirementsLicense = models.IntegerField(null = True)
-    requirementsLevel = models.IntegerField( null = True)
-    testText = models.TextField(max_length = 300, null = True)
+    tags = models.CharField(max_length=128, null=True)
+    language = models.IntegerField(null=True)
+    requirementsLicense = models.IntegerField(null=True)
+    requirementsLevel = models.IntegerField(null=True)
+    testText = models.TextField(max_length=300, null=True)
 
 #  Assignments
 class Assignment(models.Model):
     # (saved：0/published：1/running：2/finished：3/arguing：4)
-    description = models.TextField(max_length = 1000)
-    status = models.IntegerField(default = 0)
-    task = models.ForeignKey(Task)
+    description = models.TextField(max_length=1000)
+    status = models.IntegerField(default=0)
+    task = models.ForeignKey(Task, on_delete=models.CASCADE)
     order = models.IntegerField()
-    testTextFinished = models.TextField(max_length = 600, null = True)
-    translator = models.ForeignKey(Translator, related_name = 'partyB', null = True)
-    scores = models.IntegerField(null = True)
-    price = models.IntegerField(null = True)
-    submission = models.FileField(max_length = 50, null = True)
-    experience = models.IntegerField(default = 0)
+    testTextFinished = models.TextField(max_length=600, null=True)
+    translator = models.ForeignKey(
+        Translator, related_name='partyB', null=True, on_delete=models.CASCADE)
+    scores = models.IntegerField(null=True)
+    price = models.IntegerField(null=True)
+    submission = models.FileField(max_length=50, null=True)
+    experience = models.IntegerField(default=0)
 
 # dispute
 class Dispute(models.Model):
-    assignment = models.ForeignKey(Assignment)
-    employerStatement = models.TextField(max_length = 1000, null = True)
-    translatorStatement = models.TextField(max_length = 1000, null = True)
-    status = models.IntegerField() #0:未处理；1：已处理
-    adminStatement = models.TextField(max_length = 1000, null = True)
+    assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE)
+    employerStatement = models.TextField(max_length=1000, null=True)
+    translatorStatement = models.TextField(max_length=1000, null=True)
+    status = models.IntegerField()  # 0:未处理；1：已处理
+    adminStatement = models.TextField(max_length=1000, null=True)
 
-#language type
+
+# language type
 CHINESE = 0
 ENGLISH = 1
 JAPANESE = 2
 FRENCH = 3
 RUSSIAN = 4
 SPAINISH = 5
+
 # language
 class Language(models.Model):
     languageType = models.IntegerField()
-    TranslatorId = models.ForeignKey(Translator)
+    TranslatorId = models.ForeignKey(Translator, on_delete=models.CASCADE)
     @classmethod
-    def get_by_translatorId(cls,transId):
+    def get_by_translatorId(cls, transId):
         try:
-            return cls.objects.filter(translatorId = transId)
+            return cls.objects.filter(translatorId=transId)
         except cls.DoesNotExist:
             #raise LogicError('User not found')
             return
@@ -88,17 +91,19 @@ CET4 = 0
 CET6 = 1
 TOFEL100 = 2
 TOFEL110 = 3
+
 # license
 class License(models.Model):
     licenseType = models.IntegerField()
-    licenseImage = models.ImageField(max_length = 256, null = True)
-    description = models.CharField(max_length = 100, null = True)
-    belonger = models.ForeignKey(Translator)
-    adminVerify = models.BooleanField( default = False)
+    licenseImage = models.ImageField(max_length=256, null=True)
+    description = models.CharField(max_length=100, null=True)
+    belonger = models.ForeignKey(Translator, on_delete=models.CASCADE)
+    adminVerify = models.BooleanField(default=False)
+
     @classmethod
-    def get_by_belongerId(cls,transId):
+    def get_by_belongerId(cls, transId):
         try:
-            return cls.objects.filter(belonger = transId, adminVerify = True)
+            return cls.objects.filter(belonger=transId, adminVerify=True)
         except cls.DoesNotExist:
             #raise LogicError('User not found')
             return
