@@ -175,7 +175,7 @@
       })
       .then(function (response) {
         return response.json().then(function (data) {
-          for (let task in data['taskList']) {
+          for (let task of data.taskList) {
             let tmptask = []
             tmptask.id = task['id']
             tmptask.title = task['title']

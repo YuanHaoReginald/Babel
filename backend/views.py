@@ -215,7 +215,7 @@ def GetTaskDetail(request):
                 'status': assignment.status,
                 'score': assignment.scores,
                 'price': assignment.price,
-                'submission': assignment.submission,
+                'submission': assignment.submission.url if assignment.submission else '',
             })
         return JsonResponse(response_dict)
 
@@ -243,7 +243,7 @@ def GetSquareTasks(request):
                     'status': assignment.status,
                     'score': assignment.scores,
                     'price': assignment.price,
-                    'submission': assignment.submission,
+                    'submission': assignment.submission.url if assignment.submission else '',
                 })
 
             response_dict['taskList'].append({
@@ -255,6 +255,5 @@ def GetSquareTasks(request):
                 'language': task.languageOrigin if task.languageOrigin == 0 else task.languageTarget,
                 'description': task.description,
                 'assignment': _temp_assignment
-            })    
-        response_dict = {'taskList': []}
+            })
         return JsonResponse(response_dict)
