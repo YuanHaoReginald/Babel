@@ -35,7 +35,6 @@
             ref="upload"
             name="file"
             :before-upload="handleBeforeUpload"
-            :data="{id: task_id}"
             action="api/UploadTaskFile">
             <Button type="ghost" icon="ios-cloud-upload-outline" id="fileButton">选择文件</Button>
           </Upload>
@@ -141,8 +140,8 @@
         return false
       },
       handleUpload () {
-        console.log(this.task_id)
         this.loadingStatus = true
+        this.$refs.upload.data = {id: this.task_id}
         this.$refs.upload.post(this.file)
         this.file = null
         this.loadingStatus = false
@@ -170,7 +169,7 @@
           license: this.license,
           description: this.description,
           tags: this.tagsStr,
-          ddlTime: Date.parse(this.ddlTime),
+          ddlTime: Date.parse(this.ddlTime) / 1000,
           level: this.level,
           assignments: this.assignments})
         const headers = new Headers({

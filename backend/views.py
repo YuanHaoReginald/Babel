@@ -104,7 +104,6 @@ def CreateTask(request):
     user = auth.get_user(request).employer
     if request.method == 'POST':
         info_dict = json.loads(request.body.decode())
-        print(info_dict)
         task_title = info_dict['title']
         task_description = info_dict['description']
         task_language = info_dict['language']
@@ -117,10 +116,9 @@ def CreateTask(request):
                                    description = task_description,
                                    fileType = 0,
                                    employer = user,
-                                   ddlTime = task_ddlTime,
+                                   ddlTime = datetime.datetime.utcfromtimestamp(task_ddlTime),
                                    languageTarget = 3,
                                    requirementCreditLevel = task_level)
-        print('task')
         for assignment in task_assignments:
             Assignment.objects.create(task = task,
                                       order = assignment['order'],
@@ -132,7 +130,7 @@ def UploadTaskFile(request):
         file = request.FILES.get('file')
         taskid = request.POST.get('id')
         task = Task.objects.get(id = taskid)
-        task.fileUrl.save(file)
+        task.fileUrl.save(file.name, file)
     return HttpResponse(0)
 
 def GetEmployerTasks(request):
