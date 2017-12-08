@@ -83,7 +83,7 @@
           that.publishTime = data['publishTime']
           that.ddlTime = data['ddlTime']
           that.language = data['language']
-          for (let assignment of data) {
+          for (let assignment of data['assignment']) {
             let tmp = []
             tmp['order'] = assignment.order
             tmp['description'] = assignment.description

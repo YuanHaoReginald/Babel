@@ -191,3 +191,30 @@ def PickupAssignment(request):
         assignment.translator = user
         assignment.save()
         return HttpResponse(0)
+    
+def GetTaskDetail(request):
+    if request.method == 'GET':
+        print('-----------------------GetTaskDetail-----------------')
+        # current_user = auth.get_user(request)
+        info_dict = json.loads(request.body.decode())
+        task = Task.objects.get(id=info_dict['taskid'])
+        response_dict = {
+            'title': task.title,
+            'description': task.description,
+            'publishTime': task.publishTime.timestamp(),
+            'ddlTime': task.ddlTime.timestamp(),
+            'language': task.languageOrigin if task.languageOrigin == 0 else task.languageTarget,
+            'assignment': []
+        }
+        assignment_set = task.assignment_set.all()
+        for assignment in assignment_set:
+            response_dict['assignment'].append({
+                'order': assignment.order,
+                'description': assignment.description,
+                'translator': assignment.translator,
+                'status': assignment.status,
+                'score': assignment.scores,
+                'price': assignment.price,
+                'submission': assignment.submission,
+            })
+        return JsonResponse(response_dict)
