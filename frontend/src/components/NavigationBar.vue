@@ -14,16 +14,17 @@
         <MenuItem @click.native="toProfile">个人主页</MenuItem>
         <router-link to="/signupmore"><MenuItem>修改个人信息</MenuItem></router-link>
         <MenuItem @click.native="logout">登出</MenuItem>
-      </Submenu>
+        </Submenu>
       </Col>
       <Col span="3"offset="8" v-else>
-      <Submenu name="3">
+        <Submenu name="3">
         <template slot="title">
           <Icon type="alert-circled"></Icon>
           离线状态
         </template>
         <router-link to="/login"><MenuItem>登入</MenuItem></router-link>
         <router-link to="/"><MenuItem>注册</MenuItem></router-link>
+        </Submenu>
       </Col>
     </Row>
   </Menu>
