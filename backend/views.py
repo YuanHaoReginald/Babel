@@ -88,7 +88,7 @@ def UserModify(request):
                          'wechatNumber': user.wechatNumber,
                          'alipayNumber': user.alipayNumber,
                          'language': 'French',
-                         'avatar': user.avatar.url}
+                         'avatar': user.avatar.url if user.avatar else ''}
         return JsonResponse(response_dict)
 
 def UploadAvatar(request):
@@ -151,5 +151,26 @@ def GetEmployerTasks(request):
                 'tags': _temp_tag_list,
                 'language': task.languageOrigin if task.languageOrigin == 0 else task.languageTarget,
                 'description': task.description,
+            })
+        return JsonResponse(response_dict)
+
+def GetTranslatorAssignments(request):
+    if request.method == 'GET':
+        current_user = auth.get_user(request).translator
+        assignment_set = current_user.assignment_set.all()
+        response_dict = {'assignmentList': []}
+        for assignment in assignment_set:
+            task = assignment.task
+            _task_tag = task.tag_set.all()
+            _temp_tag_list = []
+            for tag in _task_tag:
+                _temp_tag_list.append(tag)
+            response_dict['assignmentList'].append({
+                'title': task.title,
+                'publishTime': task.publishTime.timestamp(),
+                'ddlTime': task.ddlTime.timestamp(),
+                'tags': _temp_tag_list,
+                'language': task.languageOrigin if task.languageOrigin == 0 else task.languageTarget,
+                'description': assignment.description,
             })
         return JsonResponse(response_dict)

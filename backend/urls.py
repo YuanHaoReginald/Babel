@@ -12,4 +12,5 @@ urlpatterns = [
     url(r'^CreateTask$', views.CreateTask, name='CreateTask'),
     url(r'^UploadTaskFile$', views.UploadTaskFile, name='UploadTaskFile'),
     url(r'^GetEmployerTasks$', views.GetEmployerTasks, name='GetEmployerTasks'),
+    url(r'^GetTranslatorAssignments$', views.GetTranslatorAssignments, name='GetTranslatorAssignments'),
 ]
