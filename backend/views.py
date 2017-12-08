@@ -218,3 +218,43 @@ def GetTaskDetail(request):
                 'submission': assignment.submission,
             })
         return JsonResponse(response_dict)
+
+def GetSquareTasks(request):
+    if request.method == 'GET':
+        print('-----------------------GetSquareTasks-----------------')
+        # current_user = auth.get_user(request).employer
+        task_set = Task.objects.order_by('publishTime')
+        if task_set.count() > 5:
+            task_set = task_set.reverse()[:5]
+        response_dict = {'taskList': []}
+        for task in task_set:
+            _task_tag = task.tag_set.all()
+            _temp_tag_list = []
+            for tag in _task_tag:
+                _temp_tag_list.append(tag)
+
+            assignment_set = task.assignment_set.all()
+            _temp_assignment = []
+            for assignment in assignment_set:
+                _temp_assignment.append({
+                    'order': assignment.order,
+                    'description': assignment.description,
+                    'translator': assignment.translator,
+                    'status': assignment.status,
+                    'score': assignment.scores,
+                    'price': assignment.price,
+                    'submission': assignment.submission,
+                })
+
+            response_dict['taskList'].append({
+                'id': task.id,
+                'title': task.title,
+                'publishTime': task.publishTime.timestamp(),
+                'ddlTime': task.ddlTime.timestamp(),
+                'tags': _temp_tag_list,
+                'language': task.languageOrigin if task.languageOrigin == 0 else task.languageTarget,
+                'description': task.description,
+                'assignment': _temp_assignment
+            })    
+        response_dict = {'taskList': []}
+        return JsonResponse(response_dict)

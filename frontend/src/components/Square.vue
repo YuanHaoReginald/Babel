@@ -163,18 +163,19 @@
       }
     },
     created: function () {
-      let body = JSON.stringify({taskid: this.$route.params.tid})
+      // let body = JSON.stringify({taskid: this.$route.params.tid})
       const headers = new Headers({
         'Content-Type': 'application/json'
       })
       let that = this
-      fetch('api/GetSquareTasks', { method: 'GET',
+      fetch('api/GetSquareTasks', {
+        method: 'GET',
         headers,
-        credentials: 'include',
-        body: body })
+        credentials: 'include'
+      })
       .then(function (response) {
         return response.json().then(function (data) {
-          for (let task in data) {
+          for (let task in data['taskList']) {
             let tmptask = []
             tmptask.id = task['id']
             tmptask.title = task['title']
@@ -183,7 +184,7 @@
             tmptask.language = task['language']
             tmptask.tags = task['tags']
             tmptask.assignments = []
-            for (let assignment of task) {
+            for (let assignment of task['assignment']) {
               let tmpassignment = []
               tmpassignment['order'] = assignment.order
               tmpassignment['description'] = assignment.description
