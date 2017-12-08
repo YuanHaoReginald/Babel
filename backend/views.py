@@ -47,6 +47,11 @@ def UserSignIn(request):
             login(request, user)
             return JsonResponse({'id': user.id, 'utype': user.utype})
 
+@login_required
+def UserLogout(request):
+    logout(request)
+    return HttpResponse(0)
+
 # get user info
 @login_required
 def GetUserInfo(request):
@@ -174,3 +179,15 @@ def GetTranslatorAssignments(request):
                 'description': assignment.description,
             })
         return JsonResponse(response_dict)
+
+def PickupAssignment(request):
+    if request.method == 'POST':
+        user = auth.get_user(request).translator
+        info_dict = json.loads(request.body.decode())
+        task_id = info_dict['task_id']
+        assignment_order = info_dict['assignment_order']
+        task = Task.objects.get(id = task_id)
+        assignment = Assignment.objects.get(task = task, order = assignment_order)
+        assignment.translator = user
+        assignment.save()
+        return HttpResponse(0)

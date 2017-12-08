@@ -11,7 +11,7 @@
               <span class="words"><b>报酬</b>：{{ a.price }}</span>
               <span class="words"><b>状态</b>： {{ a.status }}</span>
               <span v-if="a.status == '已完成'"><b>任务评分</b>:&nbsp;<Rate disabled v-model="a.score"></Rate></span>
-              <span v-if="a.status == '未领取'"><Button type="primary" size="small" @click="pickup(task.id, a.id)">领取任务</Button></span>
+              <span v-if="a.status == '未领取'"><Button type="primary" size="small" @click="pickup(task.id, a.order)">领取任务</Button></span>
               <p class="description"><b>详情</b>： {{ a.description }}</p>
             </li>
           </ul>
@@ -61,19 +61,18 @@
     name: 'square',
     methods: {
       pickup: function (task, assignment) {
-        let body = JSON.stringify({userid: sessionStorage.getItem('userid'),
-          task_id: task,
-          assignment_order: assignment})
+        let body = JSON.stringify({task_id: task, assignment_order: assignment})
         const headers = new Headers({
           'Content-Type': 'application/json'
         })
+        let that = this
         fetch('api/PickupAssignment', { method: 'POST',
           headers,
           credentials: 'include',
           body: body })
         .then(function (response) {
           return response.json().then(function (data) {
-            console.log('Success')
+            that.$Message.success('Receive Assignment Success')
           })
         }).catch(function (ex) {
           alert('Network Error')
