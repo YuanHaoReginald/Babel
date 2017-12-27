@@ -1,4 +1,4 @@
-<!--This is for translator-->
+<!--This is for employer-->
 <template>
   <div class="root">
     <Card dis-hover>
@@ -50,20 +50,6 @@
         <div class="box">
           <h3>微信号：</h3>
           <div class="input"><Input v-model="wechat"></Input></div>
-        </div>
-        <div class="box">
-          <h3>上传证书：</h3>
-          <Select v-model="language" style="width:200px;" id="languageSelect"  placeholder="<选择语言>">
-            <Option v-for="item in languageList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-          </Select>
-          <ul>
-            <li v-for="l in licenseList[language]">
-              <Row>
-                <Col span="4"><h4>{{ l.label }}:</h4></Col>
-                <Col span="6"><Upload><Button>上传证书扫描件</Button></Upload></Col>
-              </Row>
-            </li>
-          </ul>
         </div>
         <div id="submitButton"><Button type="primary" @click="modify_info">提交修改</Button></div>
       </div>
@@ -149,17 +135,17 @@
           headers,
           credentials: 'include',
           body: body })
-        .then(function (response) {
-          return response.json().then(function (data) {
-            if (data['status']) {
-              that.$Message.success('Modify successfully.')
-            } else {
-              that.$Message.warning('Modify Failed.')
-            }
+          .then(function (response) {
+            return response.json().then(function (data) {
+              if (data['status']) {
+                that.$Message.success('Modify successfully.')
+              } else {
+                that.$Message.warning('Modify Failed.')
+              }
+            })
+          }).catch(function (ex) {
+            alert('Network Error')
           })
-        }).catch(function (ex) {
-          alert('Network Error')
-        })
       },
       handleView () {
         this.visible = true
@@ -198,16 +184,16 @@
       fetch('api/UserModify', { method: 'GET',
         headers,
         credentials: 'include'})
-      .then(function (response) {
-        return response.json().then(function (data) {
-          that.telephone = data['telephone']
-          that.alipay = data['alipayNumber']
-          that.wechat = data['wechatNumber']
-          that.language = data['language']
+        .then(function (response) {
+          return response.json().then(function (data) {
+            that.telephone = data['telephone']
+            that.alipay = data['alipayNumber']
+            that.wechat = data['wechatNumber']
+            that.language = data['language']
+          })
+        }).catch(function (ex) {
+          alert('Network Error')
         })
-      }).catch(function (ex) {
-        alert('Network Error')
-      })
     }
   }
 </script>
@@ -276,25 +262,25 @@
     margin-right: 4px;
   }
   .avatar-upload img{
-      width: 100%;
-      height: 100%;
+    width: 100%;
+    height: 100%;
   }
   .upload-cover{
-      display: none;
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: rgba(0,0,0,.6);
+    display: none;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0,0,0,.6);
   }
   .avatar-upload:hover .upload-cover{
-      display: block;
+    display: block;
   }
   .upload-cover i{
-      color: #fff;
-      font-size: 20px;
-      cursor: pointer;
-      margin: 0 2px;
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+    margin: 0 2px;
   }
 </style>

@@ -4,6 +4,7 @@ import Login from '@/components/Login'
 import Welcome from '@/components/Welcome'
 import SignUpSimple from '@/components/SignUpSimple'
 import SignUpMore from '@/components/SignUpMore'
+import SignUpEmployer from '@/components/SignUpEmployer'
 import EmployerPage from '@/components/EmployerPage'
 import TranslatorPage from '@/components/TranslatorPage'
 import AddTask from '@/components/AddTask'
@@ -34,6 +35,11 @@ export default new Router({
       path: '/signupmore',
       name: 'Signupmore',
       component: SignUpMore
+    },
+    {
+      path: '/signupEmployer',
+      name: 'SignupEmployer',
+      component: SignUpEmployer
     },
     {
       path: '/employer',
