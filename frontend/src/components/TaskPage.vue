@@ -67,15 +67,15 @@
       }
     },
     created: function () {
-      let body = JSON.stringify({taskid: this.$route.params.tid})
-      const headers = new Headers({
+      console.log('taskpage')
+        const headers = new Headers({
         'Content-Type': 'application/json'
       })
       let that = this
-      fetch('api/GetTaskDetail', { method: 'GET',
+      console.log('11111111')
+      fetch('api/GetTaskDetail?taskid=' + this.$route.params.tid, { method: 'GET',
         headers,
-        credentials: 'include',
-        body: body })
+        credentials: 'include'})
       .then(function (response) {
         return response.json().then(function (data) {
           that.title = data['title']
