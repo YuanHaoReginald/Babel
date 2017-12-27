@@ -110,6 +110,74 @@
             ]
           },
           {
+            title: '中法信件翻译任务',
+            publishTime: '2017-3-1',
+            ddlTime: '2017-5-10',
+            tags: ['art', 'math'],
+            language: 'French',
+            assignments: [
+              {
+                order: 1,
+                description: '这个任务需要翻译我给出的pdf文档的第20-40页，注意主要人名的翻' +
+                '译要与附录中的统一。完成情况好的话我一定会好评的。',
+                status: '已完成',
+                translator: '2333',
+                score: 4,
+                price: '20元'
+              },
+              {
+                order: 2,
+                description: 'PartII PartII PartII PartII PartII PartII ',
+                status: '进行中',
+                translator: '2333',
+                score: 4,
+                price: '20元'
+              },
+              {
+                order: 3,
+                description: 'PartIII PartIII PartIII PartIII PartIII PartIII ',
+                status: '未领取',
+                translator: '2333',
+                score: 4,
+                price: '20元'
+              }
+            ]
+          },
+          {
+            title: '中法信件翻译任务',
+            publishTime: '2017-3-1',
+            ddlTime: '2017-5-10',
+            tags: ['art', 'math'],
+            language: 'French',
+            assignments: [
+              {
+                order: 1,
+                description: '这个任务需要翻译我给出的pdf文档的第20-40页，注意主要人名的翻' +
+                '译要与附录中的统一。完成情况好的话我一定会好评的。',
+                status: '已完成',
+                translator: '2333',
+                score: 4,
+                price: '20元'
+              },
+              {
+                order: 2,
+                description: 'PartII PartII PartII PartII PartII PartII ',
+                status: '进行中',
+                translator: '2333',
+                score: 4,
+                price: '20元'
+              },
+              {
+                order: 3,
+                description: 'PartIII PartIII PartIII PartIII PartIII PartIII ',
+                status: '未领取',
+                translator: '2333',
+                score: 4,
+                price: '20元'
+              }
+            ]
+          },
+          {
             title: 'title',
             publishTime: 'publishTime',
             ddlTime: 'ddlTime',
