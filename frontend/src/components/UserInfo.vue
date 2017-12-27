@@ -26,7 +26,7 @@
       return {
         username: '王小明',
         email: 'abcdefg@163.com',
-        headSrc: '/src/assets/head_sample.jpg',
+        headSrc: '/static/selfie.jpg',
         level: 4,
         experienceNumber: 60,
         maxExperience: 200
@@ -38,20 +38,18 @@
       }
     },
     created: function () {
-      let body = JSON.stringify({id: Number(sessionStorage.getItem('userid'))})
       const headers = new Headers({
         'Content-Type': 'application/json'
       })
       let that = this
       fetch('api/GetUserInfo', { method: 'GET',
         headers,
-        credentials: 'include',
-        body: body })
+        credentials: 'include'})
       .then(function (response) {
         return response.json().then(function (data) {
           that.username = data['username']
           that.email = data['email']
-          that.headSrc = data['avatar']
+          // that.headSrc = data['avatar']
           that.level = data['level']
           that.experienceNumber = data['experience']
         })

@@ -7,7 +7,7 @@
     </div>
     <div class="input">
       <h3>Password:</h3>
-      <Input v-model="password" style="width: 300px"> </Input>
+      <Input v-model="password" type="password" style="width: 300px"> </Input>
     </div>
     <div class="button">
       <Button size="large" type="primary" v-on:click="login">Sign in</Button>
@@ -39,7 +39,7 @@
         .then(function (response) {
           return response.json().then(function (data) {
             if (data['id'] === 0) {
-              alert('Username or Password Error')
+              that.Message.warning('Username or Password Error')
             } else {
               sessionStorage.setItem('userid', data['id'])
               sessionStorage.setItem('utype', data['utype'])

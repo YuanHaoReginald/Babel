@@ -56,17 +56,26 @@
       }
     },
     created: function () {
-      let body = JSON.stringify({id: Number(sessionStorage.getItem('userid'))})
       const headers = new Headers({
         'Content-Type': 'application/json'
       })
+      let that = this
       fetch('api/GetEmployerTasks', { method: 'GET',
         headers,
-        credentials: 'include',
-        body: body })
+        credentials: 'include'})
       .then(function (response) {
         return response.json().then(function (data) {
-          alert(0)
+          that.tasklist = []
+          for (let task of data.taskList) {
+            that.tasklist.push({
+              title: task.title,
+              publishTime: Date(task.publishTime),
+              ddlTime: Date(task.ddlTime),
+              tags: task.tag,
+              language: task.language,
+              description: task.description
+            })
+          }
         })
       }).catch(function (ex) {
         alert('Network Error')
