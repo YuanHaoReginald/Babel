@@ -38,8 +38,8 @@ class Task(models.Model):
     # tags
     tags = models.CharField(max_length = 128, null = True)
     language = models.IntegerField(null = True)
-    requirementsLicense = models.IntegerField(null = True)
-    requirementsLevel = models.IntegerField( null = True)
+    requirementsLicense = models.IntegerField(default = 0)
+    requirementsLevel = models.IntegerField( default = 0)
     testText = models.TextField(max_length = 300, null = True)
 
 #  Assignments

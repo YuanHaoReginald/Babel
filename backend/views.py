@@ -6,10 +6,11 @@ from django.http import HttpResponse
 from django.http import JsonResponse
 from django.contrib import messages
 from .models import *
+from django.core import serializers
 
 import os
 import json
-
+import time
 
 # Create your views here.
 
@@ -111,3 +112,46 @@ def UploadAvatar(request):
         print(avatar)
         print(request.POST.get('a'))
     return HttpResponse(0)
+
+# add task vue : Add task
+def AddTask(request):
+    info_dict = json.loads(request.body.decode())
+    task_title = info_dict['title']
+    task_language = info_dict['language']
+    task_description = info_dict['description']
+    task_fileurl = info_dict['fileurl']
+    task_filename = info_dict['file_name']
+
+    name_list = task_filename.split('.',1)
+    name_suffix = name_list[-1]
+    text_suffix_list = ['doc','docx','txt','md']
+    if name_suffix in text_suffix_list:
+        task_fileType = 0
+    else:
+        task_fileType = 1
+
+    task_publishTime = time.time()
+    task_ddlTime = time.time() + 24 * 3600 * 30
+
+    try:
+        Task.objects.create(title = task_title, description = task_description, fileUrl = task_fileurl, fileType = task_fileType, language = task_language,
+                        publishTime = task_publishTime, ddlTime = task_ddlTime)
+        return HttpResponse(1)
+    except:
+        return HttpResponse(0)
+
+# show task list: Tasks
+def ShowTaskList(request):
+    if request.method == 'POST':
+        json_all_tasks = serializers.serialize("json", Task.objects.all())
+        return HttpResponse(json_all_tasks)
+
+# show a task: TaskPage
+def ShowSingleTask(request):
+    if request.method == 'POST':
+        info_dict = json.loads(request.body.decode())
+        task_id = info_dict['id']
+        json_task =  serializers.serialize("json", Task.objects.get(id = task_id))
+        return HttpResponse(json_task)
+
+# s
