@@ -1,15 +1,15 @@
 <template>
   <div class="root">
     <div class="container">
-    <div class="title"><h2>Join Babel</h2></div>
+    <div class="title"><h2>加入巴别塔</h2></div>
       <br>
       <div class="input">
-        <h3>Username:</h3>
+        <h3>用户名:</h3>
         <Input v-model="username" style="width: 400px"> </Input>
       </div>
       <br>
       <div class="input">
-        <h3>Password:</h3>
+        <h3>密码:</h3>
         <Input v-model="password" type="password" style="width: 400px"> </Input>
       </div>
       <br>
