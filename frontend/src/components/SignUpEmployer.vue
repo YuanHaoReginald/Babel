@@ -202,7 +202,8 @@
 <style scoped>
   .root {
     margin-top:30px;
-    margin-left: 250px;
+    margin-left: auto;
+    margin-right: auto;
     width:750px;
   }
   .card {
