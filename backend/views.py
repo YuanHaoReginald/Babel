@@ -47,6 +47,16 @@ def UserSignIn(request):
             login(request, user)
             return JsonResponse({'id': user.id, 'utype': user.utype})
 
+def UsernameCheck(request):
+    if request.method == 'POST':
+        username = json.loads(request.body.decode())['username']
+        print(username)
+        try:
+            user = User.objects.get(username=username)
+            return JsonResponse({'status': True})
+        except:
+            return JsonResponse({'status': False})
+
 @login_required
 def UserLogout(request):
     logout(request)
@@ -140,7 +150,6 @@ def UploadTaskFile(request):
 
 def GetEmployerTasks(request):
     if request.method == 'GET':
-        print('-----------------------GetEmployerTasks-----------------')
         current_user = auth.get_user(request).employer
         task_set = current_user.task_set.all()
         response_dict = {'taskList': []}
@@ -220,6 +229,33 @@ def GetTaskDetail(request):
             })
         return JsonResponse(response_dict)
 
+def GetAssignmentDetail(request):
+    if request.method == 'GET':
+        print('-----------------------GetAssignmentDetail-----------------')
+        assignmentid = request.GET.get('assignmentid')
+        assignment = Assignment.objects.get(id=assignmentid)
+        task = assignment.task
+        response_dict = {
+            'title': task.title,
+            'description': task.description,
+            'publishTime': task.publishTime.timestamp(),
+            'ddlTime': task.ddlTime.timestamp(),
+            'language': task.languageOrigin if task.languageOrigin == 0 else task.languageTarget,
+            'assignment': {
+                'description': assignment.description,
+                'translator': assignment.translator.username if assignment.translator else '',
+                'status': assignment.status,
+                'score': assignment.scores,
+                'price': assignment.price,
+                'submission': assignment.submission.name if assignment.submission else ''
+            },
+            'owner': {
+                'name': task.employer.username,
+                'avatar': task.employer.avatar.url if task.employer.avatar else ''
+            }
+        }
+        return JsonResponse(response_dict)
+
 def GetSquareTasks(request):
     if request.method == 'GET':
         print('-----------------------GetSquareTasks-----------------')
@@ -258,3 +294,12 @@ def GetSquareTasks(request):
                 'assignment': _temp_assignment
             })
         return JsonResponse(response_dict)
+
+def SubmitAssignment(request):
+    if request.method == 'POST':
+        file = request.FILES.get('file')
+        assignmentid = request.POST.get('assignmentid')
+        print(assignmentid)
+        assignment = Assignment.objects.get(id = assignmentid)
+        assignment.submission.save(file.name, file)
+    return JsonResponse({'url': assignment.submission.name})

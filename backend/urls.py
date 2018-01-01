@@ -6,6 +6,7 @@ from django.conf import settings
 urlpatterns = [
     url(r'^UserSignUp$', views.UserSignUp, name='UserSignUp'),
     url(r'^UserSignIn$', views.UserSignIn, name='UserSignIn'),
+    url(r'^UsernameCheck$', views.UsernameCheck, name='UsernameCheck'),
     url(r'^UserLogout$', views.UserLogout, name='UserLogout'),
     url(r'^GetUserInfo$', views.GetUserInfo, name='GetUserInfo'),
     url(r'^UserModify$', views.UserModify, name='UserModify'),
@@ -16,5 +17,7 @@ urlpatterns = [
     url(r'^GetTranslatorAssignments$', views.GetTranslatorAssignments, name='GetTranslatorAssignments'),
     url(r'^PickupAssignment$', views.PickupAssignment, name='PickupAssignment'),
     url(r'^GetTaskDetail$', views.GetTaskDetail, name='GetTaskDetail'),
+    url(r'^GetAssignmentDetail$', views.GetAssignmentDetail, name='GetAssignmentDetail'),
     url(r'^GetSquareTasks$', views.GetSquareTasks, name='GetSquareTasks'),
+    url(r'^SubmitAssignment$', views.SubmitAssignment, name='SubmitAssignment'),
 ]

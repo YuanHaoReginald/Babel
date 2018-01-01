@@ -7,17 +7,36 @@
             <h2 id="task-title">{{ title }}<br></h2>
             <p>{{ description }}</p>
             <div class="grey">
-              发布者：<Avatar src="owner.img_src" />
+              发布者：<Avatar v-bind:src="owner.img_src" />
               {{ owner.name }}
             </div>
           </div>
           <div id="details">
             <p class="grey">详细信息</p>
             <p>{{ assignment.description }}</p>
+            <br>
             <span v-if="assignment.status == '待领取'"><Button type="primary" size="small">领取任务</Button></span>
-            <span v-if="assignment.status == '已完成'"><b>任务评分</b>:&nbsp;<Rate v-model="assignment.score"></Rate></span>
-            <span v-if="assignment.status == '待评分'"><b>任务评分</b>:&nbsp;<Rate disabled v-model="assignment.score"></Rate></span>
+            <span v-if="assignment.status == '进行中'">
+              <div>
+                <Upload
+                  ref="upload"
+                  :before-upload="handleBeforeUpload"
+                  :on-success="handleSuccess"
+                  :show-upload-list="false"
+                  action="api/SubmitAssignment">
+                  <Button type="ghost" icon="ios-cloud-upload-outline">Select the file to upload</Button>
+                  <b class="grey" style="padding-left: 20px">{{ assignment.submission }}</b>
+                </Upload>
+                <div v-if="file !== null">
+                  Upload file: {{ file.name }}
+                  <Button type="text" @click="upload" :loading="loadingStatus">{{ loadingStatus ? 'Uploading' : 'Click to upload' }}</Button>
+                  <Button shape="circle" icon="close" @click="cancel"></Button>
+                </div>
+              </div>
+            </span>            
+            <span v-if="assignment.status == '已完成'"><b>任务评分</b>:&nbsp;<Rate v-model="assignment.score"></Rate></span>            
             <span v-if="assignment.status == '已完成'"><Button type="error" size="small">申请投诉</Button></span>
+            <span v-if="assignment.status == '待评分'"><b>任务评分</b>:&nbsp;<Rate disabled v-model="assignment.score"></Rate></span>            
           </div>
         </Card>
       </div>
@@ -55,7 +74,7 @@
         assignment: {
           description: '这个任务需要翻译我给出的pdf文档的第20-40页，注意主要人名的翻' +
           '译要与附录中的统一。完成情况好的话我一定会好评的。',
-          status: '待领取',
+          status: '进行中',
           translator: '2333',
           score: 4,
           price: '20元',
@@ -77,7 +96,78 @@
             title: 'Enya歌词翻译',
             price: '70元'
           }
-        ]
+        ],
+        file: null,
+        loadingStatus: false
+      }
+    },
+    created: function () {
+      const headers = new Headers({
+        'Content-Type': 'application/json'
+      })
+      let that = this
+      fetch('api/GetAssignmentDetail?assignmentid=' + this.$route.params.aid, { method: 'GET',
+        headers,
+        credentials: 'include'})
+      .then(function (response) {
+        return response.json().then(function (data) {
+          that.title = data['title']
+          that.description = data['description']
+          that.publishTime = Date(data['publishTime'])
+          that.ddlTime = Date(data['ddlTime'])
+          that.language = data['language']
+          let assignment = data['assignment']
+          that.assignment['translator'] = assignment.translator
+          that.assignment['price'] = assignment.price
+          that.assignment['submission'] = assignment.submission
+          that.assignment['description'] = assignment.description
+          switch (assignment.status) {
+            case 0:
+              that.assignment['status'] = '未发布'
+              break
+            case 1:
+              that.assignment['status'] = '待认领'
+              break
+            case 2:
+              that.assignment['status'] = '进行中'
+              break
+            case 3:
+              that.assignment['status'] = '已完成'
+              that.assignment['score'] = assignment.score
+              break
+            case 4:
+              that.assignment['status'] = '纠纷中'
+              that.assignment['score'] = assignment.score
+              break
+          }
+          let owner = data['owner']
+          that.owner.name = owner.name
+          that.owner.img_src = owner.avatar
+        })
+      }).catch(function (ex) {
+        alert('Network Error')
+      })
+    },
+    methods: {
+      handleBeforeUpload (file) {
+        this.file = file
+        return false
+      },
+      handleSuccess (res, file) {
+        console.log(res.url)
+        this.assignment.submission = res.url
+        this.file = null
+      },
+      upload () {
+        this.loadingStatus = true
+        this.$refs.upload.data = {assignmentid: this.$route.params.aid}
+        this.$refs.upload.post(this.file)
+        this.$Message.success('Success')
+        this.loadingStatus = false
+        this.file = null
+      },
+      cancel () {
+        this.file = null
       }
     }
   }
