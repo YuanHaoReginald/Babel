@@ -25,7 +25,7 @@
         <div>
           <ul>
             <li v-for="assignment in assignmentlist">
-              <Card padding=10>
+              <Card padding=10 @click="checkAssignment(assignment.id)">
                 <p slot="title" id="assignmentTitle">
                   {{ assignment.title }}&nbsp;&nbsp;&nbsp;<span v-for="tag in assignment.tags"><Tag><h4>{{ tag }}</h4></Tag></span>
                 </p>
@@ -105,6 +105,11 @@
       }).catch(function (ex) {
         alert('Network Error')
       })
+    },
+    methods: {
+      checkAssignment (assignmentid) {
+        this.$router.push('/assignment/' + assignmentid)
+      }
     }
   }
 </script>

@@ -68,7 +68,7 @@
     },
     created: function () {
       console.log('taskpage')
-        const headers = new Headers({
+      const headers = new Headers({
         'Content-Type': 'application/json'
       })
       let that = this
@@ -80,8 +80,8 @@
         return response.json().then(function (data) {
           that.title = data['title']
           that.description = data['description']
-          that.publishTime = data['publishTime']
-          that.ddlTime = data['ddlTime']
+          that.publishTime = Date(data['publishTime'])
+          that.ddlTime = Date(data['ddlTime'])
           that.language = data['language']
           for (let assignment of data['assignment']) {
             let tmp = []
