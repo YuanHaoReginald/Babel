@@ -43,7 +43,7 @@
             } else {
               sessionStorage.setItem('userid', data['id'])
               sessionStorage.setItem('utype', data['utype'])
-              that.$store.commit('login', {'userid': Number(data['id']), 'utype': data['utype']})
+              that.$store.commit('login', {'userid': Number(data['id']), 'utype': data['utype'], 'username': that.username})
               that.$router.push({name: data['utype']})
             }
           }).catch(function (ex) {
