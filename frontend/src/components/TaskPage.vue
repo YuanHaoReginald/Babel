@@ -23,7 +23,7 @@
     </div>
     <div id="right">
       <div class="card"><Card dis-hover>
-        <h3 id="right-info"><br>任务信息</h3>
+        <h3 id="right-info">任务信息</h3>
         <p>任务描述：{{ description }}</p>
         <p>任务语言：{{ language }}</p>
         <p>发布时间：{{ publishTime }}</p>

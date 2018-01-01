@@ -75,10 +75,8 @@
     color: floralwhite;
   }
   #root {
-    min-width: 1050px;
   }
   #center {
-    width:950px;
     margin-right: auto;
     margin-left: auto;
   }

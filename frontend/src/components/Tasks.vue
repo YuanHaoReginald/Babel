@@ -23,6 +23,9 @@
           </ul>
         </div>
       </Card>
+      <div id="pages">
+        <Page :total=page_total_num></Page>
+      </div>
     </div>
   </div>
 </template>
@@ -52,7 +55,9 @@
             description: 'I am the description.I am the description.I am the description.' +
             'I am the description.I am the description.I am the description.I am the description.'
           }
-        ]
+        ],
+        page_total_num: 500,
+        page_current_num: 1
       }
     },
     mounted: function () {
@@ -123,6 +128,9 @@
     font-size: 12px;
     text-align: left;
     color: #80848f;
+  }
+  #pages {
+    padding: 20px;
   }
   h2 {
     font-size: 24px;

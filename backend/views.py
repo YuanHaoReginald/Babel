@@ -47,6 +47,17 @@ def UserSignIn(request):
             login(request, user)
             return JsonResponse({'id': user.id, 'utype': user.utype})
 
+def UsernameCheck(request):
+    if request.method == 'POST':
+        username = json.loads(request.body.decode())['username']
+        print(username)
+        try:
+            user = User.objects.get(username=username)
+            print('hhhhhhhhhhhhhhhhhhhhh')
+            return JsonResponse({'status': True})
+        except:
+            return JsonResponse({'status': False})
+
 @login_required
 def UserLogout(request):
     logout(request)

@@ -6,6 +6,7 @@ from django.conf import settings
 urlpatterns = [
     url(r'^UserSignUp$', views.UserSignUp, name='UserSignUp'),
     url(r'^UserSignIn$', views.UserSignIn, name='UserSignIn'),
+    url(r'^UsernameCheck$', views.UsernameCheck, name='UsernameCheck'),
     url(r'^UserLogout$', views.UserLogout, name='UserLogout'),
     url(r'^GetUserInfo$', views.GetUserInfo, name='GetUserInfo'),
     url(r'^UserModify$', views.UserModify, name='UserModify'),

@@ -127,7 +127,7 @@
               {
                 order: 3,
                 description: 'PartIII PartIII PartIII PartIII PartIII PartIII ',
-                status: '未领取',
+                status: '待领取',
                 translator: '2333',
                 score: 4,
                 price: '20元'
