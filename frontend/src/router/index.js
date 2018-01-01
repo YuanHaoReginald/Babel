@@ -19,27 +19,27 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'Welcome',
+      name: 'welcome',
       component: Welcome
     },
     {
       path: '/login',
-      name: 'Login',
+      name: 'login',
       component: Login
     },
     {
       path: '/signup/:utype',
-      name: 'Signup',
+      name: 'signup',
       component: SignUpSimple
     },
     {
       path: '/signupmore',
-      name: 'Signupmore',
+      name: 'signupmore',
       component: SignUpMore
     },
     {
       path: '/signupEmployer',
-      name: 'SignupEmployer',
+      name: 'signupEmployer',
       component: SignUpEmployer
     },
     {
