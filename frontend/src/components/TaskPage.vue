@@ -67,12 +67,10 @@
       }
     },
     created: function () {
-      console.log('taskpage')
       const headers = new Headers({
         'Content-Type': 'application/json'
       })
       let that = this
-      console.log('11111111')
       fetch('api/GetTaskDetail?taskid=' + this.$route.params.tid, { method: 'GET',
         headers,
         credentials: 'include'})

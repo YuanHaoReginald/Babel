@@ -89,7 +89,7 @@
         this.$router.push('/task/' + taskid)
       },
       canPickup: function (assignment) {
-        return assignment.status === '未领取' && sessionStorage.getItem('utype') === 'translator'
+        return assignment.status === '待领取' && sessionStorage.getItem('utype') === 'translator'
       }
     },
     data () {

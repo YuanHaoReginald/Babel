@@ -24,7 +24,7 @@
         </div>
       </Card>
       <div id="pages">
-        <Page :total=page_total_num></Page>
+        <Page :total="page_total_num"></Page>
       </div>
     </div>
   </div>
