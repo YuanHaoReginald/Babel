@@ -33,9 +33,8 @@
           <h3>任务文件：</h3>
           <Upload
             ref="upload"
-            name="avatar"
+            name="file"
             :before-upload="handleBeforeUpload"
-            :data="{id: task_id}"
             action="api/UploadTaskFile">
             <Button type="ghost" icon="ios-cloud-upload-outline" id="fileButton">选择文件</Button>
           </Upload>
@@ -138,15 +137,14 @@
     methods: {
       handleBeforeUpload (file) {
         this.file = file
+        return false
       },
-      upload () {
-        console.log(this.task_id)
+      handleUpload () {
         this.loadingStatus = true
-        setTimeout(() => {
-          this.file = null
-          this.loadingStatus = false
-          this.$Message.success('Success')
-        }, 1500)
+        this.$refs.upload.data = {id: this.task_id}
+        this.$refs.upload.post(this.file)
+        this.file = null
+        this.loadingStatus = false
       },
       addAssignment () {
         this.assignment_num = this.assignment_num + 1
@@ -171,6 +169,7 @@
           license: this.license,
           description: this.description,
           tags: this.tagsStr,
+          ddlTime: Date.parse(this.ddlTime) / 1000,
           level: this.level,
           assignments: this.assignments})
         const headers = new Headers({
@@ -184,7 +183,7 @@
         .then(function (response) {
           return response.json().then(function (data) {
             that.task_id = data.task_id
-            that.upload()
+            that.handleUpload()
             that.$router.push('/task/' + data.task_id)
           })
         }).catch(function (ex) {

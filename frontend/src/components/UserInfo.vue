@@ -26,7 +26,7 @@
       return {
         username: '王小明',
         email: 'abcdefg@163.com',
-        headSrc: '/src/assets/head_sample.jpg',
+        headSrc: '/static/selfie.jpg',
         level: 4,
         experienceNumber: 60,
         maxExperience: 200
@@ -49,7 +49,7 @@
         return response.json().then(function (data) {
           that.username = data['username']
           that.email = data['email']
-          that.headSrc = data['avatar']
+          // that.headSrc = data['avatar']
           that.level = data['level']
           that.experienceNumber = data['experience']
         })

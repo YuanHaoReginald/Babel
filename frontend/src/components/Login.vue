@@ -1,13 +1,13 @@
 <template>
   <div class="root">
-    <div class="title"><h2>Login</h2></div>
+    <div class="title"><h2>登录</h2></div>
     <div class="input">
-      <h3>Username:</h3>
+      <h3>用户名:</h3>
       <Input v-model="username" style="width: 300px"> </Input>
     </div>
     <div class="input">
-      <h3>Password:</h3>
-      <Input v-model="password" style="width: 300px"> </Input>
+      <h3>密码:</h3>
+      <Input v-model="password" type="password" style="width: 300px"> </Input>
     </div>
     <div class="button">
       <Button size="large" type="primary" v-on:click="login">Sign in</Button>

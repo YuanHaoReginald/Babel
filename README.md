@@ -6,3 +6,7 @@ Translation crowdsourcing platform.
 
 ## 小组会议守则
 [小组会议守则](https://hackmd.io/s/ByVTFc8xG).
+
+
+## 部分Git使用建议
+[关于Git的部分组内建议](https://hackmd.io/s/Syz3ObSMM)

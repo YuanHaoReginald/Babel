@@ -5,13 +5,13 @@
     </div>
     <br>
     <div class="buttons">
-      <Button shape="circle" size="large" v-on:click="status=true">Register</Button>
-      <router-link to="/login"><Button type="primary" shape="circle" size="large">Sign in</Button></router-link>
+      <Button shape="circle" size="large" v-on:click="status=true">注册</Button>
+      <router-link to="/login"><Button type="primary" shape="circle" size="large">登录</Button></router-link>
     </div>
     <br>
     <div v-if="status" class="new_buttons">
-      <router-link to="/signup/translator"><Button shape="circle" size="large" >I am a translator.</Button></router-link>
-      <router-link to="/signup/employer"><Button shape="circle" size="large" >I am an employer.</Button></router-link>
+      <router-link to="/signup/translator"><Button shape="circle" size="large" >我是翻译</Button></router-link>
+      <router-link to="/signup/employer"><Button shape="circle" size="large" >我要发布翻译任务</Button></router-link>
     </div>
   </div>
 </template>
@@ -20,7 +20,7 @@
     name: 'login',
     data () {
       return {
-        msg: 'Welcome to Babel.',
+        msg: '欢迎来到巴别塔',
         status: false
       }
     }
@@ -42,7 +42,7 @@
     margin-left: -120px;
   }
   h2 {
-    font-size:40px;
+    font-size:35px;
     color: black;
   }
 </style>
