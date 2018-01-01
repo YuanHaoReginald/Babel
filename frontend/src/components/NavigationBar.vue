@@ -7,7 +7,7 @@
         <Col span="10" offset="1">
         <Input v-model="search" icon="search"> </Input>
         </Col>
-        <Col span="3"offset="8" v-if="status">
+        <Col span="3"offset="8" v-if="this.$store.state.online">
         <Submenu name="3">
           <template slot="title">
             <Icon type="stats-bars"></Icon>
@@ -38,8 +38,7 @@
     data () {
       return {
         theme1: 'dark',
-        search: '',
-        status: true
+        search: ''
       }
     },
     methods: {
@@ -55,6 +54,7 @@
           sessionStorage.removeItem('userid')
           sessionStorage.removeItem('utype')
           that.$Message.success('Logout successfully.')
+          that.$store.commit('logout')
           that.$router.push('/login')
         }).catch(function (ex) {
           alert('Network Error')
