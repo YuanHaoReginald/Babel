@@ -14,7 +14,7 @@ import Square from '@/components/Square'
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   // mode: 'history',
   routes: [
     {
@@ -35,26 +35,41 @@ export default new Router({
     {
       path: '/signupmore',
       name: 'signupmore',
+      meta: {
+        requireAuth: true
+      },
       component: SignUpMore
     },
     {
       path: '/signupEmployer',
       name: 'signupEmployer',
+      meta: {
+        requireAuth: true
+      },
       component: SignUpEmployer
     },
     {
       path: '/employer',
       name: 'employer',
+      meta: {
+        requireAuth: true
+      },
       component: EmployerPage
     },
     {
       path: '/translator',
       name: 'translator',
+      meta: {
+        requireAuth: true
+      },
       component: TranslatorPage
     },
     {
       path: '/addTask',
       name: 'addTask',
+      meta: {
+        requireAuth: true
+      },
       component: AddTask
     },
     {
@@ -75,3 +90,20 @@ export default new Router({
     // nginx:no 404 -> index.html(history)
   ]
 })
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(r => r.meta.requireAuth)) {
+    if (sessionStorage.getItem('userid')) {
+      next()
+    } else {
+      next({
+        path: '/login',
+        query: {redirect: to.fullPath}
+      })
+    }
+  } else {
+    next()
+  }
+})
+
+export default router
