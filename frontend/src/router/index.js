@@ -11,6 +11,7 @@ import AddTask from '@/components/AddTask'
 import Task from '@/components/TaskPage'
 import Assignment from '@/components/AssignmentPage'
 import Square from '@/components/Square'
+import Manager from '@/components/Manager'
 
 Vue.use(Router)
 
@@ -71,6 +72,11 @@ export default new Router({
       path: '/square',
       name: 'square',
       component: Square
+    },
+    {
+      path: '/manager',
+      name: 'manager',
+      component: Manager
     }
     // nginx:no 404 -> index.html(history)
   ]
