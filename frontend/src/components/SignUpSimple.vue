@@ -14,12 +14,21 @@
       </div>
       <br>
       <div class="input">
+        <h3>确认密码:</h3>
+        <div>
+          <Input v-model="passwordRepeat" type="password" style="width: 400px"> </Input>
+          <Icon type="close-circled" v-if="passwordMatch === false" style="color: red"></Icon>
+        </div>
+      </div>
+      <br>
+      <div class="input">
         <h3>Email:</h3>
         <Input v-model="email" style="width: 400px"> </Input>
       </div>
       <br>
-      <div class="button">
-        <Button size="large" type="primary" v-on:click="sign_up_simple">Sign Up</Button>
+      <div class="button" @click="sign_up_simple">
+        <Button size="large" type="primary" v-if="passwordMatch">Sign Up</Button>
+        <Button size="large" type="primary" v-else disabled>Sign Up</Button>
       </div>
     </div>
   </div>
@@ -32,6 +41,7 @@
       return {
         username: '',
         password: '',
+        passwordRepeat: '',
         email: ''
       }
     },
@@ -62,6 +72,11 @@
         }).catch(function (ex) {
           alert('Network Error')
         })
+      }
+    },
+    computed: {
+      passwordMatch: function () {
+        return this.password === this.passwordRepeat
       }
     }
   }

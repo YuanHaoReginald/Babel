@@ -153,6 +153,7 @@ def GetEmployerTasks(request):
             for tag in _task_tag:
                 _temp_tag_list.append(tag)
             response_dict['taskList'].append({
+                'id': task.id,                
                 'title': task.title,
                 'publishTime': task.publishTime.timestamp(),
                 'ddlTime': task.ddlTime.timestamp(),
@@ -174,6 +175,7 @@ def GetTranslatorAssignments(request):
             for tag in _task_tag:
                 _temp_tag_list.append(tag)
             response_dict['assignmentList'].append({
+                'id': assignment.id,
                 'title': task.title,
                 'publishTime': task.publishTime.timestamp(),
                 'ddlTime': task.ddlTime.timestamp(),
@@ -198,9 +200,8 @@ def PickupAssignment(request):
 def GetTaskDetail(request):
     if request.method == 'GET':
         print('-----------------------GetTaskDetail-----------------')
-        # current_user = auth.get_user(request)
-        info_dict = json.loads(request.body.decode())
-        task = Task.objects.get(id=info_dict['taskid'])
+        taskid = request.GET.get('taskid')
+        task = Task.objects.get(id=taskid)
         response_dict = {
             'title': task.title,
             'description': task.description,
@@ -214,7 +215,7 @@ def GetTaskDetail(request):
             response_dict['assignment'].append({
                 'order': assignment.order,
                 'description': assignment.description,
-                'translator': assignment.translator,
+                'translator': assignment.translator.username if assignment.translator else '',
                 'status': assignment.status,
                 'score': assignment.scores,
                 'price': assignment.price,

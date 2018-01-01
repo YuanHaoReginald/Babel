@@ -23,7 +23,7 @@
     </div>
     <div id="right">
       <div class="card"><Card dis-hover>
-        <h3 style="margin-bottom: 5px;">任务信息</h3>
+        <h3 id="right-info"><br>任务信息</h3>
         <p>任务描述：{{ description }}</p>
         <p>任务语言：{{ language }}</p>
         <p>发布时间：{{ publishTime }}</p>
@@ -67,21 +67,21 @@
       }
     },
     created: function () {
-      let body = JSON.stringify({taskid: this.$route.params.tid})
+      console.log('taskpage')
       const headers = new Headers({
         'Content-Type': 'application/json'
       })
       let that = this
-      fetch('api/GetTaskDetail', { method: 'GET',
+      console.log('11111111')
+      fetch('api/GetTaskDetail?taskid=' + this.$route.params.tid, { method: 'GET',
         headers,
-        credentials: 'include',
-        body: body })
+        credentials: 'include'})
       .then(function (response) {
         return response.json().then(function (data) {
           that.title = data['title']
           that.description = data['description']
-          that.publishTime = data['publishTime']
-          that.ddlTime = data['ddlTime']
+          that.publishTime = Date(data['publishTime'])
+          that.ddlTime = Date(data['ddlTime'])
           that.language = data['language']
           for (let assignment of data['assignment']) {
             let tmp = []
@@ -122,7 +122,7 @@
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
   .root {
-    margin:20px 127px 10px 127px;
+    margin:20px auto 10px auto;
     padding: 0 16px 0 16px;
     width:1000px;
   }
@@ -141,6 +141,9 @@
   }
   #taskTitle {
     padding: 15px 20px 10px;
+  }
+  #right-info {
+    margin-bottom: 5px;
   }
   h2 {
     color: #1c2438;

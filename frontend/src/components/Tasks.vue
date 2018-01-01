@@ -12,7 +12,7 @@
         <div>
           <ul>
             <li v-for="task in tasklist">
-              <Card padding=10>
+              <Card padding=10 @click.native="checkTaskDetail(task.id)">
                 <p slot="title" id="taskTitle">
                   {{ task.title }}&nbsp;&nbsp;&nbsp;<span v-for="tag in task.tags"><Tag><h4>{{ tag }}</h4></Tag></span>
                 </p>
@@ -55,7 +55,7 @@
         ]
       }
     },
-    created: function () {
+    mounted: function () {
       const headers = new Headers({
         'Content-Type': 'application/json'
       })
@@ -68,6 +68,7 @@
           that.tasklist = []
           for (let task of data.taskList) {
             that.tasklist.push({
+              id: task.id,
               title: task.title,
               publishTime: Date(task.publishTime),
               ddlTime: Date(task.ddlTime),
@@ -80,6 +81,11 @@
       }).catch(function (ex) {
         alert('Network Error')
       })
+    },
+    methods: {
+      checkTaskDetail: function (taskid) {
+        this.$router.push('/task/' + taskid)
+      }
     }
   }
 </script>
