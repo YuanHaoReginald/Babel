@@ -52,7 +52,8 @@ const router = new Router({
       path: '/employer',
       name: 'employer',
       meta: {
-        requireAuth: true
+        requireAuth: true,
+        requireType: 'employer'
       },
       component: EmployerPage
     },
@@ -60,7 +61,8 @@ const router = new Router({
       path: '/translator',
       name: 'translator',
       meta: {
-        requireAuth: true
+        requireAuth: true,
+        requireType: 'translator'
       },
       component: TranslatorPage
     },
@@ -68,7 +70,8 @@ const router = new Router({
       path: '/addTask',
       name: 'addTask',
       meta: {
-        requireAuth: true
+        requireAuth: true,
+        requireType: 'employer'
       },
       component: AddTask
     },
@@ -94,11 +97,26 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
   if (to.matched.some(r => r.meta.requireAuth)) {
     if (sessionStorage.getItem('userid')) {
-      next()
+      if (to.matched.some(r => r.meta.requireAuth)) {
+        if (to.meta.requireType !== sessionStorage['utype']) {
+          if (sessionStorage['utype'] === 'translator') {
+            next({
+              path: '/translator'
+            })
+          } else {
+            next({
+              path: '/employer'
+            })
+          }
+        } else {
+          next()
+        }
+      } else {
+        next()
+      }
     } else {
       next({
-        path: '/login',
-        query: {redirect: to.fullPath}
+        path: '/login'
       })
     }
   } else {
