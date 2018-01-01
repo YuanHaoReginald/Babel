@@ -11,7 +11,7 @@
               <span class="words"><b>报酬</b>：{{ a.price }}</span>
               <span class="words"><b>状态</b>： {{ a.status }}</span>
               <span v-if="a.status == '已完成'"><b>任务评分</b>:&nbsp;<Rate disabled v-model="a.score"></Rate></span>
-              <span v-if="a.status == '未领取'"><Button type="primary" size="small" @click="pickup(task.id, a.order)">领取任务</Button></span>
+              <span v-if="canPickup(a)"><Button type="primary" size="small" @click="pickup(task.id, a.order)">领取任务</Button></span>
               <p class="description"><b>详情</b>： {{ a.description }}</p>
             </li>
           </ul>
@@ -87,6 +87,9 @@
       },
       checkTaskDetail: function (taskid) {
         this.$router.push('/task/' + taskid)
+      },
+      canPickup: function (assignment) {
+        return assignment.status === '未领取' && sessionStorage.getItem('utype') === 'translator'
       }
     },
     data () {
