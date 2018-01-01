@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import store from '../store/store'
 import Login from '@/components/Login'
 import Welcome from '@/components/Welcome'
 import SignUpSimple from '@/components/SignUpSimple'
@@ -96,10 +97,15 @@ const router = new Router({
 
 router.beforeEach((to, from, next) => {
   if (to.matched.some(r => r.meta.requireAuth)) {
-    if (sessionStorage.getItem('userid')) {
-      if (to.matched.some(r => r.meta.requireAuth)) {
-        if (to.meta.requireType !== sessionStorage['utype']) {
-          if (sessionStorage['utype'] === 'translator') {
+    // if (sessionStorage.getItem('userid')) {
+    if (Number(store.state.userid) !== 0) {
+      if (to.matched.some(r => r.meta.requireType)) {
+        // if (to.meta.requireType !== sessionStorage['utype']) {
+        console.log(to.meta.requireType)
+        console.log(store.state.utype)
+        if (to.meta.requireType !== store.state.utype) {
+          // if (sessionStorage['utype'] === 'translator') {
+          if (store.state.utype === 'translator') {
             next({
               path: '/translator'
             })

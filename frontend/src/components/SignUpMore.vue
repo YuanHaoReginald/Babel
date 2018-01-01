@@ -192,7 +192,8 @@
         })
       },
       userid () {
-        return Number(sessionStorage.getItem('userid'))
+        // return Number(sessionStorage.getItem('userid'))
+        return Number(this.$store.state.userid)
       }
     },
     created: function () {
