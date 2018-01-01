@@ -6,7 +6,7 @@
         <div class="title"><h2>完善个人信息</h2></div>
         <div class="box">
           <h3>上传头像：</h3>
-          <div class="avatar-upload" v-if="avatar.status != 'none'">
+          <div class="avatar-upload" v-if="avatar.url != ''">
             <template v-if="avatar.status === 'finished'">
               <img :src="avatar.url">
               <div class="upload-cover">
@@ -25,7 +25,9 @@
             <Upload
               name="avatar"
               :data="{id: userid()}"
+              :before-upload="handleBeforeUpload"
               :on-success="handleSuccess"
+              :show-upload-list="false"
               :format="['jpg','jpeg','png']"
               :max-size="2048"
               :on-format-error="handleFormatError"
@@ -167,6 +169,9 @@
       handleRemove (file) {
         this.avatar.status = 'none'
         this.avatar.url = ''
+      },
+      handleBeforeUpload () {
+        this.avatar.url = ' '
       },
       handleSuccess (res, file) {
         console.log('abcdefg')
