@@ -43,9 +43,8 @@
             } else {
               sessionStorage.setItem('userid', data['id'])
               sessionStorage.setItem('utype', data['utype'])
+              that.$store.commit('login', {'userid': Number(data['id']), 'utype': data['utype']})
               that.$router.push({name: data['utype']})
-              that.$store.commit('login')
-              console.log(that.$store.state.online)
             }
           }).catch(function (ex) {
             alert('Network Error')
