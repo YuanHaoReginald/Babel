@@ -32,7 +32,7 @@ def UserSignUp(request):
             elif user_type == 'employer':
                 new_user = Employer.objects.create_user(username=new_username, password=new_password, email=new_email, utype='employer')
             response_dict = {'id': new_user.id}
-            login(request, new_user)
+            auth.login(request, new_user)
         return JsonResponse(response_dict)
 
 
@@ -42,20 +42,18 @@ def UserSignIn(request):
         info_dict = json.loads(request.body.decode())
         username = info_dict['username']
         password = info_dict['password']
-        user = authenticate(username=username, password=password)
+        user = auth.authenticate(username=username, password=password)
         if user is None:
             return JsonResponse({'id': 0})
         else:
-            login(request, user)
+            auth.login(request, user)
             return JsonResponse({'id': user.id, 'utype': user.utype})
 
-@login_required
 def UserLogout(request):
-    logout(request)
+    auth.logout(request)
     return HttpResponse(0)
 
 # get user info
-@login_required
 def GetUserInfo(request):
     if request.method == 'GET':
         user = auth.get_user(request)
@@ -72,6 +70,7 @@ def GetUserInfo(request):
             response_dict['headSrc'] = user.avatar.url
         return JsonResponse(response_dict)
 
+##### 18/1/2 2:18 ###
 
 # sign up more
 def UserModify(request):
