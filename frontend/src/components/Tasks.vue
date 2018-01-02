@@ -50,7 +50,7 @@
           },
           {
             title: 'title',
-            status: '未发布',
+            status: '待发布',
             publishTime: 'publishTime',
             ddlTime: 'ddlTime',
             tags: ['art', 'math'],
@@ -77,7 +77,7 @@
           for (let task of data.taskList) {
             switch (task.status) {
               case 0:
-                task.status = '未发布'
+                task.status = '待发布'
                 break
               case 1:
                 task.status = '进行中'

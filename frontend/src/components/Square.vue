@@ -89,7 +89,7 @@
         this.$router.push('/task/' + taskid)
       },
       canPickup: function (assignment) {
-        return assignment.status === '待领取' && sessionStorage.getItem('utype') === 'translator'
+        return assignment.status === '待领取' && this.$store.state.utype === 'translator'
       }
     },
     data () {
@@ -194,10 +194,10 @@
               tmpassignment['translator'] = assignment.translator
               switch (assignment.status) {
                 case 0:
-                  tmpassignment['status'] = '未发布'
+                  tmpassignment['status'] = '待发布'
                   break
                 case 1:
-                  tmpassignment['status'] = '未认领'
+                  tmpassignment['status'] = '待领取'
                   break
                 case 2:
                   tmpassignment['status'] = '进行中'

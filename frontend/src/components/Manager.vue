@@ -31,9 +31,9 @@
             <Card dis-hover>
               <p>翻译者：{{ a.argument_translator }}</p>
               <p>雇主：{{ a.argument_employer }}</p>
-              <div v-if="a.status == '未审核'" class="buttons">
-                <Button type="primary" @click="setArgue(a, true)">同意</Button>
-                <Button type="error" @click="setArgue(a, false)">不同意</Button>
+              <div v-if="a.status == '待审核'" class="buttons">
+                <Button type="primary">同意</Button>
+                <Button type="error">不同意</Button>
                 <div class="input">
                   <Input v-model="a.reason" type="textarea" size="large"></Input>
                 </div>
@@ -89,13 +89,15 @@
         licenses: {
           notVerified: [
             {
+              type: '',
               description: '1234567',
               url: 'http://www.cxyym.com/wp-content/uploads/2016/04/030a3bb51ba6ef4e0f7e73798a246655.png',
               result: '',
               reason: ''
             },
             {
-              description: '1234567',
+              type: '',
+              description: 'qwertyu',
               url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTinVcxgZ5o4TUaUzgfoUKGIuHMOCSnopg6lPs_WEjVZgZ7QBfc',
               result: '',
               reason: ''
