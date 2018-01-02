@@ -32,8 +32,8 @@
               <p>翻译者：{{ a.argument_translator }}</p>
               <p>雇主：{{ a.argument_employer }}</p>
               <div v-if="a.status == '待审核'" class="buttons">
-                <Button type="primary">同意</Button>
-                <Button type="error">不同意</Button>
+                <Button type="primary" @click="setArgue(a, true)">同意</Button>
+                <Button type="error" @click="setArgue(a, false)">不同意</Button>
                 <div class="input">
                   <Input v-model="a.reason" type="textarea" size="large"></Input>
                 </div>
@@ -48,6 +48,35 @@
             <Card dis-hover>
               <p>翻译者：{{ a.argument_translator }}</p>
               <p>雇主：{{ a.argument_employer }}</p>
+              <p v-if="a.result">同意</p><p v-else>不同意</p>
+              <p>理由：{{ a.reason }}</p>
+            </Card>
+          </div>
+        </li>
+      </ul>
+      <ul v-if="checking === 'licenses_notVerified'">
+        <li v-for="l in licenses.notVerified">
+          <div class="card">
+            <Card dis-hover>
+              <p>证书：{{ l.url }}</p>
+              <p>类型：{{ l.type }}</p>
+              <p>描述：{{ l.description }}</p>
+              <div v-if="l.status == '待审核'" class="buttons">
+                <Button type="primary" @click="setLicense(l, true)">有效</Button>
+                <Button type="error" @click="setLicense(l, false)">无效</Button>
+              </div>
+            </Card>
+          </div>
+        </li>
+      </ul>
+      <ul v-if="checking === 'licenses_verified'">
+        <li v-for="l in licenses.verified">
+          <div class="card">
+            <Card dis-hover>
+              <p>证书：{{ l.url }}</p>
+              <p>类型：{{ l.type }}</p>
+              <p>描述：{{ l.description }}</p>
+              <p v-if="a.result">有效</p><p v-else>无效</p>
             </Card>
           </div>
         </li>
@@ -67,20 +96,20 @@
           notSolved: [
             {
               id: 1,
-              status: '未审核',
+              status: '待审核',
               assignment_name: 'name',
               argument_translator: '我觉得没问题',
               argument_employer: '我觉得翻译很差不能给这么多',
-              result: '',
+              result: null,
               reason: ''
             },
             {
               id: 2,
-              status: '未审核',
+              status: '待审核',
               assignment_name: 'name',
               argument_translator: '去你妈的',
               argument_employer: '滚',
-              result: '',
+              result: null,
               reason: ''
             }
           ],
@@ -89,18 +118,20 @@
         licenses: {
           notVerified: [
             {
+              id: 2,
+              status: '待审核',
               type: '',
               description: '1234567',
               url: 'http://www.cxyym.com/wp-content/uploads/2016/04/030a3bb51ba6ef4e0f7e73798a246655.png',
-              result: '',
-              reason: ''
+              result: null
             },
             {
+              id: 20,
+              status: '待审核',
               type: '',
               description: 'qwertyu',
               url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTinVcxgZ5o4TUaUzgfoUKGIuHMOCSnopg6lPs_WEjVZgZ7QBfc',
-              result: '',
-              reason: ''
+              result: null
             }
           ],
           verified: []
@@ -152,7 +183,48 @@
         }).catch(function (ex) {
           alert('Network Error')
         })
+      },
+      setLicense: function (license, result) {
+        license.status = '已审核'
+        license.result = result
+        this.licenses.verified[this.licenses.verified.length] = license
+        for (var i = 0; i < this.licenses.notVerified.length; ++i) {
+          if (this.licenses.notVerified[i] === license) {
+            this.licenses.notVerified.splice(i, 1)
+            break
+          }
+        }
+        let body = JSON.stringify({licenseid: license.id,
+          result: result
+        })
+        const headers = new Headers({
+          'Content-Type': 'application/json'
+        })
+        fetch('api/VerifyLicense', { method: 'POST',
+          headers,
+          credentials: 'include',
+          body: body })
+        .then(function (response) {
+          return response.json().then(function (data) {
+          })
+        }).catch(function (ex) {
+          alert('Network Error')
+        })
       }
+    },
+    created: function () {
+      const headers = new Headers({
+        'Content-Type': 'application/json'
+      })
+      fetch('api/GetManager', { method: 'GET',
+        headers,
+        credentials: 'include' })
+      .then(function (response) {
+        return response.json().then(function (data) {
+        })
+      }).catch(function (ex) {
+        alert('Network Error')
+      })
     }
   }
 </script>

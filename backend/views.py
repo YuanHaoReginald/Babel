@@ -326,12 +326,27 @@ def SolveDispute(request):
         dispute_id = info_dict['disputeid']
         result = info_dict['result']
         statement = info_dict['statement']
-        print(statement)
         dispute = Dispute.objects.get(id=dispute_id)
         dispute.adminStatement = statement
-        if status:
+        if result:
             dispute.status = 1
         else:
             dispute.status = 2
         dispute.save()
         return JsonResponse({'status': True})
+
+def VerifyLicense(request):
+    if request.method == 'POST':
+        info_dict = json.loads(request.body.decode())
+        license_id = info_dict['licenseid']
+        result = info_dict['result']
+        license = License.objects.get(id=license_id)
+        if result:
+            license.adminVerify = 1
+        else:
+            license.adminVerify = 2
+        license.save()
+        return JsonResponse({'status': True})
+
+def GetManager(request):
+    return HttpResponse(0)
