@@ -31,9 +31,9 @@
             <Card dis-hover>
               <p>翻译者：{{ a.argument_translator }}</p>
               <p>雇主：{{ a.argument_employer }}</p>
-              <div v-if="a.status == '未审核'" class="buttons">
-                <Button type="primary" @click="setArgue(a, true)">同意</Button>
-                <Button type="error" @click="setArgue(a, false)">不同意</Button>
+              <div v-if="a.status == '待审核'" class="buttons">
+                <Button type="primary">同意</Button>
+                <Button type="error">不同意</Button>
                 <div class="input">
                   <Input v-model="a.reason" type="textarea" size="large"></Input>
                 </div>

@@ -123,7 +123,7 @@
           that.assignment['description'] = assignment.description
           switch (assignment.status) {
             case 0:
-              that.assignment['status'] = '未发布'
+              that.assignment['status'] = '待发布'
               break
             case 1:
               that.assignment['status'] = '待认领'
