@@ -39,7 +39,7 @@
         .then(function (response) {
           return response.json().then(function (data) {
             if (data['id'] === 0) {
-              that.Message.warning('Username or Password Error')
+              that.$Message.warning('Username or Password Error')
             } else {
               sessionStorage.setItem('userid', data['id'])
               sessionStorage.setItem('utype', data['utype'])

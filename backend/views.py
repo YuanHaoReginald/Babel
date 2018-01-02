@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.contrib import auth
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -319,4 +318,20 @@ def PublishTask(request):
         for assignment in assignment_set:
             assignment.status = 1
             assignment.save()
+        return JsonResponse({'status': True})
+
+def SolveDispute(request):
+    if request.method == 'POST':
+        info_dict = json.loads(request.body.decode())
+        dispute_id = info_dict['disputeid']
+        result = info_dict['result']
+        statement = info_dict['statement']
+        print(statement)
+        dispute = Dispute.objects.get(id=dispute_id)
+        dispute.adminStatement = statement
+        if status:
+            dispute.status = 1
+        else:
+            dispute.status = 2
+        dispute.save()
         return JsonResponse({'status': True})

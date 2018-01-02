@@ -79,7 +79,7 @@ class Dispute(models.Model):
     assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE)
     employerStatement = models.TextField(max_length=1000, null=True)
     translatorStatement = models.TextField(max_length=1000, null=True)
-    status = models.IntegerField()  # 0:未处理；1：已处理
+    status = models.IntegerField(default=0)  # 0:未处理；1：TranslatorSide 2: EmployerSide
     adminStatement = models.TextField(max_length=1000, null=True)
 
 
