@@ -89,13 +89,15 @@
         licenses: {
           notVerified: [
             {
+              type: '',
               description: '1234567',
               url: 'http://www.cxyym.com/wp-content/uploads/2016/04/030a3bb51ba6ef4e0f7e73798a246655.png',
               result: '',
               reason: ''
             },
             {
-              description: '1234567',
+              type: '',
+              description: 'qwertyu',
               url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTinVcxgZ5o4TUaUzgfoUKGIuHMOCSnopg6lPs_WEjVZgZ7QBfc',
               result: '',
               reason: ''
