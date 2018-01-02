@@ -24,4 +24,5 @@ urlpatterns = [
     url(r'^SolveDispute$', views.SolveDispute, name='SolveDispute'),
     url(r'^VerifyLicense$', views.VerifyLicense, name='VerifyLicense'),
     url(r'^GetManager$', views.GetManager, name='GetManager'),
+    url(r'^AcceptAssignment$', views.AcceptAssignment, name='AcceptAssignment'),
 ]

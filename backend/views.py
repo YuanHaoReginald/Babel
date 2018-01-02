@@ -222,6 +222,7 @@ def GetTaskDetail(request):
         assignment_set = task.assignment_set.all()
         for assignment in assignment_set:
             response_dict['assignment'].append({
+                'id': assignment.id,
                 'order': assignment.order,
                 'description': assignment.description,
                 'translator': assignment.translator.username if assignment.translator else '',
@@ -350,3 +351,18 @@ def VerifyLicense(request):
 
 def GetManager(request):
     return HttpResponse(0)
+
+def AcceptAssignment(request):
+    if request.method == 'POST':
+        info_dict = json.loads(request.body.decode())
+        assignment_id = info_dict['assignmentid']
+        result = info_dict['result']
+        acceptance = info_dict['acceptance']
+        assignment = Assignment.objects.get(id=assignment_id)
+        if acceptance == 'accept':
+            assignment.scores = result
+        elif acceptance == 'reject':
+            Dispute.objects.create(assignment=assignment_id, employerStatement=result)
+        assignment.status = 3
+        assignment.save()
+        return JsonResponse({'status': True})

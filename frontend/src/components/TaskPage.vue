@@ -13,7 +13,7 @@
                   <p>任务状态: {{ a.status }}</p>
                   <!-- <p v-if="a.status == '已完成'">任务评分:&nbsp;<Rate disabled v-model="a.score"></Rate></p> -->
                   <Button v-if="a.status == '已完成'" type="primary" @click="modalConfirm = true">fuck</Button>
-                  <Modal title="确认任务" v-model="modalConfirm" :mask-closable="false" @on-ok="if(confirm==='accept'){a.score=valueCustomText}else{a.note=text}" :loading="loading">
+                  <Modal title="确认任务" v-model="modalConfirm" :mask-closable="false" @on-ok="acceptAssignment(a)" :loading="loading">
                     <RadioGroup v-model="confirm">
                       <Radio label="accept"></Radio>
                       <Radio label="reject"></Radio>
@@ -21,7 +21,7 @@
                     <Rate v-if="confirm === 'accept'" show-text allow-half v-model="valueCustomText">
                       <span style="color: #f5a623">{{ valueCustomText }}</span>
                     </Rate>
-                    <Input v-if="confirm !== 'accept'" v-model="text" type="textarea" :rows="4" placeholder="请写出你的拒绝理由"></Input>
+                    <Input v-else v-model="text" type="textarea" :rows="4" placeholder="请写出你的拒绝理由"></Input>
                   </Modal>
                   <p>任务描述： </p>
                   <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ a.description }}</p>
@@ -58,6 +58,7 @@
         language: '法语',
         assignments: [
           {
+            id: 1,
             order: 1,
             description: '这个任务需要翻译我给出的pdf文档的第20-40页，注意主要人名的翻' +
             '译要与附录中的统一。完成情况好的话我一定会好评的。',
@@ -69,6 +70,7 @@
             note: ''
           },
           {
+            id: 2,
             order: 2,
             description: 'PartII PartII PartII PartII PartII PartII ',
             status: '进行中',
@@ -114,6 +116,7 @@
           }
           for (let assignment of data['assignment']) {
             let tmp = []
+            tmp['id'] = assignment.id
             tmp['order'] = assignment.order
             tmp['description'] = assignment.description
             tmp['translator'] = assignment.translator
@@ -164,6 +167,42 @@
               for (let assignment of that.assignments) {
                 assignment.status = '待领取'
               }
+            }
+          })
+        }).catch(function (ex) {
+          alert('Network Error')
+        })
+      },
+      acceptAssignment: function (assignment) {
+        var result
+        if (this.confirm === 'accept') {
+          result = assignment.score = this.valueCustomText
+        } else {
+          result = assignment.note = this.text
+        }
+        let body = JSON.stringify({
+          assignmentid: assignment.id,
+          acceptance: this.confirm,
+          result: result
+        })
+        const headers = new Headers({
+          'Content-Type': 'application/json'
+        })
+        let that = this
+        fetch('api/AcceptAssignment', {
+          method: 'POST',
+          headers,
+          credentials: 'include',
+          body: body
+        })
+        .then(function (response) {
+          return response.json().then(function (data) {
+            if (data.status) {
+              assignment.status = '已完成'
+              assignment.scores = 0
+              that.valueCustomText = 3
+              that.text = ''
+              that.modalConfirm = false
             }
           })
         }).catch(function (ex) {
