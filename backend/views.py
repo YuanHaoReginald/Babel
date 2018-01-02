@@ -112,7 +112,7 @@ def UploadAvatar(request):
         user = auth.get_user(request)
         file_extension = avatar.name.split('.')[-1]
         user.avatar.delete()
-        user.avatar.save(user.username + '.' + file_extension, avatar)
+        user.avatar.save('avatars/' + user.username + '.' + file_extension, avatar)
     return JsonResponse({'url': user.avatar.name})
 
 def CreateTask(request):
@@ -145,8 +145,8 @@ def UploadTaskFile(request):
         file = request.FILES.get('file')
         taskid = request.POST.get('id')
         task = Task.objects.get(id = taskid)
-        task.fileUrl.save(file.name, file)
-    return HttpResponse(0)
+        task.fileUrl.save('tasks/' + file.name, file)
+    return JsonResponse({'url': task.fileUrl.name})
 
 def GetEmployerTasks(request):
     if request.method == 'GET':
@@ -161,6 +161,7 @@ def GetEmployerTasks(request):
             response_dict['taskList'].append({
                 'id': task.id,                
                 'title': task.title,
+                'status': task.status,
                 'publishTime': task.publishTime.timestamp(),
                 'ddlTime': task.ddlTime.timestamp(),
                 'tags': _temp_tag_list,
@@ -182,6 +183,7 @@ def GetTranslatorAssignments(request):
                 _temp_tag_list.append(tag)
             response_dict['assignmentList'].append({
                 'id': assignment.id,
+                'status': assignment.status,
                 'title': task.title,
                 'publishTime': task.publishTime.timestamp(),
                 'ddlTime': task.ddlTime.timestamp(),
@@ -200,6 +202,7 @@ def PickupAssignment(request):
         task = Task.objects.get(id = task_id)
         assignment = Assignment.objects.get(task = task, order = assignment_order)
         assignment.translator = user
+        assignment.status = 1
         assignment.save()
         return HttpResponse(0)
     
@@ -210,6 +213,7 @@ def GetTaskDetail(request):
         task = Task.objects.get(id=taskid)
         response_dict = {
             'title': task.title,
+            'status': task.status,
             'description': task.description,
             'publishTime': task.publishTime.timestamp(),
             'ddlTime': task.ddlTime.timestamp(),
@@ -301,5 +305,18 @@ def SubmitAssignment(request):
         assignmentid = request.POST.get('assignmentid')
         print(assignmentid)
         assignment = Assignment.objects.get(id = assignmentid)
-        assignment.submission.save(file.name, file)
+        assignment.submission.save('assignments/' + file.name, file)
     return JsonResponse({'url': assignment.submission.name})
+
+def PublishTask(request):
+    if request.method == 'POST':
+        info_dict = json.loads(request.body.decode())
+        task_id = info_dict['taskid']
+        task = Task.objects.get(id=task_id)
+        task.status = 1
+        task.save()
+        assignment_set = task.assignment_set.all()
+        for assignment in assignment_set:
+            assignment.status = 1
+            assignment.save()
+        return JsonResponse({'status': True})

@@ -24,6 +24,7 @@
     <div id="right">
       <div class="card"><Card dis-hover>
         <h3 id="right-info">任务信息</h3>
+        <p>任务状态：{{ status }}</p><Button v-if="status == '未发布'" @click="publishTask">立即发布</Button>
         <p>任务描述：{{ description }}</p>
         <p>任务语言：{{ language }}</p>
         <p>发布时间：{{ publishTime }}</p>
@@ -39,6 +40,7 @@
     data () {
       return {
         title: '法语文件翻译任务',
+        status: '已发布',
         description: '我是任务的描述',
         publishTime: '2017-3-1',
         ddlTime: '2017-5-10',
@@ -81,6 +83,17 @@
           that.publishTime = Date(data['publishTime'])
           that.ddlTime = Date(data['ddlTime'])
           that.language = data['language']
+          switch (data['status']) {
+            case 0:
+              that.status = '未发布'
+              break
+            case 1:
+              that.status = '进行中'
+              break
+            case 2:
+              that.status = '已结束'
+              break
+          }
           for (let assignment of data['assignment']) {
             let tmp = []
             tmp['order'] = assignment.order
@@ -113,6 +126,31 @@
       }).catch(function (ex) {
         alert('Network Error')
       })
+    },
+    methods: {
+      publishTask: function () {
+        let body = JSON.stringify({taskid: this.$route.params.tid})
+        const headers = new Headers({
+          'Content-Type': 'application/json'
+        })
+        let that = this
+        fetch('api/PublishTask', { method: 'POST',
+          headers,
+          credentials: 'include',
+          body: body})
+        .then(function (response) {
+          return response.json().then(function (data) {
+            if (data.status) {
+              that.status = '进行中'
+              for (let assignment of that.assignments) {
+                assignment.status = '未认领'
+              }
+            }
+          })
+        }).catch(function (ex) {
+          alert('Network Error')
+        })
+      }
     }
   }
 </script>

@@ -12,6 +12,16 @@
             已经处理
           </MenuItem>
         </MenuGroup>
+        <MenuGroup title="证书审核">
+          <MenuItem name="3">
+            <Icon type="document-text"></Icon>
+            尚未处理
+          </MenuItem>
+          <MenuItem name="4">
+            <Icon type="document-text"></Icon>
+            已经处理
+          </MenuItem>
+        </MenuGroup>
       </Menu>
     </div>
     <div id="right">
@@ -19,8 +29,8 @@
         <li v-for="a in argues">
           <div class="card">
             <Card dis-hover>
-              <p>翻译者：{{ a.argument_translator}}</p>
-              <p>雇主：{{ a.argument_employer}}</p>
+              <p>翻译者：{{ a.argument_translator }}</p>
+              <p>雇主：{{ a.argument_employer }}</p>
               <div v-if="a.status == '未审核'" class="buttons">
                 <Button type="primary">同意</Button>
                 <Button type="error">不同意</Button>

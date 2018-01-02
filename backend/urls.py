@@ -19,5 +19,6 @@ urlpatterns = [
     url(r'^GetTaskDetail$', views.GetTaskDetail, name='GetTaskDetail'),
     url(r'^GetAssignmentDetail$', views.GetAssignmentDetail, name='GetAssignmentDetail'),
     url(r'^GetSquareTasks$', views.GetSquareTasks, name='GetSquareTasks'),
+    url(r'^PublishTask$', views.PublishTask, name='PublishTask'),
     url(r'^SubmitAssignment$', views.SubmitAssignment, name='SubmitAssignment'),
 ]

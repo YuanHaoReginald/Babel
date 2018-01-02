@@ -39,6 +39,8 @@ class Employer(CommonUser):
 class Task(models.Model):
     title = models.CharField(max_length=30)
     description = models.CharField(max_length=512, null=True)
+    # (saved：0/published&running：1/closed：2)
+    status = models.IntegerField(default=0)
     fileUrl = models.FileField(max_length=256, null=True)
     fileType = models.IntegerField()  # 0:文本；1:音频; 2:视频; 3:其他
     employer = models.ForeignKey(
