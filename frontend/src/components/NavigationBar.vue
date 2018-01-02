@@ -28,7 +28,7 @@
             <router-link to="/login"><MenuItem>登入</MenuItem></router-link>
             <router-link to="/"><MenuItem>注册</MenuItem></router-link>
           </Submenu>
-        </div>>
+        </div>
         </Col>
       </Row>
       </div>

@@ -25,10 +25,10 @@
       </Menu>
     </div>
     <div id="right">
-      <ul v-if="checking === 'argues_notSolved'">
+      <ul v-if="checking === 'argues_notSolved'" class="argue">
         <li v-for="a in argues.notSolved">
           <div class="card">
-            <Card dis-hover>
+            <Card dis-hover padding="20">
               <p>翻译者：{{ a.argument_translator }}</p>
               <p>雇主：{{ a.argument_employer }}</p>
               <div v-if="a.status == '待审核'" class="buttons">
@@ -42,25 +42,29 @@
           </div>
         </li>
       </ul>
-      <ul v-if="checking === 'argues_solved'">
+      <ul v-if="checking === 'argues_solved'" class="argue">
         <li v-for="a in argues.solved">
           <div class="card">
-            <Card dis-hover>
+            <Card dis-hover padding="20">
+              <p v-if="a.result" class="status_text"><img src="../assets/yes.png" class="logo"><span>已同意</span></p>
+              <p v-else class="status_text"><img src="../assets/no.png" class="logo"><span>已拒绝</span></p>
               <p>翻译者：{{ a.argument_translator }}</p>
               <p>雇主：{{ a.argument_employer }}</p>
-              <p v-if="a.result">同意</p><p v-else>不同意</p>
               <p>理由：{{ a.reason }}</p>
             </Card>
           </div>
         </li>
       </ul>
-      <ul v-if="checking === 'licenses_notVerified'">
+      <ul v-if="checking === 'licenses_notVerified'" class="license">
         <li v-for="l in licenses.notVerified">
           <div class="card">
-            <Card dis-hover>
-              <p>证书：{{ l.url }}</p>
-              <p>类型：{{ l.type }}</p>
-              <p>描述：{{ l.description }}</p>
+            <Card dis-hover padding="20">
+              <p class="type_text">类型：{{ l.language }} | {{ l.type }}</p>
+              <Card dis-hover  class="img">
+                <div>
+                  <img :src="l.url">
+                </div>
+              </Card>
               <div v-if="l.status == '待审核'" class="buttons">
                 <Button type="primary" @click="setLicense(l, true)">有效</Button>
                 <Button type="error" @click="setLicense(l, false)">无效</Button>
@@ -70,9 +74,22 @@
         </li>
       </ul>
       <ul v-if="checking === 'licenses_verified'">
-        <li v-for="l in licenses.verified">
+        <li v-for="l in licenses.verified" class="license">
           <div class="card">
-            <Card dis-hover>
+            <Card dis-hover padding="20">
+              <p class="type_text">类型：{{ l.language }} | {{ l.type }}</p>
+              <Card dis-hover  class="img">
+                <div style="text-align:center">
+                  <img :src="l.url">
+                </div>
+              </Card>
+              <div v-if="l.status == '待审核'" class="buttons">
+                <Button type="primary" @click="setLicense(l, true)">有效</Button>
+                <Button type="error" @click="setLicense(l, false)">无效</Button>
+              </div>
+            </Card>
+          </div><div class="card">
+            <Card dis-hover  padding="20">
               <p>证书：{{ l.url }}</p>
               <p>类型：{{ l.type }}</p>
               <p>描述：{{ l.description }}</p>
@@ -85,6 +102,7 @@
     </div>
   </div>
 </template>
+
 <script>
   export default {
     data () {
@@ -120,17 +138,17 @@
             {
               id: 2,
               status: '待审核',
-              type: '',
-              description: '1234567',
-              url: 'http://www.cxyym.com/wp-content/uploads/2016/04/030a3bb51ba6ef4e0f7e73798a246655.png',
+              type: '专业四级',
+              language: '法语',
+              url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTinVcxgZ5o4TUaUzgfoUKGIuHMOCSnopg6lPs_WEjVZgZ7QBfc',
               result: null
             },
             {
               id: 20,
               status: '待审核',
-              type: '',
-              description: 'qwertyu',
-              url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTinVcxgZ5o4TUaUzgfoUKGIuHMOCSnopg6lPs_WEjVZgZ7QBfc',
+              type: '专业八级',
+              language: '法语',
+              url: 'http://www.cxyym.com/wp-content/uploads/2016/04/030a3bb51ba6ef4e0f7e73798a246655.png',
               result: null
             }
           ],
@@ -239,12 +257,16 @@
   div {
     text-align: left;
   }
+  span {
+    margin: 0 0 150px 10px;
+    color: #80848f;
+  }
   #left {
     float:left;
   }
   #right{
-    padding: 10px;
-    margin-left: 250px;
+    padding: 20px;
+    margin-left: 245px;
   }
   .center {
     text-align: center;
@@ -252,10 +274,32 @@
   .card {
     margin-bottom: 10px;
   }
+  .argue .card {
+    line-height:300%;
+  }
+  .license .card {
+    line-height:400%;
+  }
+  .status_text {
+
+  }
+  .logo {
+    width: 20px;
+  }
   .buttons {
-    margin: 10px;
+    margin: 10px 10px 10px 0;
   }
   .input {
-    margin: 10px;
+    margin: 10px 10px 10px 0;
+  }
+  .img {
+    width:355px;
+    text-align:center;
+  }
+  .img div img {
+    width: 320px;
+  }
+  .type_text {
+    font-size: 15px;
   }
 </style>

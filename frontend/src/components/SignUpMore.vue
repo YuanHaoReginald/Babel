@@ -92,23 +92,23 @@
         languageList: [
           {
             value: 'English',
-            label: '英语'
+            label: '英语 / English'
           },
           {
             value: 'Japanese',
-            label: '日语'
+            label: '日语 / 日本語'
           },
           {
             value: 'French',
-            label: '法语'
+            label: '法语 / Français'
           },
           {
             value: 'Russian',
-            label: '俄语'
+            label: '俄语 / русский'
           },
           {
             value: 'Spanish',
-            label: '西班牙语'
+            label: '西班牙语 / Español'
           }
         ],
         licenseList: {
