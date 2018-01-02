@@ -1,7 +1,23 @@
 import Vuex from 'vuex'
 import Vue from 'vue'
+import VuexPersistence from 'vuex-persist'
 
 Vue.use(Vuex)
+
+const vuexLocal = new VuexPersistence({
+  storage: window.localStorage,
+  reducer: state => ({
+    online: state.online,
+    userid: state.userid,
+    utype: state.utype,
+    username: state.username
+  }),
+  filter: (mutation) => (
+    mutation.type === 'setStatus' ||
+    mutation.type === 'login' ||
+    mutation.type === 'logout'
+  )
+})
 
 export default new Vuex.Store({
   state: {
@@ -28,5 +44,6 @@ export default new Vuex.Store({
       state.utype = ''
       state.username = ''
     }
-  }
+  },
+  plugins: [vuexLocal.plugin]
 })
