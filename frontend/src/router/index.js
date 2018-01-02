@@ -22,6 +22,9 @@ const router = new Router({
     {
       path: '/',
       name: 'welcome',
+      meta: {
+        notRequireAuth: true
+      },
       component: Welcome
     },
     {
@@ -103,14 +106,11 @@ const router = new Router({
 
 router.beforeEach((to, from, next) => {
   if (to.matched.some(r => r.meta.requireAuth)) {
-    // if (sessionStorage.getItem('userid')) {
     if (Number(store.state.userid) !== 0) {
       if (to.matched.some(r => r.meta.requireType)) {
-        // if (to.meta.requireType !== sessionStorage['utype']) {
         console.log(to.meta.requireType)
         console.log(store.state.utype)
         if (to.meta.requireType !== store.state.utype) {
-          // if (sessionStorage['utype'] === 'translator') {
           if (store.state.utype === 'translator') {
             next({
               path: '/translator'
@@ -130,6 +130,14 @@ router.beforeEach((to, from, next) => {
       next({
         path: '/login'
       })
+    }
+  } else if (to.matched.some(r => r.meta.notRequireAuth)) {
+    if (Number(store.state.userid) !== 0) {
+      next({
+        path: '/square'
+      })
+    } else {
+      next()
     }
   } else {
     next()
