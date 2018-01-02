@@ -150,11 +150,13 @@
         return false
       },
       handleUpload () {
-        this.loadingStatus = true
-        this.$refs.upload.data = {id: this.task_id}
-        this.$refs.upload.post(this.file)
-        this.file = null
-        this.loadingStatus = false
+        if (this.file) {
+          this.loadingStatus = true
+          this.$refs.upload.data = {id: this.task_id}
+          this.$refs.upload.post(this.file)
+          this.file = null
+          this.loadingStatus = false
+        }
       },
       addAssignment () {
         this.assignment_num = this.assignment_num + 1

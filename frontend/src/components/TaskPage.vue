@@ -24,7 +24,7 @@
     <div id="right">
       <div class="card"><Card dis-hover>
         <h3 id="right-info">任务信息</h3>
-        <p>任务状态：{{ status }}</p><Button v-if="status == '未发布'" @click="publishTask">立即发布</Button>
+        <p>任务状态：{{ status }}</p><Button v-if="status == '待发布'" @click="publishTask">立即发布</Button>
         <p>任务描述：{{ description }}</p>
         <p>任务语言：{{ language }}</p>
         <p>发布时间：{{ publishTime }}</p>
@@ -85,7 +85,7 @@
           that.language = data['language']
           switch (data['status']) {
             case 0:
-              that.status = '未发布'
+              that.status = '待发布'
               break
             case 1:
               that.status = '进行中'
@@ -101,10 +101,10 @@
             tmp['translator'] = assignment.translator
             switch (assignment.status) {
               case 0:
-                tmp['status'] = '未发布'
+                tmp['status'] = '待发布'
                 break
               case 1:
-                tmp['status'] = '未认领'
+                tmp['status'] = '待领取'
                 break
               case 2:
                 tmp['status'] = '进行中'
@@ -143,7 +143,7 @@
             if (data.status) {
               that.status = '进行中'
               for (let assignment of that.assignments) {
-                assignment.status = '未认领'
+                assignment.status = '待领取'
               }
             }
           })
