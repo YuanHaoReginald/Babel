@@ -239,6 +239,30 @@
         credentials: 'include' })
       .then(function (response) {
         return response.json().then(function (data) {
+          this.total = data.DisputeList.length
+          this.argues.notSolved = []
+          for (let dispute of data.DisputeList) {
+            this.argues.notSolved.push({
+              id: dispute['id'],
+              status: '待审核',
+              assignment_name: dispute['assignment_name'],
+              argument_translator: dispute['argument_translator'],
+              argument_employer: dispute['argument_employer'],
+              result: null,
+              reason: ''
+            })
+          }
+          this.licenses.notVerified = []
+          for (let license of data.LicenseList) {
+            this.licenses.notVerified.push({
+              id: license['id'],
+              status: '待审核',
+              type: license['type'],
+              description: license['description'],
+              url: license['url'],
+              result: null
+            })
+          }
         })
       }).catch(function (ex) {
         alert('Network Error')
