@@ -11,7 +11,18 @@
                 <Col span="2"><h3>{{ a.order }}</h3></Col>
                 <Col span="22">
                   <p>任务状态: {{ a.status }}</p>
-                  <p v-if="a.status == '已完成'">任务评分:&nbsp;<Rate disabled v-model="a.score"></Rate></p>
+                  <!-- <p v-if="a.status == '已完成'">任务评分:&nbsp;<Rate disabled v-model="a.score"></Rate></p> -->
+                  <Button v-if="a.status == '已完成'" type="primary" @click="modalConfirm = true">fuck</Button>
+                  <Modal title="确认任务" v-model="modalConfirm" :mask-closable="false" @on-ok="if(confirm==='accept'){a.score=valueCustomText}else{a.note=text}" :loading="loading">
+                    <RadioGroup v-model="confirm">
+                      <Radio label="accept"></Radio>
+                      <Radio label="reject"></Radio>
+                    </RadioGroup><br>
+                    <Rate v-if="confirm === 'accept'" show-text allow-half v-model="valueCustomText">
+                      <span style="color: #f5a623">{{ valueCustomText }}</span>
+                    </Rate>
+                    <Input v-if="confirm !== 'accept'" v-model="text" type="textarea" :rows="4" placeholder="请写出你的拒绝理由"></Input>
+                  </Modal>
                   <p>任务描述： </p>
                   <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ a.description }}</p>
                 </Col>
@@ -54,7 +65,8 @@
             translator: '2333',
             score: 4,
             price: '20元',
-            submission: '/2333/455'
+            submission: '/2333/455',
+            note: ''
           },
           {
             order: 2,
@@ -63,9 +75,15 @@
             translator: '2333',
             score: 4,
             price: '20元',
-            submission: '/2333/455'
+            submission: '/2333/455',
+            note: ''
           }
-        ]
+        ],
+        modalConfirm: false,
+        confirm: 'accept',
+        valueCustomText: 3,
+        loading: true,
+        text: ''
       }
     },
     created: function () {
@@ -120,6 +138,7 @@
             }
             tmp['price'] = assignment.price
             tmp['submission'] = assignment.submission
+            tmp['note'] = ''
             that.assignments.push(tmp)
           }
         })
