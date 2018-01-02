@@ -350,7 +350,33 @@ def VerifyLicense(request):
         return JsonResponse({'status': True})
 
 def GetManager(request):
-    return HttpResponse(0)
+    if request.method == 'GET':
+        print('-----------------------GetManager-----------------')
+        response_dict = {
+            'DisputeList': [],
+            'LicenseList': []
+        }
+        dispute_set = Dispute.objects.filter(status=0)
+        if dispute_set.count() > 100:
+            dispute_set = dispute_set[:100]
+        for dispute in dispute_set:
+            response_dict['DisputeList'].append({
+                'id': dispute.id,
+                'assignment_name': dispute.assignment.description,
+                'argument_translator': dispute.translatorStatement,
+                'argument_employer': dispute.employerStatement,
+            })
+        license_set = License.objects.filter(status=0)
+        if license_set.count() > 100:
+            license_set = license_set[:100]
+        for _license in license_set:
+            response_dict['LicenseList'].append({
+                'id': _license.id,
+                'type': _license.licenseType,
+                'description': _license.description,
+                'url': _license.licenseImage,
+            })
+        return JsonResponse(response_dict)
 
 def AcceptAssignment(request):
     if request.method == 'POST':
