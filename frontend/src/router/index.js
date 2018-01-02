@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import store from '../store/store'
+// import store from '../store/store'
 import Login from '@/components/Login'
 import Welcome from '@/components/Welcome'
 import SignUpSimple from '@/components/SignUpSimple'
@@ -103,7 +103,7 @@ const router = new Router({
     // nginx:no 404 -> index.html(history)
   ]
 })
-
+/*
 router.beforeEach((to, from, next) => {
   if (to.matched.some(r => r.meta.requireAuth)) {
     if (Number(store.state.userid) !== 0) {
@@ -143,5 +143,5 @@ router.beforeEach((to, from, next) => {
     next()
   }
 })
-
+*/
 export default router

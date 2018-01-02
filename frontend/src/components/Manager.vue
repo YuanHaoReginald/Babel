@@ -78,8 +78,8 @@
               id: 2,
               status: '未审核',
               assignment_name: 'name',
-              argument_translator: '去你妈的',
-              argument_employer: '滚',
+              argument_translator: '大家加油',
+              argument_employer: '最胖',
               result: '',
               reason: ''
             }

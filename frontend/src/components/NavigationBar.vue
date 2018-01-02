@@ -19,14 +19,16 @@
         </Submenu>
         </Col>
         <Col span="3"offset="8" v-else>
-        <Submenu name="3">
-          <template slot="title">
-            <Icon type="alert-circled"></Icon>
-            离线状态
-          </template>
-          <router-link to="/login"><MenuItem>登入</MenuItem></router-link>
-          <router-link to="/"><MenuItem>注册</MenuItem></router-link>
-        </Submenu>
+        <div class="icon">
+          <Submenu name="3">
+            <template slot="title">
+              <Icon type="person" size="40"></Icon>
+              游客
+            </template>
+            <router-link to="/login"><MenuItem>登入</MenuItem></router-link>
+            <router-link to="/"><MenuItem>注册</MenuItem></router-link>
+          </Submenu>
+        </div>>
         </Col>
       </Row>
       </div>
@@ -89,5 +91,8 @@
   #center {
     margin-right: auto;
     margin-left: auto;
+  }
+  .icon {
+    margin-top: 5px;
   }
 </style>
