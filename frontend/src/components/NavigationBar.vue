@@ -61,7 +61,7 @@
         })
       },
       toProfile: function () {
-        this.$router.push({name: sessionStorage.getItem('utype')})
+        this.$router.push({name: this.$store.state.utype})
       },
       toWebmain: function () {
         if (this.$store.state.online) {
