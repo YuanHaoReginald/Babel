@@ -4,9 +4,9 @@
     <Card dis-hover>
       <div class="card">
         <div class="title"><h2>完善个人信息</h2></div>
-        <div class="box">
+        <div class="box" id="head">
           <h3>上传头像：</h3>
-          <div class="avatar-upload" v-if="avatar.url != ''">
+          <div class="input"><div class="avatar-upload" v-if="avatar.url != ''">
             <template v-if="avatar.status === 'finished'">
               <img :src="avatar.url">
               <div class="upload-cover">
@@ -39,7 +39,7 @@
                 <Icon type="camera" size="20"></Icon>
               </div>
             </Upload>
-          </div>
+          </div></div>
         </div>
         <div class="box">
           <h3>电话：</h3>
@@ -60,6 +60,7 @@
           </Select>
           <ul>
             <li v-for="l in licenseList[language]">
+              &nbsp;
               <Row>
                 <Col span="4"><h4>{{ l.label }}:</h4></Col>
                 <Col span="6"><Upload><Button>上传证书扫描件</Button></Upload></Col>
@@ -91,23 +92,23 @@
         languageList: [
           {
             value: 'English',
-            label: '英语'
+            label: '英语 / English'
           },
           {
             value: 'Japanese',
-            label: '日语'
+            label: '日语 / 日本語'
           },
           {
             value: 'French',
-            label: '法语'
+            label: '法语 / Français'
           },
           {
             value: 'Russian',
-            label: '俄语'
+            label: '俄语 / русский'
           },
           {
             value: 'Spanish',
-            label: '西班牙语'
+            label: '西班牙语 / Español'
           }
         ],
         licenseList: {
@@ -253,6 +254,9 @@
   #submitButton {
     margin-top: 150px;
   }
+  #head {
+    text-align: left;
+  }
   h2 {
     color: #1c2438;
     text-align: left;
@@ -269,22 +273,19 @@
     margin-bottom: 20px;
   }
   .avatar-upload{
-    display: inline-block;
     width: 60px;
     height: 60px;
-    text-align: center;
     line-height: 60px;
     border: 1px solid transparent;
     border-radius: 4px;
     overflow: hidden;
     background: #fff;
-    position: relative;
     box-shadow: 0 1px 1px rgba(0,0,0,.2);
     margin-right: 4px;
   }
   .avatar-upload img{
-      width: 100%;
-      height: 100%;
+    width: 100%;
+    height: 100%;
   }
   .upload-cover{
       display: none;

@@ -11,7 +11,18 @@
                 <Col span="2"><h3>{{ a.order }}</h3></Col>
                 <Col span="22">
                   <p>任务状态: {{ a.status }}</p>
-                  <p v-if="a.status == '已完成'">任务评分:&nbsp;<Rate disabled v-model="a.score"></Rate></p>
+                  <Button v-if="a.status == '进行中'" type="primary" @click="modalConfirm = true">任务验收</Button>
+                  <Modal title="确认任务" v-model="modalConfirm" :mask-closable="false" @on-ok="acceptAssignment(a)" :loading="loading">
+                    <RadioGroup v-model="confirm">
+                      <Radio label="accept"></Radio>
+                      <Radio label="reject"></Radio>
+                    </RadioGroup><br>
+                    <Rate v-if="confirm === 'accept'" show-text allow-half v-model="valueCustomText">
+                      <span style="color: #f5a623">{{ valueCustomText }}</span>
+                    </Rate>
+                    <Input v-else v-model="text" type="textarea" :rows="4" placeholder="请写出你的拒绝理由"></Input>
+                  </Modal>
+                  <span v-if="a.status == '已完成'"><b>任务评分</b>:&nbsp;<Rate allow-half disabled v-model="a.score">{{a.score}}</Rate></span>
                   <p>任务描述： </p>
                   <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ a.description }}</p>
                 </Col>
@@ -24,7 +35,7 @@
     <div id="right">
       <div class="card"><Card dis-hover>
         <h3 id="right-info">任务信息</h3>
-        <p>任务状态：{{ status }}</p><Button v-if="status == '未发布'" @click="publishTask">立即发布</Button>
+        <p>任务状态：{{ status }}</p><Button v-if="status == '待发布'" @click="publishTask">立即发布</Button>
         <p>任务描述：{{ description }}</p>
         <p>任务语言：{{ language }}</p>
         <p>发布时间：{{ publishTime }}</p>
@@ -47,25 +58,34 @@
         language: '法语',
         assignments: [
           {
+            id: 1,
             order: 1,
             description: '这个任务需要翻译我给出的pdf文档的第20-40页，注意主要人名的翻' +
             '译要与附录中的统一。完成情况好的话我一定会好评的。',
-            status: '已完成',
+            status: '进行中',
             translator: '2333',
             score: 4,
             price: '20元',
-            submission: '/2333/455'
+            submission: '/2333/455',
+            note: ''
           },
           {
+            id: 2,
             order: 2,
             description: 'PartII PartII PartII PartII PartII PartII ',
             status: '进行中',
             translator: '2333',
             score: 4,
             price: '20元',
-            submission: '/2333/455'
+            submission: '/2333/455',
+            note: ''
           }
-        ]
+        ],
+        modalConfirm: false,
+        confirm: 'accept',
+        valueCustomText: 3,
+        loading: true,
+        text: ''
       }
     },
     created: function () {
@@ -85,7 +105,7 @@
           that.language = data['language']
           switch (data['status']) {
             case 0:
-              that.status = '未发布'
+              that.status = '待发布'
               break
             case 1:
               that.status = '进行中'
@@ -96,15 +116,16 @@
           }
           for (let assignment of data['assignment']) {
             let tmp = []
+            tmp['id'] = assignment.id
             tmp['order'] = assignment.order
             tmp['description'] = assignment.description
             tmp['translator'] = assignment.translator
             switch (assignment.status) {
               case 0:
-                tmp['status'] = '未发布'
+                tmp['status'] = '待发布'
                 break
               case 1:
-                tmp['status'] = '未认领'
+                tmp['status'] = '待领取'
                 break
               case 2:
                 tmp['status'] = '进行中'
@@ -120,6 +141,7 @@
             }
             tmp['price'] = assignment.price
             tmp['submission'] = assignment.submission
+            tmp['note'] = ''
             that.assignments.push(tmp)
           }
         })
@@ -143,8 +165,44 @@
             if (data.status) {
               that.status = '进行中'
               for (let assignment of that.assignments) {
-                assignment.status = '未认领'
+                assignment.status = '待领取'
               }
+            }
+          })
+        }).catch(function (ex) {
+          alert('Network Error')
+        })
+      },
+      acceptAssignment: function (assignment) {
+        var result
+        if (this.confirm === 'accept') {
+          result = assignment.score = this.valueCustomText
+        } else {
+          result = assignment.note = this.text
+          assignment.score = 0
+        }
+        let body = JSON.stringify({
+          assignmentid: assignment.id,
+          acceptance: this.confirm,
+          result: result
+        })
+        const headers = new Headers({
+          'Content-Type': 'application/json'
+        })
+        let that = this
+        fetch('api/AcceptAssignment', {
+          method: 'POST',
+          headers,
+          credentials: 'include',
+          body: body
+        })
+        .then(function (response) {
+          return response.json().then(function (data) {
+            if (data.status) {
+              assignment.status = '已完成'
+              that.valueCustomText = 3
+              that.text = ''
+              that.modalConfirm = false
             }
           })
         }).catch(function (ex) {

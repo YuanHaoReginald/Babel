@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.contrib import auth
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -227,6 +226,7 @@ def GetTaskDetail(request):
         assignment_set = task.assignment_set.all()
         for assignment in assignment_set:
             response_dict['assignment'].append({
+                'id': assignment.id,
                 'order': assignment.order,
                 'description': assignment.description,
                 'translator': assignment.translator.username if assignment.translator else '',
@@ -323,4 +323,77 @@ def PublishTask(request):
         for assignment in assignment_set:
             assignment.status = 1
             assignment.save()
+        return JsonResponse({'status': True})
+
+
+def SolveDispute(request):
+    if request.method == 'POST':
+        info_dict = json.loads(request.body.decode())
+        dispute_id = info_dict['disputeid']
+        result = info_dict['result']
+        statement = info_dict['statement']
+        dispute = Dispute.objects.get(id=dispute_id)
+        dispute.adminStatement = statement
+        if result:
+            dispute.status = 1
+        else:
+            dispute.status = 2
+        dispute.save()
+        return JsonResponse({'status': True})
+
+def VerifyLicense(request):
+    if request.method == 'POST':
+        info_dict = json.loads(request.body.decode())
+        license_id = info_dict['licenseid']
+        result = info_dict['result']
+        license = License.objects.get(id=license_id)
+        if result:
+            license.adminVerify = 1
+        else:
+            license.adminVerify = 2
+        license.save()
+        return JsonResponse({'status': True})
+
+def GetManager(request):
+    if request.method == 'GET':
+        print('-----------------------GetManager-----------------')
+        response_dict = {
+            'DisputeList': [],
+            'LicenseList': []
+        }
+        dispute_set = Dispute.objects.filter(status=0)
+        if dispute_set.count() > 100:
+            dispute_set = dispute_set[:100]
+        for dispute in dispute_set:
+            response_dict['DisputeList'].append({
+                'id': dispute.id,
+                'assignment_name': dispute.assignment.description,
+                'argument_translator': dispute.translatorStatement,
+                'argument_employer': dispute.employerStatement,
+            })
+        license_set = License.objects.filter(status=0)
+        if license_set.count() > 100:
+            license_set = license_set[:100]
+        for _license in license_set:
+            response_dict['LicenseList'].append({
+                'id': _license.id,
+                'type': _license.licenseType,
+                'description': _license.description,
+                'url': _license.licenseImage,
+            })
+        return JsonResponse(response_dict)
+
+def AcceptAssignment(request):
+    if request.method == 'POST':
+        info_dict = json.loads(request.body.decode())
+        assignment_id = info_dict['assignmentid']
+        result = info_dict['result']
+        acceptance = info_dict['acceptance']
+        assignment = Assignment.objects.get(id=assignment_id)
+        if acceptance == 'accept':
+            assignment.scores = result
+        elif acceptance == 'reject':
+            Dispute.objects.create(assignment=assignment_id, employerStatement=result)
+        assignment.status = 3
+        assignment.save()
         return JsonResponse({'status': True})

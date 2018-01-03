@@ -69,6 +69,15 @@
                 <Col span="17"><div class="input_assignment"><Input v-model="a.text" type="textarea"></Input></div></Col>
                 <Col span="2"><div class="delete_button" v-if="assignment_num > 1"><Button type="ghost" @click="deleteAssignment(a.order)">删除</Button></div></Col>
               </Row>
+              <Row>
+                <Col span="1">
+                <div>
+                  <h4>&nbsp;</h4>
+                </div>
+                </Col>
+                <Col span="4"><div class="task_text"><h4>报酬:</h4></div></Col>
+                <Col span="17"><div class="input_assignment"><InputNumber v-model="a.price"  size="large"></InputNumber>&nbsp;元</div></Col>
+              </Row>
             </li>
           </ul>
         </div>
@@ -129,7 +138,8 @@
         assignments: [
           {
             order: 1,
-            text: ''
+            text: '',
+            price: 0
           }
         ]
       }
@@ -140,11 +150,13 @@
         return false
       },
       handleUpload () {
-        this.loadingStatus = true
-        this.$refs.upload.data = {id: this.task_id}
-        this.$refs.upload.post(this.file)
-        this.file = null
-        this.loadingStatus = false
+        if (this.file) {
+          this.loadingStatus = true
+          this.$refs.upload.data = {id: this.task_id}
+          this.$refs.upload.post(this.file)
+          this.file = null
+          this.loadingStatus = false
+        }
       },
       addAssignment () {
         this.assignment_num = this.assignment_num + 1
@@ -213,10 +225,13 @@
   }
   .input {
     margin-top:5px;
+    text-align: left;
   }
   .input_assignment {
     margin-top: 5px;
     width: 450px;
+    text-align: left;
+    color: #80848f;
   }
   .task_text {
     text-align: center;

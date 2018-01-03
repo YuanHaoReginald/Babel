@@ -1,16 +1,16 @@
 <template>
   <div class="root">
     <div id="left">
-      <div class="card" v-for="task in tasklist" @click="checkTaskDetail(task.id)"><Card dis-hover>
+      <div class="card" v-for="task in tasklist"><Card dis-hover>
         <div class="task" >
           <h4>标签：{{ toStr(task.tags) }}</h4>
-          <h2>{{ task.title }}</h2>
+          <h2 @click="checkTaskDetail(task.id)">{{ task.title }}</h2>
           <ul>
             <li v-for="a in task.assignments">
               <span class="order">{{ a.order }}</span>
               <span class="words"><b>报酬</b>：{{ a.price }}</span>
               <span class="words"><b>状态</b>： {{ a.status }}</span>
-              <span v-if="a.status == '已完成'"><b>任务评分</b>:&nbsp;<Rate disabled v-model="a.score"></Rate></span>
+              <span v-if="a.status == '已完成'"><b>任务评分</b>:&nbsp;<Rate allow-half disabled v-model="a.score"></Rate></span>
               <span v-if="canPickup(a)"><Button type="primary" size="small" @click="pickup(task.id, a.order)">领取任务</Button></span>
               <p class="description"><b>详情</b>： {{ a.description }}</p>
             </li>
@@ -89,7 +89,7 @@
         this.$router.push('/task/' + taskid)
       },
       canPickup: function (assignment) {
-        return assignment.status === '待领取' && sessionStorage.getItem('utype') === 'translator'
+        return assignment.status === '待领取' && this.$store.state.utype === 'translator'
       }
     },
     data () {
@@ -194,10 +194,10 @@
               tmpassignment['translator'] = assignment.translator
               switch (assignment.status) {
                 case 0:
-                  tmpassignment['status'] = '未发布'
+                  tmpassignment['status'] = '待发布'
                   break
                 case 1:
-                  tmpassignment['status'] = '未认领'
+                  tmpassignment['status'] = '待领取'
                   break
                 case 2:
                   tmpassignment['status'] = '进行中'
