@@ -11,8 +11,7 @@
                 <Col span="2"><h3>{{ a.order }}</h3></Col>
                 <Col span="22">
                   <p>任务状态: {{ a.status }}</p>
-                  <!-- <p v-if="a.status == '已完成'">任务评分:&nbsp;<Rate disabled v-model="a.score"></Rate></p> -->
-                  <Button v-if="a.status == '已完成'" type="primary" @click="modalConfirm = true">fuck</Button>
+                  <Button v-if="a.status == '进行中'" type="primary" @click="modalConfirm = true">任务验收</Button>
                   <Modal title="确认任务" v-model="modalConfirm" :mask-closable="false" @on-ok="acceptAssignment(a)" :loading="loading">
                     <RadioGroup v-model="confirm">
                       <Radio label="accept"></Radio>
@@ -23,6 +22,7 @@
                     </Rate>
                     <Input v-else v-model="text" type="textarea" :rows="4" placeholder="请写出你的拒绝理由"></Input>
                   </Modal>
+                  <span v-if="a.status == '已完成'"><b>任务评分</b>:&nbsp;<Rate allow-half disabled v-model="a.score">{{a.score}}</Rate></span>
                   <p>任务描述： </p>
                   <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ a.description }}</p>
                 </Col>
@@ -62,7 +62,7 @@
             order: 1,
             description: '这个任务需要翻译我给出的pdf文档的第20-40页，注意主要人名的翻' +
             '译要与附录中的统一。完成情况好的话我一定会好评的。',
-            status: '已完成',
+            status: '进行中',
             translator: '2333',
             score: 4,
             price: '20元',
@@ -179,6 +179,7 @@
           result = assignment.score = this.valueCustomText
         } else {
           result = assignment.note = this.text
+          assignment.score = 0
         }
         let body = JSON.stringify({
           assignmentid: assignment.id,
@@ -199,7 +200,6 @@
           return response.json().then(function (data) {
             if (data.status) {
               assignment.status = '已完成'
-              assignment.scores = 0
               that.valueCustomText = 3
               that.text = ''
               that.modalConfirm = false
