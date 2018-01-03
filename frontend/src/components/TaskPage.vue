@@ -50,12 +50,13 @@
     <div id="right">
       <div class="card"><Card dis-hover>
         <h3 id="right-info">任务信息</h3>
-        <p>任务状态：{{ status }}</p><Button v-if="status == '待发布' && isowner" @click="publishTask">立即发布</Button>
+        <p>任务状态：{{ status }}</p>
         <p>任务描述：{{ description }}</p>
         <p>任务语言：{{ language }}</p>
         <p>发布时间：{{ publishTime }}</p>
         <p>截止时间：{{ ddlTime }}</p>
         <p>任务文件：<a :href="DownloadTask(taskFile)">{{ taskFile }}</a></p>
+        <Button v-if="status == '待发布'" @click="publishTask"  type="info">立即发布</Button>
       </Card></div>
     </div>
   </div>
@@ -68,7 +69,7 @@
       return {
         id: 0,
         title: '法语文件翻译任务',
-        status: '已发布',
+        status: '待发布',
         description: '我是任务的描述',
         publishTime: '2017-3-1',
         ddlTime: '2017-5-10',

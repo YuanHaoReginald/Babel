@@ -113,7 +113,7 @@
         language: null,
         license: null,
         description: null,
-        tagsStr: null,
+        tagsStr: [],
         ddlTime: null,
         level: 0,
         file: null,
