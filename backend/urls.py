@@ -28,4 +28,5 @@ urlpatterns = [
     url(r'^FileDownload$', views.FileDownload, name='FileDownload'),
     url(r'^UploadLicense$', views.UploadLicense, name='UploadLicense'),
     url(r'^ResponseTestResult$', views.ResponseTestResult, name='ResponseTestResult'),
+    url(r'^SubmitTestResult$', views.SubmitTestResult, name='SubmitTestResult'),
 ]

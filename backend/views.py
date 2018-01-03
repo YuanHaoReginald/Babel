@@ -461,7 +461,6 @@ def UploadLicense(request):
 def ResponseTestResult(request):
     if request.method == 'POST':
         infoDict = json.loads(request.body.decode())
-        print(infoDict)
         assignmentId  = infoDict['assignment_id']
         assignment = Assignment.objects.get(id = assignmentId)
         result = infoDict['result']
@@ -472,3 +471,20 @@ def ResponseTestResult(request):
             assignment.translator = NULL
         assignment.save()
         return HttpResponse(0)
+
+def SubmitTestResult(request):
+    if request.method == 'POST':
+        user = auth.get_user(request).translator
+        infoDict = json.loads(request.body.decode())
+        taskId = infoDict['task_id']
+        assignmentOrder = infoDict['assignment_order']
+        testResult = infoDict['testResult']
+        task = Task.objects.get(id = taskId)
+        assignment = Assignment.objects.get(task = task, order = assignmentOrder)
+        with transaction.atomic():
+            if assignment.status == 1:
+                assignment.translator = user
+                assignment.status = 10
+                assignment.testResult = testResult
+                assignment.save()
+            return JsonResponse({'translator': assignment.translator.username})

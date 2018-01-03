@@ -199,10 +199,14 @@
                 tmp['status'] = '纠纷中'
                 tmp['score'] = assignment.score
                 break
+              case 10:
+                tmp['status'] = '试译中'
+                break
             }
             tmp['price'] = assignment.price
             tmp['submission'] = assignment.submission
             tmp['note'] = ''
+            tmp['testResult'] = assignment.testResult
             that.assignments.push(tmp)
           }
         })
@@ -336,6 +340,7 @@
         this.modalConfirm = true
       },
       callTestConfirm: function (assignment) {
+        console.log(assignment)
         this.currentAssignment = assignment
         this.testResult = this.currentAssignment.testResult
         this.testConfirm = true

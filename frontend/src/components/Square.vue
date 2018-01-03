@@ -17,6 +17,13 @@
           </ul>
         </div>
       </Card></div>
+      <Modal title="请试译" v-model="testConfirm" :mask-closable="false" @on-ok="submitTestResult" :loading="loading">
+        <p class="bottom-10">试译语段：</p>
+        <p class="bottom-10">{{ testText }}</p>
+        <p class="bottom-10">翻译结果：</p>
+        <br>
+        <Input v-model="testResult" type="textarea" :rows="4" placeholder="请写出你的翻译结果"></Input>
+      </Modal>
     </div>
     <div id="right">
       <div class="card" id="chosen"><Card dis-hover>
@@ -66,6 +73,9 @@
         chosen_tags: [],
         chosen_languages: [],
         chosen_price: [],
+        testText: '',
+        testResult: '',
+        testConfirm: false,
         tasklist: [
           {
             id: 1,
@@ -75,6 +85,8 @@
             tags: ['art', 'math'],
             language: 'French',
             testText: '干不动了',
+            currentTask: null,
+            currentAssignment: null,
             assignments: [
               {
                 order: 1,
@@ -137,13 +149,49 @@
     },
     methods: {
       pickup: function (task, assignment) {
-        // todo
-        let body = JSON.stringify({task_id: task.id, assignment_order: assignment.order})
+        console.log(task)
+        if (task.testText === '') {
+          let body = JSON.stringify({task_id: task.id, assignment_order: assignment.order})
+          const headers = new Headers({
+            'Content-Type': 'application/json'
+          })
+          let that = this
+          fetch('api/PickupAssignment', { method: 'POST',
+            headers,
+            credentials: 'include',
+            body: body })
+          .then(function (response) {
+            return response.json().then(function (data) {
+              if (data.translator === that.$store.state.username) {
+                that.$Message.success('Receive Assignment Success')
+                assignment.status = '进行中'
+                assignment.translator = that.$store.state.username
+                that.$forceUpdate()
+              } else {
+                that.$Message.warning('The Assignment has been picked by another translator')
+              }
+            })
+          }).catch(function (ex) {
+            alert('Network Error')
+          })
+        } else {
+          this.testConfirm = true
+          this.testText = task.testText
+          this.currentTask = task
+          this.currentAssignment = assignment
+        }
+      },
+      submitTestResult: function () {
+        let body = JSON.stringify({
+          task_id: this.currentTask.id,
+          assignment_order: this.currentAssignment.order,
+          testResult: this.testResult
+        })
         const headers = new Headers({
           'Content-Type': 'application/json'
         })
         let that = this
-        fetch('api/PickupAssignment', { method: 'POST',
+        fetch('api/SubmitTestResult', { method: 'POST',
           headers,
           credentials: 'include',
           body: body })
@@ -151,12 +199,14 @@
           return response.json().then(function (data) {
             if (data.translator === that.$store.state.username) {
               that.$Message.success('Receive Assignment Success')
-              assignment.status = '进行中'
-              assignment.translator = that.$store.state.username
+              that.currentAssignment.status = '试译中'
+              that.currentAssignment.translator = that.$store.state.username
               that.$forceUpdate()
             } else {
               that.$Message.warning('The Assignment has been picked by another translator')
             }
+            that.testConfirm = false
+            that.testResult = ''
           })
         }).catch(function (ex) {
           alert('Network Error')
@@ -197,6 +247,7 @@
             tmptask.ddlTime = task['ddlTime']
             tmptask.language = task['language']
             tmptask.tags = task['tags']
+            tmptask.testText = task['testText']
             tmptask.assignments = []
             for (let assignment of task['assignment']) {
               let tmpassignment = []
