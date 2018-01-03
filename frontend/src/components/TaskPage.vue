@@ -13,10 +13,11 @@
                   <p>任务状态: {{ a.status }}</p>
                   <p>任务描述: </p>
                   <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ a.description }}</p>
-                  <p v-if="a.status == '进行中' || a.status == '已完成' || a.status == '纠纷中'">翻译结果:&nbsp;<a :href="DownloadAssignment(a.submission)">{{ a.submission }}</a></p>
+                  <p v-if="(a.status == '进行中' || a.status == '已完成' || a.status == '纠纷中') && isowner">翻译结果:&nbsp;<a :href="DownloadAssignment(a.submission)">{{ a.submission }}</a></p>
                   <div class="button">
-                    <Button type="primary" @click="modalConfirm = true" v-if="a.status == '进行中'">任务验收</Button>
-                    <Button type="primary" v-if="a.status == '试译中'" @click="testConfirm = true" >查看试译结果</Button>
+                    <Button type="primary" @click="modalConfirm = true" v-if="a.status == '进行中' && isowner">任务验收</Button>
+                    <Button type="primary" v-if="a.status == '试译中' && isowner" @click="testConfirm = true" >查看试译结果</Button>
+                    <Button type="primary" @click="pickup(a)" v-if="a.status == '待领取' && !isowner">领取任务</Button>
                     <span v-if="a.status == '已完成'">任务评分:&nbsp;<Rate allow-half disabled v-model="a.score"><span class="orange">{{ a.score }}</span></Rate></span>
                   </div>
                   <Modal title="试译结果" v-model="testConfirm" :mask-closable="false" :loading="loading">
@@ -49,12 +50,13 @@
     <div id="right">
       <div class="card"><Card dis-hover>
         <h3 id="right-info">任务信息</h3>
-        <p>任务状态：{{ status }}</p><Button v-if="status == '待发布'" @click="publishTask">立即发布</Button>
+        <p>任务状态：{{ status }}</p>
         <p>任务描述：{{ description }}</p>
         <p>任务语言：{{ language }}</p>
         <p>发布时间：{{ publishTime }}</p>
         <p>截止时间：{{ ddlTime }}</p>
         <p>任务文件：<a :href="DownloadTask(taskFile)">{{ taskFile }}</a></p>
+        <Button v-if="status == '待发布'" @click="publishTask"  type="info">立即发布</Button>
       </Card></div>
     </div>
   </div>
@@ -65,13 +67,15 @@
     name: 'taskpage',
     data () {
       return {
+        id: 0,
         title: '法语文件翻译任务',
-        status: '已发布',
+        status: '待发布',
         description: '我是任务的描述',
         publishTime: '2017-3-1',
         ddlTime: '2017-5-10',
         language: '法语',
         taskFile: '',
+        employerId: 0,
         assignments: [
           {
             id: 1,
@@ -143,12 +147,14 @@
         credentials: 'include'})
       .then(function (response) {
         return response.json().then(function (data) {
+          that.id = data['id']
           that.title = data['title']
           that.description = data['description']
           that.publishTime = Date(data['publishTime'])
           that.ddlTime = Date(data['ddlTime'])
           that.language = data['language']
           that.taskFile = data['fileUrl']
+          that.employerId = data['employerId']
           switch (data['status']) {
             case 0:
               that.status = '待发布'
@@ -194,6 +200,11 @@
       }).catch(function (ex) {
         alert('Network Error')
       })
+    },
+    computed: {
+      isowner: function () {
+        return this.$store.state.utype === 'employer' && this.employerId === this.$store.state.userid
+      }
     },
     methods: {
       publishTask: function () {
@@ -260,6 +271,31 @@
       },
       DownloadTask: function (submission) {
         return 'api/FileDownload?type=tasks&filename=' + submission
+      },
+      pickup: function (assignment) {
+        let body = JSON.stringify({task_id: this.id, assignment_order: assignment.order})
+        const headers = new Headers({
+          'Content-Type': 'application/json'
+        })
+        let that = this
+        fetch('api/PickupAssignment', { method: 'POST',
+          headers,
+          credentials: 'include',
+          body: body })
+        .then(function (response) {
+          return response.json().then(function (data) {
+            if (data.translator === that.$store.state.username) {
+              that.$Message.success('Receive Assignment Success')
+              assignment.status = '进行中'
+              assignment.translator = that.$store.state.username
+              that.$forceUpdate()
+            } else {
+              that.$Message.warning('The Assignment has been picked by another translator')
+            }
+          })
+        }).catch(function (ex) {
+          alert('Network Error')
+        })
       }
     }
   }

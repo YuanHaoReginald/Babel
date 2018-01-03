@@ -242,3 +242,34 @@ class PublishTaskTestCase(TestCase):
         with patch.object(Task.objects,'get',return_value = mytask):
             response = json.loads(found.func(request).content.decode())
             self.assertEqual(response['status'], True)
+
+class SolveDisputeTestCase(TestCase):
+    def test_normal_test(self):
+        found = resolve('/SolveDispute', urlconf=backend.urls)
+        request = Mock(wraps=HttpRequest(), method='POST')
+
+        request.body = Mock()
+        request.body.decode = Mock(return_value=' {"disputeid":1,"result":123,"statement":"haha"}')
+
+        mydispute = Mock()
+        mydispute.adminStatement = None
+        mydispute.status = 0
+
+        with patch.object(Dispute.objects,'get',return_value = mydispute):
+            response = json.loads(found.func(request).content.decode())
+            self.assertEqual(response['status'], True)
+
+class VerifyLicenseTestCase(TestCase):
+    def test_normal_test(self):
+        found = resolve('/VerifyLicense', urlconf=backend.urls)
+        request = Mock(wraps=HttpRequest(), method='POST')
+
+        request.body = Mock()
+        request.body.decode = Mock(return_value=' {"licenseid":1,"result":123,"statement":"haha"}')
+
+        mylicense = Mock()
+        mylicense.adminVerify = 0
+
+        with patch.object(License.objects,'get',return_value = mylicense):
+            response = json.loads(found.func(request).content.decode())
+            self.assertEqual(response['status'], True)

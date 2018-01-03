@@ -15,7 +15,7 @@
         </div>
         <div class="box">
           <h3>截止时间：</h3>
-          <div id="datepicker"><DatePicker v-model="ddlTime" type="date" placeholder="Select date" style="width: 200px"></DatePicker></div>
+          <div id="datepicker"><DatePicker v-model="ddlTime" :options="option"  type="date" placeholder="Select date" style="width: 200px"></DatePicker></div>
         </div>
         <div class="box">
           <h3>译者资质：</h3>
@@ -113,13 +113,18 @@
         language: null,
         license: null,
         description: null,
-        tagsStr: null,
+        tagsStr: [],
         ddlTime: null,
         level: 0,
         file: null,
         loadingStatus: false,
         testText: null,
         if_test: '',
+        option: {
+          disabledDate (date) {
+            return date && date.valueOf() < Date.now() - 86400000
+          }
+        },
         languageList: [
           {
             value: 'English',

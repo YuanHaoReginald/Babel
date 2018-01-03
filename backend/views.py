@@ -18,30 +18,30 @@ from urllib.parse import urljoin
 # user signup
 def UserSignUp(request):
     if request.method == 'POST':
-        info_dict = json.loads(request.body.decode())
-        new_username = info_dict['username']
-        new_password = info_dict['password']
-        new_email = info_dict['email']
-        user_type = info_dict['utype']
+        infoDict = json.loads(request.body.decode())
+        newUsername = infoDict['username']
+        newPassword = infoDict['password']
+        newEmail = infoDict['email']
+        userType = infoDict['utype']
         try:
-            existedUser = User.objects.get(username=new_username)
-            response_dict = {'id': 0}
+            existedUser = User.objects.get(username=newUsername)
+            responseDict = {'id': 0}
         except:
-            if user_type == 'translator':
-                new_user = Translator.objects.create_user(username=new_username, password=new_password, email=new_email, utype='translator')
-            elif user_type == 'employer':
-                new_user = Employer.objects.create_user(username=new_username, password=new_password, email=new_email, utype='employer')
-            response_dict = {'id': new_user.id}
-            auth.login(request, new_user)
-        return JsonResponse(response_dict)
+            if userType == 'translator':
+                newUser = Translator.objects.create_user(username=newUsername, password=newPassword, email=newEmail, utype='translator')
+            elif userType == 'employer':
+                newUser = Employer.objects.create_user(username=newUsername, password=newPassword, email=newEmail, utype='employer')
+            responseDict = {'id': newUser.id}
+            auth.login(request, newUser)
+        return JsonResponse(responseDict)
 
 
 # user login
 def UserSignIn(request):
     if request.method == 'POST':
-        info_dict = json.loads(request.body.decode())
-        username = info_dict['username']
-        password = info_dict['password']
+        infoDict = json.loads(request.body.decode())
+        username = infoDict['username']
+        password = infoDict['password']
         user = auth.authenticate(username=username, password=password)
         if user is None:
             return JsonResponse({'id': 0})
@@ -71,14 +71,14 @@ def GetUserInfo(request):
             user = user.translator
         elif user.utype == 'employer':
             user = user.employer
-        response_dict = {'username': user.username,
+        responseDict = {'username': user.username,
                          'email': user.email,
                          'headSrc': '',
                          'level': user.creditLevel,
                          'experience': user.experience}
         if user.avatar:
-            response_dict['headSrc'] = user.avatar.url
-        return JsonResponse(response_dict)
+            responseDict['headSrc'] = user.avatar.url
+        return JsonResponse(responseDict)
 
 ##### 18/1/2 2:18 ###
 
@@ -91,29 +91,29 @@ def UserModify(request):
         user = user.employer
     if request.method == 'POST':
         try:
-            info_dict = json.loads(request.body.decode())
-            user.telephone = info_dict['telephone']
-            user.alipayNumber = info_dict['alipayNumber']
-            user.wechatNumber = info_dict['wechatNumber']
+            infoDict = json.loads(request.body.decode())
+            user.telephone = infoDict['telephone']
+            user.alipayNumber = infoDict['alipayNumber']
+            user.wechatNumber = infoDict['wechatNumber']
             user.save()
             return JsonResponse({'status': True})
         except:
             return JsonResponse({'status': False})
     elif request.method == 'GET':
-        response_dict = {'telephone': user.telephone,
+        responseDict = {'telephone': user.telephone,
                          'wechatNumber': user.wechatNumber,
                          'alipayNumber': user.alipayNumber,
                          'language': 'French',
                          'avatar': user.avatar.url if user.avatar else ''}
-        return JsonResponse(response_dict)
+        return JsonResponse(responseDict)
 
 def UploadAvatar(request):
     if request.method == 'POST':
         avatar = request.FILES.get('avatar')
         user = auth.get_user(request)
-        file_extension = avatar.name.split('.')[-1]
+        fileExtension = avatar.name.split('.')[-1]
         user.avatar.delete()
-        user.avatar.save('avatars/' + user.username + '.' + file_extension, avatar)
+        user.avatar.save('avatars/' + user.username + '.' + fileExtension, avatar)
     return JsonResponse({'url': user.avatar.name})
 
 def CreateTask(request):
@@ -165,8 +165,8 @@ def CreateTask(request):
 def UploadTaskFile(request):
     if request.method == 'POST':
         file = request.FILES.get('file')
-        taskid = request.POST.get('id')
-        task = Task.objects.get(id = taskid)
+        taskId = request.POST.get('id')
+        task = Task.objects.get(id = taskId)
         task.fileUrl.save('tasks/' + file.name, file)
         print(55)
     return JsonResponse({'url': task.fileUrl.name})
@@ -174,15 +174,15 @@ def UploadTaskFile(request):
 
 def GetEmployerTasks(request):
     if request.method == 'GET':
-        current_user = auth.get_user(request).employer
-        task_set = current_user.task_set.all()
-        response_dict = {'taskList': []}
-        for task in task_set:
+        currentUser = auth.get_user(request).employer
+        taskSet = currentUser.task_set.all()
+        responseDict = {'taskList': []}
+        for task in taskSet:
             _task_tag = task.tag_set.all()
             _temp_tag_list = []
             for tag in _task_tag:
                 _temp_tag_list.append(tag)
-            response_dict['taskList'].append({
+            responseDict['taskList'].append({
                 'id': task.id,                
                 'title': task.title,
                 'status': task.status,
@@ -192,20 +192,20 @@ def GetEmployerTasks(request):
                 'language': task.languageOrigin if task.languageOrigin == 0 else task.languageTarget,
                 'description': task.description,
             })
-        return JsonResponse(response_dict)
+        return JsonResponse(responseDict)
 
 def GetTranslatorAssignments(request):
     if request.method == 'GET':
-        current_user = auth.get_user(request).translator
-        assignment_set = current_user.assignment_set.all()
-        response_dict = {'assignmentList': []}
-        for assignment in assignment_set:
+        currentUser = auth.get_user(request).translator
+        assignmentSet = currentUser.assignment_set.all()
+        responseDict = {'assignmentList': []}
+        for assignment in assignmentSet:
             task = assignment.task
             _task_tag = task.tag_set.all()
             _temp_tag_list = []
             for tag in _task_tag:
                 _temp_tag_list.append(tag)
-            response_dict['assignmentList'].append({
+            responseDict['assignmentList'].append({
                 'id': assignment.id,
                 'status': assignment.status,
                 'title': task.title,
@@ -215,16 +215,16 @@ def GetTranslatorAssignments(request):
                 'language': task.languageOrigin if task.languageOrigin == 0 else task.languageTarget,
                 'description': assignment.description,
             })
-        return JsonResponse(response_dict)
+        return JsonResponse(responseDict)
 
 def PickupAssignment(request):
     if request.method == 'POST':
         user = auth.get_user(request).translator
-        info_dict = json.loads(request.body.decode())
-        task_id = info_dict['task_id']
-        assignment_order = info_dict['assignment_order']
-        task = Task.objects.get(id = task_id)
-        assignment = Assignment.objects.get(task = task, order = assignment_order)
+        infoDict = json.loads(request.body.decode())
+        taskId = infoDict['task_id']
+        assignmentOrder = infoDict['assignment_order']
+        task = Task.objects.get(id = taskId)
+        assignment = Assignment.objects.get(task = task, order = assignmentOrder)
         with transaction.atomic():
             if assignment.status == 1:
                 assignment.translator = user
@@ -235,9 +235,11 @@ def PickupAssignment(request):
 def GetTaskDetail(request):
     if request.method == 'GET':
         print('-----------------------GetTaskDetail-----------------')
-        taskid = request.GET.get('taskid')
-        task = Task.objects.get(id=taskid)
-        response_dict = {
+        taskId = request.GET.get('taskid')
+        task = Task.objects.get(id=taskId)
+
+        responseDict = {
+            'id': task.id,
             'title': task.title,
             'status': task.status,
             'description': task.description,
@@ -245,11 +247,12 @@ def GetTaskDetail(request):
             'ddlTime': task.ddlTime.timestamp(),
             'language': task.languageOrigin if task.languageOrigin == 0 else task.languageTarget,
             'fileUrl': task.fileUrl.name.split('/')[-1] if task.fileUrl else '',
+            'employerId': task.employer.id,
             'assignment': []
         }
         assignment_set = task.assignment_set.all()
         for assignment in assignment_set:
-            response_dict['assignment'].append({
+            responseDict['assignment'].append({
                 'id': assignment.id,
                 'order': assignment.order,
                 'description': assignment.description,
@@ -259,15 +262,15 @@ def GetTaskDetail(request):
                 'price': assignment.price,
                 'submission': assignment.submission.name.split('/')[-1] if assignment.submission else '',
             })
-        return JsonResponse(response_dict)
+        return JsonResponse(responseDict)
 
 def GetAssignmentDetail(request):
     if request.method == 'GET':
         print('-----------------------GetAssignmentDetail-----------------')
-        assignmentid = request.GET.get('assignmentid')
-        assignment = Assignment.objects.get(id=assignmentid)
+        assignmentId = request.GET.get('assignmentid')
+        assignment = Assignment.objects.get(id=assignmentId)
         task = assignment.task
-        response_dict = {
+        responseDict = {
             'title': task.title,
             'description': task.description,
             'publishTime': task.publishTime.timestamp(),
@@ -286,25 +289,25 @@ def GetAssignmentDetail(request):
                 'avatar': task.employer.avatar.url if task.employer.avatar else ''
             }
         }
-        return JsonResponse(response_dict)
+        return JsonResponse(responseDict)
 
 def GetSquareTasks(request):
     if request.method == 'GET':
         print('-----------------------GetSquareTasks-----------------')
         # current_user = auth.get_user(request).employer
-        task_set = Task.objects.order_by('publishTime')
-        if task_set.count() > 5:
-            task_set = task_set.reverse()[:5]
-        response_dict = {'taskList': []}
-        for task in task_set:
+        taskSet = Task.objects.order_by('publishTime')
+        if taskSet.count() > 5:
+            taskSet = taskSet.reverse()[:5]
+        responseDict = {'taskList': []}
+        for task in taskSet:
             _task_tag = task.tag_set.all()
             _temp_tag_list = []
             for tag in _task_tag:
                 _temp_tag_list.append(tag)
 
-            assignment_set = task.assignment_set.all()
+            assignmentSet = task.assignment_set.all()
             _temp_assignment = []
-            for assignment in assignment_set:
+            for assignment in assignmentSet:
                 _temp_assignment.append({
                     'order': assignment.order,
                     'description': assignment.description,
@@ -315,7 +318,7 @@ def GetSquareTasks(request):
                     'submission': assignment.submission.url if assignment.submission else '',
                 })
 
-            response_dict['taskList'].append({
+            responseDict['taskList'].append({
                 'id': task.id,
                 'title': task.title,
                 'publishTime': task.publishTime.timestamp(),
@@ -325,26 +328,26 @@ def GetSquareTasks(request):
                 'description': task.description,
                 'assignment': _temp_assignment
             })
-        return JsonResponse(response_dict)
+        return JsonResponse(responseDict)
 
 def SubmitAssignment(request):
     if request.method == 'POST':
         file = request.FILES.get('file')
-        assignmentid = request.POST.get('assignmentid')
-        print(assignmentid)
-        assignment = Assignment.objects.get(id = assignmentid)
+        assignmentId = request.POST.get('assignmentid')
+        print(assignmentId)
+        assignment = Assignment.objects.get(id = assignmentId)
         assignment.submission.save('assignments/' + file.name, file)
     return JsonResponse({'url': assignment.submission.name})
 
 def PublishTask(request):
     if request.method == 'POST':
-        info_dict = json.loads(request.body.decode())
-        task_id = info_dict['taskid']
-        task = Task.objects.get(id=task_id)
+        infoDict = json.loads(request.body.decode())
+        taskId = infoDict['taskid']
+        task = Task.objects.get(id=taskId)
         task.status = 1
         task.save()
-        assignment_set = task.assignment_set.all()
-        for assignment in assignment_set:
+        assignmentSet = task.assignment_set.all()
+        for assignment in assignmentSet:
             assignment.status = 1
             assignment.save()
         return JsonResponse({'status': True})
@@ -352,11 +355,11 @@ def PublishTask(request):
 
 def SolveDispute(request):
     if request.method == 'POST':
-        info_dict = json.loads(request.body.decode())
-        dispute_id = info_dict['disputeid']
-        result = info_dict['result']
-        statement = info_dict['statement']
-        dispute = Dispute.objects.get(id=dispute_id)
+        infoDict = json.loads(request.body.decode())
+        disputeId = infoDict['disputeid']
+        result = infoDict['result']
+        statement = infoDict['statement']
+        dispute = Dispute.objects.get(id=disputeId)
         dispute.adminStatement = statement
         if result:
             dispute.status = 1
@@ -367,10 +370,10 @@ def SolveDispute(request):
 
 def VerifyLicense(request):
     if request.method == 'POST':
-        info_dict = json.loads(request.body.decode())
-        license_id = info_dict['licenseid']
-        result = info_dict['result']
-        license = License.objects.get(id=license_id)
+        infoDict = json.loads(request.body.decode())
+        licenseId = infoDict['licenseid']
+        result = infoDict['result']
+        license = License.objects.get(id=licenseId)
         if result:
             license.adminVerify = 1
         else:
@@ -381,51 +384,51 @@ def VerifyLicense(request):
 def GetManager(request):
     if request.method == 'GET':
         print('-----------------------GetManager-----------------')
-        response_dict = {
+        responseDict = {
             'DisputeList': [],
             'LicenseList': []
         }
-        dispute_set = Dispute.objects.filter(status=0)
-        if dispute_set.count() > 100:
-            dispute_set = dispute_set[:100]
-        for dispute in dispute_set:
-            response_dict['DisputeList'].append({
+        disputeSet = Dispute.objects.filter(status=0)
+        if disputeSet.count() > 100:
+            disputeSet = disputeSet[:100]
+        for dispute in disputeSet:
+            responseDict['DisputeList'].append({
                 'id': dispute.id,
                 'assignment_name': dispute.assignment.description,
                 'argument_translator': dispute.translatorStatement,
                 'argument_employer': dispute.employerStatement,
             })
-        license_set = License.objects.filter(adminVerify=0)
-        if license_set.count() > 100:
-            license_set = license_set[:100]
-        for _license in license_set:
-            response_dict['LicenseList'].append({
+        licenseSet = License.objects.filter(adminVerify=0)
+        if licenseSet.count() > 100:
+            licenseSet = licenseSet[:100]
+        for _license in licenseSet:
+            responseDict['LicenseList'].append({
                 'id': _license.id,
                 'type': _license.licenseType,
                 'url': _license.licenseImage.url,
             })
-        return JsonResponse(response_dict)
+        return JsonResponse(responseDict)
 
 def AcceptAssignment(request):
     if request.method == 'POST':
-        info_dict = json.loads(request.body.decode())
-        assignment_id = info_dict['assignmentid']
-        result = info_dict['result']
-        acceptance = info_dict['acceptance']
-        assignment = Assignment.objects.get(id=assignment_id)
+        infoDict = json.loads(request.body.decode())
+        assignmentId = infoDict['assignmentid']
+        result = infoDict['result']
+        acceptance = infoDict['acceptance']
+        assignment = Assignment.objects.get(id=assignmentId)
         if acceptance == 'accept':
             assignment.scores = result
         elif acceptance == 'reject':
-            Dispute.objects.create(assignment=assignment_id, employerStatement=result)
+            Dispute.objects.create(assignment=assignmentId, employerStatement=result)
         assignment.status = 3
         assignment.save()
         return JsonResponse({'status': True})
 
 def FileDownload(request):
-    def file_iterator(file_name, chunk_size=512):
-        with open(file_name, 'rb') as f:
+    def fileIterator(fileName, chunkSize=512):
+        with open(fileName, 'rb') as f:
             while True:
-                c = f.read(chunk_size)
+                c = f.read(chunkSize)
                 if c:
                     yield c
                 else:
@@ -434,7 +437,7 @@ def FileDownload(request):
         downloadType = request.GET.get('type')
         root = 'C:/Users/yw/Desktop/Babel/media/' + downloadType
         filename = request.GET.get('filename')
-        response = StreamingHttpResponse(file_iterator(root + '/' + filename))
+        response = StreamingHttpResponse(fileIterator(root + '/' + filename))
         response['Content-Type'] = 'application/octet-stream'
         response['Content-Disposition'] = 'attachment;filename="{0}"'.format(filename)
         return response
