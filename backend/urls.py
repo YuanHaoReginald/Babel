@@ -27,6 +27,10 @@ urlpatterns = [
     url(r'^AcceptAssignment$', views.AcceptAssignment, name='AcceptAssignment'),
     url(r'^FileDownload$', views.FileDownload, name='FileDownload'),
     url(r'^UploadLicense$', views.UploadLicense, name='UploadLicense'),
+<<<<<<< HEAD
     url(r'^ResponseTestResult$', views.ResponseTestResult, name='ResponseTestResult'),
     url(r'^SubmitTestResult$', views.SubmitTestResult, name='SubmitTestResult'),
+=======
+    url(r'^AcceptResult$', views.AcceptResult, name='AcceptResult'),
+>>>>>>> Feature&Fix: update
 ]

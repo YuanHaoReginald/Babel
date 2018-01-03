@@ -269,8 +269,9 @@ def GetTaskDetail(request):
 def GetAssignmentDetail(request):
     if request.method == 'GET':
         print('-----------------------GetAssignmentDetail-----------------')
-        assignmentId = request.GET.get('assignmentid')
-        assignment = Assignment.objects.get(id=assignmentId)
+        assignmentid = request.GET.get('assignmentid')
+        assignment = Assignment.objects.get(id=assignmentid)
+        _dispute = Dispute.objects.filter(assignment=assignment)
         task = assignment.task
         responseDict = {
             'title': task.title,
@@ -279,6 +280,8 @@ def GetAssignmentDetail(request):
             'ddlTime': task.ddlTime.timestamp(),
             'language': task.languageOrigin if task.languageOrigin == 0 else task.languageTarget,
             'assignment': {
+                'id': assignment.id,
+                'hasDispute' : len(_dispute) != 0,
                 'description': assignment.description,
                 'translator': assignment.translator.username if assignment.translator else '',
                 'status': assignment.status,
@@ -489,3 +492,18 @@ def SubmitTestResult(request):
                 assignment.testResult = testResult
                 assignment.save()
             return JsonResponse({'translator': assignment.translator.username})
+
+def AcceptResult(request):
+    if request.method == 'POST':
+        info_dict = json.loads(request.body.decode())
+        assignment = Assignment.objects.get(id=info_dict['assignmentId'])
+        assignment.status = 3
+        assignment.save()
+        return JsonResponse({'status': True})
+
+def argueResult(request):
+    if request.method == 'POST':
+        info_dict = json.loads(request.body.decode())
+        assignment = Assignment.objects.get(id=info_dict['assignmentId'])
+        Dispute.objects.create(assignment=assignment, employerStatement=comment)
+        return JsonResponse({'status': True})

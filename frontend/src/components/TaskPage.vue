@@ -269,7 +269,11 @@
         .then(function (response) {
           return response.json().then(function (data) {
             if (data.status) {
-              that.currentAssignment.status = '已完成'
+              if (that.confirm === 'accept') {
+                that.currentAssignment.status = '已完成'
+              } else {
+                that.currentAssignment.status = '纠纷中'
+              }
               that.valueCustomText = 3
               that.text = ''
               that.modalConfirm = false

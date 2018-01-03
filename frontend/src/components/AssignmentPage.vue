@@ -41,7 +41,15 @@
               </div>
             </span>
             <span v-if="assignment.status == '已完成'" class="grey">任务评分:&nbsp;&nbsp;<Rate v-model="assignment.score"></Rate></span>
-            <span v-if="assignment.status == '已完成'"><Button type="error">申请投诉</Button></span>
+            <span v-if="assignment.status == '纠纷中'">
+              <span v-if="!assignment.hasDispute">
+                <Button type="error" @click="argueResult">申请投诉</Button>
+                <Button type="success" @click="acceptResult">接受结果</Button>
+              </span>
+              <span v-if="assignment.hasDispute">
+                <p>请耐心等待结果</p>
+              </span>
+            </span>
             <span v-if="assignment.status == '待评分'" class="grey">任务评分:&nbsp;&nbsp;<Rate disabled v-model="assignment.score"></Rate></span>
             <Modal title="试译" v-model="testConfirm" :mask-closable="false" :loading="loading">
               <p class="bottom-10">试译语段：</p>
@@ -88,6 +96,8 @@
         ddlTime: '2017-5-10',
         language: '法语',
         assignment: {
+          id: 0,
+          hasDispute: false,
           description: '这个任务需要翻译我给出的pdf文档的第20-40页，注意主要人名的翻' +
           '译要与附录中的统一。完成情况好的话我一定会好评的。',
           status: '待领取',
@@ -137,6 +147,8 @@
           that.ddlTime = Date(data['ddlTime'])
           that.language = data['language']
           let assignment = data['assignment']
+          that.assignment['id'] = assignment.id
+          that.assignment['hasDispute'] = assignment.hasDispute
           that.assignment['translator'] = assignment.translator
           that.assignment['price'] = assignment.price
           that.assignment['submission'] = assignment.submission
@@ -188,6 +200,46 @@
       },
       cancel () {
         this.file = null
+      },
+      acceptResult () {
+        let body = JSON.stringify({assignmentId: this.assignment['id']})
+        const headers = new Headers({
+          'Content-Type': 'application/json'
+        })
+        let that = this
+        fetch('api/AcceptResult', { method: 'POST',
+          headers,
+          credentials: 'include',
+          body: body })
+        .then(function (response) {
+          return response.json().then(function (data) {
+            if (data.status) {
+              that.assignment['status'] = '已完成'
+            }
+          })
+        }).catch(function (ex) {
+          alert('Network Error')
+        })
+      },
+      argueResult () {
+        let body = JSON.stringify({assignmentId: this.assignment['id']})
+        const headers = new Headers({
+          'Content-Type': 'application/json'
+        })
+        let that = this
+        fetch('api/ArgueResult', { method: 'POST',
+          headers,
+          credentials: 'include',
+          body: body })
+        .then(function (response) {
+          return response.json().then(function (data) {
+            if (data.status) {
+              that.assignment['hasDispute'] = true
+            }
+          })
+        }).catch(function (ex) {
+          alert('Network Error')
+        })
       }
     }
   }
