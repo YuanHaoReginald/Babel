@@ -3,11 +3,11 @@
     <Menu mode="horizontal" :theme="theme1" active-name="1">
       <div id="center">
       <Row>
-        <Col span="2"><router-link to="/square"><h2>Babel</h2></router-link></Col>
+        <Col span="2" @click.native="toWebmain"><h2>Babel</h2></Col>
         <Col span="10" offset="1">
         <Input v-model="search" icon="search"> </Input>
         </Col>
-        <Col span="3"offset="8" v-if="status">
+        <Col span="3"offset="8" v-if="this.$store.state.online">
         <Submenu name="3">
           <template slot="title">
             <Icon type="stats-bars"></Icon>
@@ -38,8 +38,7 @@
     data () {
       return {
         theme1: 'dark',
-        search: '',
-        status: true
+        search: ''
       }
     },
     methods: {
@@ -55,13 +54,21 @@
           sessionStorage.removeItem('userid')
           sessionStorage.removeItem('utype')
           that.$Message.success('Logout successfully.')
+          that.$store.commit('logout')
           that.$router.push('/login')
         }).catch(function (ex) {
           alert('Network Error')
         })
       },
       toProfile: function () {
-        this.$router.push({name: sessionStorage.getItem('utype')})
+        this.$router.push({name: this.$store.state.utype})
+      },
+      toWebmain: function () {
+        if (this.$store.state.online) {
+          this.$router.push({path: '/square'})
+        } else {
+          this.$router.push({path: '/'})
+        }
       }
     }
   }
@@ -71,14 +78,15 @@
     font-size:24px;
     color: floralwhite;
   }
+  h2:hover {
+    cursor: pointer;
+  }
   h3 {
     color: floralwhite;
   }
   #root {
-    min-width: 1050px;
   }
   #center {
-    width:950px;
     margin-right: auto;
     margin-left: auto;
   }

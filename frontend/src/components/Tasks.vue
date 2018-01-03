@@ -16,6 +16,7 @@
                 <p slot="title" id="taskTitle">
                   {{ task.title }}&nbsp;&nbsp;&nbsp;<span v-for="tag in task.tags"><Tag><h4>{{ tag }}</h4></Tag></span>
                 </p>
+                <p id="taskStatus">任务状态：{{ task.status }}</p>
                 <p id="taskTime">起始时间：{{ task.publishTime }}&nbsp;&nbsp;&nbsp;截止时间：{{ task.ddlTime }}</p>
                 <p id="taskDescription">{{ task.description }}</p>
               </Card>
@@ -23,6 +24,9 @@
           </ul>
         </div>
       </Card>
+      <div id="pages">
+        <Page :total="page_total_num"></Page>
+      </div>
     </div>
   </div>
 </template>
@@ -36,6 +40,7 @@
         tasklist: [
           {
             title: '中法信件翻译任务',
+            status: '进行中',
             publishTime: '2017-3-1',
             ddlTime: '2017-5-10',
             tags: ['art', 'math'],
@@ -45,6 +50,7 @@
           },
           {
             title: 'title',
+            status: '未发布',
             publishTime: 'publishTime',
             ddlTime: 'ddlTime',
             tags: ['art', 'math'],
@@ -52,7 +58,9 @@
             description: 'I am the description.I am the description.I am the description.' +
             'I am the description.I am the description.I am the description.I am the description.'
           }
-        ]
+        ],
+        page_total_num: 500,
+        page_current_num: 1
       }
     },
     mounted: function () {
@@ -67,9 +75,21 @@
         return response.json().then(function (data) {
           that.tasklist = []
           for (let task of data.taskList) {
+            switch (task.status) {
+              case 0:
+                task.status = '未发布'
+                break
+              case 1:
+                task.status = '进行中'
+                break
+              case 2:
+                task.status = '已结束'
+                break
+            }
             that.tasklist.push({
               id: task.id,
               title: task.title,
+              status: task.status,
               publishTime: Date(task.publishTime),
               ddlTime: Date(task.ddlTime),
               tags: task.tag,
@@ -119,10 +139,13 @@
     text-align: left;
     color: #495060;
   }
-  #taskTime {
+  #taskTime, #taskStatus {
     font-size: 12px;
     text-align: left;
     color: #80848f;
+  }
+  #pages {
+    padding: 20px;
   }
   h2 {
     font-size: 24px;
