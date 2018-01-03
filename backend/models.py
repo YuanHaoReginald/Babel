@@ -103,6 +103,5 @@ class Language(models.Model):
 class License(models.Model):
     licenseType = models.IntegerField()
     licenseImage = models.ImageField(max_length=256, null=True)
-    description = models.CharField(max_length=100, null=True)
     belonger = models.ForeignKey(Translator, on_delete=models.CASCADE)
     adminVerify = models.IntegerField(default=0) # 0:未处理；1：有效 2: 无效

@@ -80,7 +80,7 @@
                   <h4>&nbsp;</h4>
                 </div>
                 </Col>
-                <Col span="4"><div class="task_text"><h4>报酬（不超过一万元）:</h4></div></Col>
+                <Col span="4"><div class="task_text"><h4>报酬:</h4></div></Col>
                 <Col span="17"><div class="input_assignment"><InputNumber v-model="a.price"  size="large" :max="10000" :min="0"></InputNumber>&nbsp;元</div></Col>
               </Row>
             </li>
