@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse, StreamingHttpResponse
 from .models import *
 from django.core import serializers
+from django.db import transaction
 import datetime
 
 import os
@@ -204,10 +205,12 @@ def PickupAssignment(request):
         assignment_order = info_dict['assignment_order']
         task = Task.objects.get(id = task_id)
         assignment = Assignment.objects.get(task = task, order = assignment_order)
-        assignment.translator = user
-        assignment.status = 2
-        assignment.save()
-        return JsonResponse({'status': True})
+        with transaction.atomic():
+            if assignment.status == 1:
+                assignment.translator = user
+                assignment.status = 2
+                assignment.save()
+            return JsonResponse({'translator': assignment.translator.username})
     
 def GetTaskDetail(request):
     if request.method == 'GET':
@@ -221,6 +224,7 @@ def GetTaskDetail(request):
             'publishTime': task.publishTime.timestamp(),
             'ddlTime': task.ddlTime.timestamp(),
             'language': task.languageOrigin if task.languageOrigin == 0 else task.languageTarget,
+            'fileUrl': task.fileUrl.name.split('/')[-1] if task.fileUrl else '',
             'assignment': []
         }
         assignment_set = task.assignment_set.all()
