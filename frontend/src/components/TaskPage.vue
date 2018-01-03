@@ -13,11 +13,22 @@
                   <p>任务状态: {{ a.status }}</p>
                   <p>任务描述: </p>
                   <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ a.description }}</p>
-                  <p>翻译结果:&nbsp;<a :href="DownloadAssignment(a.submission)" v-if="a.status == '进行中' || a.status == '已完成'">{{ a.submission }}</a></p>
+                  <p v-if="a.status == '进行中' || a.status == '已完成' || a.status == '纠纷中'">翻译结果:&nbsp;<a :href="DownloadAssignment(a.submission)">{{ a.submission }}</a></p>
                   <div class="button">
                     <Button type="primary" @click="modalConfirm = true" v-if="a.status == '进行中'">任务验收</Button>
+                    <Button type="primary" v-if="a.status == '试译中'" @click="testConfirm = true" >查看试译结果</Button>
                     <span v-if="a.status == '已完成'">任务评分:&nbsp;<Rate allow-half disabled v-model="a.score"><span class="orange">{{ a.score }}</span></Rate></span>
                   </div>
+                  <Modal title="试译结果" v-model="testConfirm" :mask-closable="false" :loading="loading">
+                    <p class="bottom-10">试译语段：</p>
+                    <p class="bottom-10">{{ testText }}</p>
+                    <p class="bottom-10">翻译结果：</p>
+                    <p class="bottom-10">{{ testResult }}</p>
+                    <div slot="footer">
+                      <Button type="error">不通过</Button>
+                      <Button type="primary">通过</Button>
+                    </div>
+                  </Modal>
                   <Modal title="确认任务" v-model="modalConfirm" :mask-closable="false" @on-ok="acceptAssignment(a)" :loading="loading">
                     <RadioGroup v-model="confirm" class="options">
                       <Radio label="accept"></Radio>
@@ -28,7 +39,6 @@
                     </Rate>
                     <Input v-else v-model="text" type="textarea" :rows="4" placeholder="请写出你的拒绝理由"></Input>
                   </Modal>
-
                 </Col>
               </Row>
             </Card>
@@ -85,13 +95,42 @@
             price: '20元',
             submission: '2333.txt',
             note: ''
+          },
+          {
+            id: 3,
+            order: 3,
+            description: '这个任务需要翻译我给出的pdf文档的第20-40页，注意主要人名的翻' +
+            '译要与附录中的统一。完成情况好的话我一定会好评的。',
+            status: '试译中',
+            translator: '2333',
+            score: 4,
+            price: '20元',
+            submission: '455.txt',
+            note: ''
+          },
+          {
+            id: 4,
+            order: 4,
+            description: '这个任务需要翻译我给出的pdf文档的第20-40页，注意主要人名的翻' +
+            '译要与附录中的统一。完成情况好的话我一定会好评的。',
+            status: '待领取',
+            translator: '2333',
+            score: 4,
+            price: '20元',
+            submission: '455.txt',
+            note: ''
           }
         ],
         modalConfirm: false,
+        testConfirm: false,
         confirm: 'accept',
         valueCustomText: 0,
         loading: true,
-        text: ''
+        text: '',
+        testText: 'My name is Van, I\'m an artist, I\'m a performance artist. ' +
+        'I\'m hired for people to fulfill their fantasies, their deep dark fantasies.',
+        testResult: '我的名字叫Van，我是一个艺术家，表演艺术家。' +
+        '我被人雇来实现他们的幻想，他们内心深处的黑暗幻想。'
       }
     },
     created: function () {
@@ -262,6 +301,9 @@
   .options {
     margin-bottom: 10px;
   }
+  .bottom-10 {
+    margin-bottom: 10px;
+  }
   #taskTitle {
     padding: 15px 20px 10px;
   }
@@ -270,11 +312,13 @@
   }
   h2 {
     color: #1c2438;
+    font-weight: 200;
     text-align: left;
   }
   h3 {
     font-size: 16px;
     color: #495060;
+    font-weight: 200;
   }
   h4 {
     font-size: 14px;

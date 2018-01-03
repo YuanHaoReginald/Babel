@@ -38,7 +38,7 @@
             action="api/UploadTaskFile">
             <Button type="ghost" icon="ios-cloud-upload-outline" id="fileButton">选择文件</Button>
           </Upload>
-          <div v-if="file !== null">
+          <div v-if="file !== null" class="left">
             Upload file: {{ file.name }}
             <Button type="text" :loading="loadingStatus">{{ loadingStatus ? 'Uploading' : 'Ready' }}</Button>
           </div>
@@ -51,6 +51,17 @@
             <Checkbox label="法律"></Checkbox>
             <Checkbox label="艺术"></Checkbox>
           </CheckboxGroup>
+        </div>
+        <div class="box"  id="textBox">
+          <h3>是否需要试译：</h3>
+          <RadioGroup v-model="if_test" id="top_10">
+            <Radio label="需要"></Radio>
+            <Radio label="不需要"></Radio>
+          </RadioGroup>
+        </div>
+        <div class="box" v-if="if_test == '需要'">
+          <h3>试译选段：</h3>
+          <div class="input"><Input v-model="testText" type="textarea" maxlength="1000"></Input></div>
         </div>
         <div class="box">
           <h3>任务总体描述：</h3>
@@ -107,6 +118,8 @@
         level: 0,
         file: null,
         loadingStatus: false,
+        testText: null,
+        if_test: '',
         languageList: [
           {
             value: 'English',
@@ -243,6 +256,15 @@
     margin:10px;
   }
   .delete_button {
+    margin-top: 5px;
+  }
+  .left {
+    text-align: left;
+  }
+  #textBox {
+    text-align: left;
+  }
+  #top_10 {
     margin-top: 5px;
   }
   #tags {
