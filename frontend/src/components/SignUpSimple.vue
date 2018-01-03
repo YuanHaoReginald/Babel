@@ -129,7 +129,7 @@
             } else {
               sessionStorage.setItem('userid', data.id)
               sessionStorage.setItem('utype', that.$route.params.utype)
-              that.$store.commit('setStatus', {'userid': data.id, 'utype': that.$route.params.utype, 'username': that.formCustom.username})
+              that.$store.commit('login', {'userid': data.id, 'utype': that.$route.params.utype, 'username': that.formCustom.username})
               that.$router.push('/signupmore')
             }
           })
