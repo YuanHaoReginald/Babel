@@ -117,27 +117,48 @@ def UploadAvatar(request):
     return JsonResponse({'url': user.avatar.name})
 
 def CreateTask(request):
-    user = auth.get_user(request).employer
     if request.method == 'POST':
+        user = auth.get_user(request).employer
         info_dict = json.loads(request.body.decode())
+        print(info_dict)
         task_title = info_dict['title']
         task_description = info_dict['description']
         task_language = info_dict['language']
-        task_license = info_dict['license']
+        if info_dict['license'] == 'cet4':
+            task_license = 4
+        elif info_dict['license'] == 'cet8':
+            task_license = 8
         task_level = info_dict['level']
         task_tags = info_dict['tags']
         task_ddlTime = info_dict['ddlTime']
         task_assignments = info_dict['assignments']
+        if info_dict['language'] == 'English':
+            task_languageTarget = 1
+        elif info_dict['language'] == 'Japanese':
+            task_languageTarget = 2
+        elif info_dict['language'] == 'French':
+            task_languageTarget = 5
+        elif info_dict['language'] == 'Russian':
+            task_languageTarget = 4
+        elif info_dict['language'] == 'Spanish':
+            task_languageTarget = 5
+        if info_dict['if_test'] == '需要':
+            task_testText = info_dict['testText']
+        else:
+            task_testText = ''
         task = Task.objects.create(title = task_title,
                                    description = task_description,
                                    fileType = 0,
                                    employer = user,
                                    ddlTime = datetime.datetime.utcfromtimestamp(task_ddlTime),
-                                   languageTarget = 3,
-                                   requirementCreditLevel = task_level)
+                                   languageTarget = task_languageTarget,
+                                   requirementCreditLevel = task_level,
+                                   requirementLicense = task_license,
+                                   testText = task_testText)
         for assignment in task_assignments:
             Assignment.objects.create(task = task,
                                       order = assignment['order'],
+                                      price = assignment['price'],
                                       description = assignment['text'])
         return JsonResponse({'task_id': task.id})
 

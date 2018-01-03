@@ -146,7 +146,7 @@
           body: body })
         .then(function (response) {
           return response.json().then(function (data) {
-            if (data.status) {
+            if (data.translator === that.$store.state.username) {
               that.$Message.success('Receive Assignment Success')
               assignment.status = '进行中'
               assignment.translator = that.$store.state.username

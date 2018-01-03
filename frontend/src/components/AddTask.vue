@@ -157,7 +157,7 @@
           {
             order: 1,
             text: '',
-            price: 0
+            price: 1
           }
         ]
       }
@@ -181,7 +181,8 @@
         this.assignments.push(
           {
             order: this.assignment_num,
-            text: ''
+            text: '',
+            price: 1
           }
         )
       },
@@ -199,6 +200,8 @@
           license: this.license,
           description: this.description,
           tags: this.tagsStr,
+          if_test: this.if_test,
+          testText: this.testText,
           ddlTime: Date.parse(this.ddlTime) / 1000,
           level: this.level,
           assignments: this.assignments})
