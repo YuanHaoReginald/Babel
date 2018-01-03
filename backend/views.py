@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse, StreamingHttpResponse
 from .models import *
 from django.core import serializers
+from django.db import transaction
 import datetime
 
 import os
@@ -106,7 +107,6 @@ def UserModify(request):
                          'avatar': user.avatar.url if user.avatar else ''}
         return JsonResponse(response_dict)
 
-# not finish this function
 def UploadAvatar(request):
     if request.method == 'POST':
         avatar = request.FILES.get('avatar')
@@ -204,10 +204,12 @@ def PickupAssignment(request):
         assignment_order = info_dict['assignment_order']
         task = Task.objects.get(id = task_id)
         assignment = Assignment.objects.get(task = task, order = assignment_order)
-        assignment.translator = user
-        assignment.status = 2
-        assignment.save()
-        return JsonResponse({'status': True})
+        with transaction.atomic():
+            if assignment.status == 1:
+                assignment.translator = user
+                assignment.status = 2
+                assignment.save()
+            return JsonResponse({'translator': assignment.translator.username})
     
 def GetTaskDetail(request):
     if request.method == 'GET':
@@ -221,6 +223,7 @@ def GetTaskDetail(request):
             'publishTime': task.publishTime.timestamp(),
             'ddlTime': task.ddlTime.timestamp(),
             'language': task.languageOrigin if task.languageOrigin == 0 else task.languageTarget,
+            'fileUrl': task.fileUrl.name.split('/')[-1] if task.fileUrl else '',
             'assignment': []
         }
         assignment_set = task.assignment_set.all()
@@ -371,7 +374,7 @@ def GetManager(request):
                 'argument_translator': dispute.translatorStatement,
                 'argument_employer': dispute.employerStatement,
             })
-        license_set = License.objects.filter(status=0)
+        license_set = License.objects.filter(adminVerify=0)
         if license_set.count() > 100:
             license_set = license_set[:100]
         for _license in license_set:
@@ -379,7 +382,7 @@ def GetManager(request):
                 'id': _license.id,
                 'type': _license.licenseType,
                 'description': _license.description,
-                'url': _license.licenseImage,
+                'url': _license.licenseImage.url,
             })
         return JsonResponse(response_dict)
 
@@ -415,3 +418,16 @@ def FileDownload(request):
         response['Content-Type'] = 'application/octet-stream'
         response['Content-Disposition'] = 'attachment;filename="{0}"'.format(filename)
         return response
+
+def UploadLicense(request):
+    if request.method == 'POST':
+        lfile = request.FILES.get('license')
+        ltype = request.POST.get('type')
+        if ltype == 'cet4':
+            ltype = 4
+        elif ltype == 'cet8':
+            ltype = 8
+        user = auth.get_user(request)
+        _license = License.objects.create(licenseType = ltype, belonger = user.translator)
+        _license.licenseImage.save('licenses/' + lfile.name, lfile)
+    return JsonResponse({'url': user.avatar.name})

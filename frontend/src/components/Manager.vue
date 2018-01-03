@@ -77,6 +77,8 @@
         <li v-for="l in licenses.verified" class="license">
           <div class="card">
             <Card dis-hover padding="20">
+              <p v-if="l.result" class="status_text"><img src="../assets/yes.png" class="logo"><span>有效</span></p>
+              <p v-else class="status_text"><img src="../assets/no.png" class="logo"><span>无效</span></p>
               <p class="type_text">类型：{{ l.language }} | {{ l.type }}</p>
               <Card dis-hover  class="img">
                 <div style="text-align:center">
@@ -87,13 +89,6 @@
                 <Button type="primary" @click="setLicense(l, true)">有效</Button>
                 <Button type="error" @click="setLicense(l, false)">无效</Button>
               </div>
-            </Card>
-          </div><div class="card">
-            <Card dis-hover  padding="20">
-              <p>证书：{{ l.url }}</p>
-              <p>类型：{{ l.type }}</p>
-              <p>描述：{{ l.description }}</p>
-              <p v-if="a.result">有效</p><p v-else>无效</p>
             </Card>
           </div>
         </li>
@@ -234,15 +229,16 @@
       const headers = new Headers({
         'Content-Type': 'application/json'
       })
+      let that = this
       fetch('api/GetManager', { method: 'GET',
         headers,
         credentials: 'include' })
       .then(function (response) {
         return response.json().then(function (data) {
-          this.total = data.DisputeList.length
-          this.argues.notSolved = []
+          that.total = data.DisputeList.length
+          that.argues.notSolved = []
           for (let dispute of data.DisputeList) {
-            this.argues.notSolved.push({
+            that.argues.notSolved.push({
               id: dispute['id'],
               status: '待审核',
               assignment_name: dispute['assignment_name'],
@@ -252,9 +248,9 @@
               reason: ''
             })
           }
-          this.licenses.notVerified = []
+          that.licenses.notVerified = []
           for (let license of data.LicenseList) {
-            this.licenses.notVerified.push({
+            that.licenses.notVerified.push({
               id: license['id'],
               status: '待审核',
               type: license['type'],
@@ -265,6 +261,7 @@
           }
         })
       }).catch(function (ex) {
+        console.log(ex)
         alert('Network Error')
       })
     }

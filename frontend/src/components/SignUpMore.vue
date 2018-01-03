@@ -63,7 +63,19 @@
               &nbsp;
               <Row>
                 <Col span="4"><h4>{{ l.label }}:</h4></Col>
-                <Col span="6"><Upload><Button>上传证书扫描件</Button></Upload></Col>
+                <Col span="6">
+                  <Upload
+                    name="license"
+                    :data="{language: language, type: l.value}"
+                    :format="['jpg','jpeg','png']"
+                    :max-size="10240"
+                    :on-format-error="handleFormatError"
+                    :on-exceeded-size="handleMaxSize"
+                    type="drag"
+                    action="api/UploadLicense">
+                    上传证书扫描件
+                  </Upload>
+                </Col>
               </Row>
             </li>
           </ul>

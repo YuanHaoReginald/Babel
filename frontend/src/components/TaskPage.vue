@@ -54,6 +54,7 @@
         <p>任务语言：{{ language }}</p>
         <p>发布时间：{{ publishTime }}</p>
         <p>截止时间：{{ ddlTime }}</p>
+        <p>任务文件：<a :href="DownloadTask(taskFile)">{{ taskFile }}</a></p>
       </Card></div>
     </div>
   </div>
@@ -70,6 +71,7 @@
         publishTime: '2017-3-1',
         ddlTime: '2017-5-10',
         language: '法语',
+        taskFile: '',
         assignments: [
           {
             id: 1,
@@ -146,6 +148,7 @@
           that.publishTime = Date(data['publishTime'])
           that.ddlTime = Date(data['ddlTime'])
           that.language = data['language']
+          that.taskFile = data['fileUrl']
           switch (data['status']) {
             case 0:
               that.status = '待发布'
@@ -254,6 +257,9 @@
       },
       DownloadAssignment: function (submission) {
         return 'api/FileDownload?type=assignments&filename=' + submission
+      },
+      DownloadTask: function (submission) {
+        return 'api/FileDownload?type=tasks&filename=' + submission
       }
     }
   }

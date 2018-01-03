@@ -150,6 +150,7 @@
               that.$Message.success('Receive Assignment Success')
               assignment.status = '进行中'
               assignment.translator = that.$store.state.username
+              that.$forceUpdate()
             } else {
               that.$Message.warning('The Assignment has been picked by another translator')
             }
