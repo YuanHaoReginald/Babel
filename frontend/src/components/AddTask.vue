@@ -43,9 +43,14 @@
             <Button type="text" :loading="loadingStatus">{{ loadingStatus ? 'Uploading' : 'Ready' }}</Button>
           </div>
         </div>
-        <div class="box">
+        <div class="box" id="tags">
           <h3>标签：</h3>
-          <div class="input"><Input v-model="tagsStr" placeholder="请输入标签名称，各标签以#分隔"></Input></div>
+          <CheckboxGroup v-model="tagsStr">
+            <Checkbox label="公文"></Checkbox>
+            <Checkbox label="文学"></Checkbox>
+            <Checkbox label="法律"></Checkbox>
+            <Checkbox label="艺术"></Checkbox>
+          </CheckboxGroup>
         </div>
         <div class="box">
           <h3>任务总体描述：</h3>
@@ -239,6 +244,9 @@
   }
   .delete_button {
     margin-top: 5px;
+  }
+  #tags {
+    text-align: left;
   }
   #languageSelect {
     float:left;
