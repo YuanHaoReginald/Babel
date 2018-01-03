@@ -244,7 +244,7 @@ def GetTaskDetail(request):
             'description': task.description,
             'publishTime': task.publishTime.timestamp(),
             'ddlTime': task.ddlTime.timestamp(),
-            'language': task.languageOrigin if task.languageOrigin == 0 else task.languageTarget,
+            'language': task.languageTarget if task.languageOrigin == 0 else task.languageTarget,
             'fileUrl': task.fileUrl.name.split('/')[-1] if task.fileUrl else '',
             'employerId': task.employer.id,
             'testText': task.testText,
@@ -458,10 +458,21 @@ def UploadLicense(request):
     if request.method == 'POST':
         lfile = request.FILES.get('license')
         ltype = request.POST.get('type')
+        language = request.POST.get('language')
         if ltype == 'cet4':
             ltype = 4
         elif ltype == 'cet8':
             ltype = 8
+        if language == 'English':
+            ltype += 10
+        elif language == 'Japanese':
+            ltype += 20
+        elif language == 'French':
+            ltype += 30
+        elif language == 'Russian':
+            ltype += 40
+        elif language == 'Spanish':
+            ltype += 50
         user = auth.get_user(request)
         _license = License.objects.create(licenseType = ltype, belonger = user.translator)
         _license.licenseImage.save('licenses/' + lfile.name, lfile)

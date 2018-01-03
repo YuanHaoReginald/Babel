@@ -160,7 +160,27 @@
           that.description = data['description']
           that.publishTime = Date(data['publishTime'])
           that.ddlTime = Date(data['ddlTime'])
-          that.language = data['language']
+          // that.language = data['language']
+          switch (data['language']) {
+            case 0:
+              that.language = '中文'
+              break
+            case 1:
+              that.language = '英语'
+              break
+            case 2:
+              that.language = '日语'
+              break
+            case 3:
+              that.language = '法语'
+              break
+            case 4:
+              that.language = '俄语'
+              break
+            case 5:
+              that.language = '西班牙语'
+              break
+          }
           that.taskFile = data['fileUrl']
           that.employerId = data['employerId']
           that.testText = data['testText']

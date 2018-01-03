@@ -249,12 +249,39 @@
             })
           }
           that.licenses.notVerified = []
+          var language
           for (let license of data.LicenseList) {
+            switch (Math.floor(license['type'] / 10)) {
+              case 0:
+                language = '中文'
+                break
+              case 1:
+                language = '英语'
+                break
+              case 2:
+                language = '日语'
+                break
+              case 3:
+                language = '法语'
+                break
+              case 4:
+                language = '俄语'
+                break
+              case 5:
+                language = '西班牙语'
+                break
+            }
+            if (license['type'] % 10 === 4) {
+              license['type'] = '专业四级'
+            } else {
+              license['type'] = '专业八级'
+            }
             that.licenses.notVerified.push({
               id: license['id'],
               status: '待审核',
               type: license['type'],
               url: license['url'],
+              language: language,
               result: null
             })
           }
