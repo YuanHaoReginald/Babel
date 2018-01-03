@@ -119,43 +119,42 @@ def UploadAvatar(request):
 def CreateTask(request):
     if request.method == 'POST':
         user = auth.get_user(request).employer
-        info_dict = json.loads(request.body.decode())
-        print(info_dict)
-        task_title = info_dict['title']
-        task_description = info_dict['description']
-        task_language = info_dict['language']
-        if info_dict['license'] == 'cet4':
-            task_license = 4
-        elif info_dict['license'] == 'cet8':
-            task_license = 8
-        task_level = info_dict['level']
-        task_tags = info_dict['tags']
-        task_ddlTime = info_dict['ddlTime']
-        task_assignments = info_dict['assignments']
-        if info_dict['language'] == 'English':
-            task_languageTarget = 1
-        elif info_dict['language'] == 'Japanese':
-            task_languageTarget = 2
-        elif info_dict['language'] == 'French':
-            task_languageTarget = 5
-        elif info_dict['language'] == 'Russian':
-            task_languageTarget = 4
-        elif info_dict['language'] == 'Spanish':
-            task_languageTarget = 5
-        if info_dict['if_test'] == '需要':
-            task_testText = info_dict['testText']
+        infoDict = json.loads(request.body.decode())
+        taskTitle = infoDict['title']
+        taskDescription = infoDict['description']
+        taskLanguage = infoDict['language']
+        if infoDict['license'] == 'cet4':
+            taskLicense = 4
+        elif infoDict['license'] == 'cet8':
+            taskLicense = 8
+        taskLevel = infoDict['level']
+        taskTags = infoDict['tags']
+        taskDdlTime = infoDict['ddlTime']
+        taskAssignments = infoDict['assignments']
+        if infoDict['language'] == 'English':
+            taskLanguageTarget = 1
+        elif infoDict['language'] == 'Japanese':
+            taskLanguageTarget = 2
+        elif infoDict['language'] == 'French':
+            taskLanguageTarget = 5
+        elif infoDict['language'] == 'Russian':
+            taskLanguageTarget = 4
+        elif infoDict['language'] == 'Spanish':
+            taskLanguageTarget = 5
+        if infoDict['if_test'] == '需要':
+            taskTestText = infoDict['testText']
         else:
-            task_testText = ''
-        task = Task.objects.create(title = task_title,
-                                   description = task_description,
+            taskTestText = ''
+        task = Task.objects.create(title = taskTitle,
+                                   description = taskDescription,
                                    fileType = 0,
                                    employer = user,
-                                   ddlTime = datetime.datetime.utcfromtimestamp(task_ddlTime),
-                                   languageTarget = task_languageTarget,
-                                   requirementCreditLevel = task_level,
-                                   requirementLicense = task_license,
-                                   testText = task_testText)
-        for assignment in task_assignments:
+                                   ddlTime = datetime.datetime.utcfromtimestamp(taskDdlTime),
+                                   languageTarget = taskLanguageTarget,
+                                   requirementCreditLevel = taskLevel,
+                                   requirementLicense = taskLicense,
+                                   testText = taskTestText)
+        for assignment in taskAssignments:
             Assignment.objects.create(task = task,
                                       order = assignment['order'],
                                       price = assignment['price'],
@@ -501,15 +500,15 @@ def SubmitTestResult(request):
 
 def AcceptResult(request):
     if request.method == 'POST':
-        info_dict = json.loads(request.body.decode())
-        assignment = Assignment.objects.get(id=info_dict['assignmentId'])
+        infoDict = json.loads(request.body.decode())
+        assignment = Assignment.objects.get(id=infoDict['assignmentId'])
         assignment.status = 3
         assignment.save()
         return JsonResponse({'status': True})
 
 def ArgueResult(request):
     if request.method == 'POST':
-        info_dict = json.loads(request.body.decode())
-        assignment = Assignment.objects.get(id=info_dict['assignmentId'])
+        infoDict = json.loads(request.body.decode())
+        assignment = Assignment.objects.get(id=infoDict['assignmentId'])
         Dispute.objects.create(assignment=assignment, employerStatement=assignment.comment)
         return JsonResponse({'status': True})
