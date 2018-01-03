@@ -11,7 +11,10 @@
                 <Col span="2"><h3>{{ a.order }}</h3></Col>
                 <Col span="22">
                   <p>任务状态: {{ a.status }}</p>
-                  <Button v-if="a.status == '进行中'" type="primary" @click="modalConfirm = true">任务验收</Button>
+                  <div v-if="a.status == '进行中'">
+                    <Button type="primary" @click="modalConfirm = true">任务验收</Button>
+                    <a :href="DownloadAssignment(a.submission)">{{ a.submission }}</a>
+                  </div>
                   <Modal title="确认任务" v-model="modalConfirm" :mask-closable="false" @on-ok="acceptAssignment(a)" :loading="loading">
                     <RadioGroup v-model="confirm">
                       <Radio label="accept"></Radio>
@@ -208,6 +211,9 @@
         }).catch(function (ex) {
           alert('Network Error')
         })
+      },
+      DownloadAssignment: function (submission) {
+        return 'api/FileDownload?type=assignments&filename=' + submission
       }
     }
   }
