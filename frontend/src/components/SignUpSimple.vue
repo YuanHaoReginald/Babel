@@ -125,7 +125,7 @@
         .then(function (response) {
           return response.json().then(function (data) {
             if (data['id'] === 0) {
-              that.$Message.warning('The username has already been picked, please retry.')
+              that.$Message.warning('The username or e-mail address has already been picked, please retry.')
             } else {
               sessionStorage.setItem('userid', data.id)
               sessionStorage.setItem('utype', that.$route.params.utype)

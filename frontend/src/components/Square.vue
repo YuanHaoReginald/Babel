@@ -272,6 +272,9 @@
                   tmpassignment['status'] = '纠纷中'
                   tmpassignment['score'] = assignment.score
                   break
+                case 10:
+                  tmpassignment['status'] = '试译中'
+                  break
               }
               tmpassignment['price'] = assignment.price
               tmpassignment['submission'] = assignment.submission

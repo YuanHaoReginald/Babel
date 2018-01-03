@@ -53,7 +53,7 @@
           <h3>微信号：</h3>
           <div class="input"><Input v-model="wechat"></Input></div>
         </div>
-        <div class="box">
+        <div class="box" v-if="translatorCheck">
           <h3>上传证书：</h3>
           <Select v-model="language" style="width:200px;" id="languageSelect"  placeholder="<选择语言>">
             <Option v-for="item in languageList" :value="item.value" :key="item.value">{{ item.label }}</Option>
@@ -243,6 +243,11 @@
       userid () {
         // return Number(sessionStorage.getItem('userid'))
         return Number(this.$store.state.userid)
+      }
+    },
+    computed: {
+      translatorCheck: function () {
+        return this.$store.state.utype === 'translator'
       }
     },
     created: function () {
