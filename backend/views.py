@@ -272,6 +272,9 @@ def GetAssignmentDetail(request):
         assignmentid = request.GET.get('assignmentid')
         assignment = Assignment.objects.get(id=assignmentid)
         _dispute = Dispute.objects.filter(assignment=assignment)
+        statement = ''
+        if len(_dispute) != 0 and _dispute[0].adminStatement:
+            statement = _dispute[0].adminStatement
         task = assignment.task
         responseDict = {
             'title': task.title,
@@ -282,6 +285,7 @@ def GetAssignmentDetail(request):
             'assignment': {
                 'id': assignment.id,
                 'hasDispute' : len(_dispute) != 0,
+                'statement' : statement,
                 'description': assignment.description,
                 'translator': assignment.translator.username if assignment.translator else '',
                 'status': assignment.status,
@@ -372,6 +376,8 @@ def SolveDispute(request):
         else:
             dispute.status = 2
         dispute.save()
+        dispute.assignment.status = 3
+        dispute.assignment.save()
         return JsonResponse({'status': True})
 
 def VerifyLicense(request):

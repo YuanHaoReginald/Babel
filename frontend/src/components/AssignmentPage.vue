@@ -40,7 +40,12 @@
                 </div>
               </div>
             </span>
-            <span v-if="assignment.status == '已完成'" class="grey">任务评分:&nbsp;&nbsp;<Rate v-model="assignment.score"></Rate></span>
+            <span v-if="assignment.status == '已完成'" class="grey">
+              任务评分:&nbsp;&nbsp;<Rate v-model="assignment.score"></Rate>
+              <span v-if="assignment.hasDispute">
+                <p> 申诉状态：{{assignment.statement}} </p>
+              </span>
+            </span>
             <span v-if="assignment.status == '纠纷中'">
               <span v-if="!assignment.hasDispute">
                 <Button type="error" @click="argueResult">申请投诉</Button>
@@ -98,6 +103,7 @@
         assignment: {
           id: 0,
           hasDispute: false,
+          statement: '',
           description: '这个任务需要翻译我给出的pdf文档的第20-40页，注意主要人名的翻' +
           '译要与附录中的统一。完成情况好的话我一定会好评的。',
           status: '待领取',
@@ -149,6 +155,7 @@
           let assignment = data['assignment']
           that.assignment['id'] = assignment.id
           that.assignment['hasDispute'] = assignment.hasDispute
+          that.assignment['statement'] = assignment.statement
           that.assignment['translator'] = assignment.translator
           that.assignment['price'] = assignment.price
           that.assignment['submission'] = assignment.submission
