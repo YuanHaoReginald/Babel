@@ -1,7 +1,7 @@
 from django.contrib import auth
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, StreamingHttpResponse
 from .models import *
 from django.core import serializers
 import datetime
@@ -233,7 +233,7 @@ def GetTaskDetail(request):
                 'status': assignment.status,
                 'score': assignment.scores,
                 'price': assignment.price,
-                'submission': assignment.submission.url if assignment.submission else '',
+                'submission': assignment.submission.name.split('/')[-1] if assignment.submission else '',
             })
         return JsonResponse(response_dict)
 
@@ -397,3 +397,21 @@ def AcceptAssignment(request):
         assignment.status = 3
         assignment.save()
         return JsonResponse({'status': True})
+
+def FileDownload(request):
+    def file_iterator(file_name, chunk_size=512):
+        with open(file_name, 'rb') as f:
+            while True:
+                c = f.read(chunk_size)
+                if c:
+                    yield c
+                else:
+                    break
+    if request.method == 'GET':
+        downloadType = request.GET.get('type')
+        root = 'C:/Users/yw/Desktop/Babel/media/' + downloadType
+        filename = request.GET.get('filename')
+        response = StreamingHttpResponse(file_iterator(root + '/' + filename))
+        response['Content-Type'] = 'application/octet-stream'
+        response['Content-Disposition'] = 'attachment;filename="{0}"'.format(filename)
+        return response

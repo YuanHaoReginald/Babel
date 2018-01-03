@@ -11,9 +11,13 @@
                 <Col span="2"><h3>{{ a.order }}</h3></Col>
                 <Col span="22" class="left">
                   <p>任务状态: {{ a.status }}</p>
-                  <p>任务描述： </p>
+                  <p>任务描述: </p>
                   <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ a.description }}</p>
-                  <div class="button"><Button v-if="a.status == '进行中'" type="primary" @click="modalConfirm = true">任务验收</Button></div>
+                  <p>翻译结果:&nbsp;<a :href="DownloadAssignment(a.submission)" v-if="a.status == '进行中' || a.status == '已完成'">{{ a.submission }}</a></p>
+                  <div class="button">
+                    <Button type="primary" @click="modalConfirm = true" v-if="a.status == '进行中'">任务验收</Button>
+                    <span v-if="a.status == '已完成'">任务评分:&nbsp;<Rate allow-half disabled v-model="a.score"><span class="orange">{{ a.score }}</span></Rate></span>
+                  </div>
                   <Modal title="确认任务" v-model="modalConfirm" :mask-closable="false" @on-ok="acceptAssignment(a)" :loading="loading">
                     <RadioGroup v-model="confirm" class="options">
                       <Radio label="accept"></Radio>
@@ -24,7 +28,7 @@
                     </Rate>
                     <Input v-else v-model="text" type="textarea" :rows="4" placeholder="请写出你的拒绝理由"></Input>
                   </Modal>
-                <span v-if="a.status == '已完成'">任务评分:&nbsp;<Rate allow-half disabled v-model="a.score"><span class="orange">{{ a.score }}</span></Rate></span>
+
                 </Col>
               </Row>
             </Card>
@@ -62,22 +66,22 @@
             order: 1,
             description: '这个任务需要翻译我给出的pdf文档的第20-40页，注意主要人名的翻' +
             '译要与附录中的统一。完成情况好的话我一定会好评的。',
-            status: '待发布',
+            status: '进行中',
             translator: '2333',
             score: 4,
             price: '20元',
-            submission: '/2333/455',
+            submission: '455.txt',
             note: ''
           },
           {
             id: 2,
             order: 2,
             description: 'PartII PartII PartII PartII PartII PartII ',
-            status: '待纠纷',
+            status: '已完成',
             translator: '2333',
             score: 4,
             price: '20元',
-            submission: '/2333/455',
+            submission: '2333.txt',
             note: ''
           }
         ],
@@ -208,6 +212,9 @@
         }).catch(function (ex) {
           alert('Network Error')
         })
+      },
+      DownloadAssignment: function (submission) {
+        return 'api/FileDownload?type=assignments&filename=' + submission
       }
     }
   }
