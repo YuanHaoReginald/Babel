@@ -52,22 +52,22 @@ class Task(models.Model):
     requirementLicense = models.IntegerField(null=True)
     requirementCreditLevel = models.FloatField(null=True)
     testText = models.TextField(max_length=1000, null=True)
-    testResult = models.TextField(max_length=1000, null=True)
 
 
 class Tag(models.Model):
     tag = models.CharField(max_length=128, unique=True)
     task = models.ManyToManyField(Task)
 
-#  Assignments
 class Assignment(models.Model):
     description = models.TextField(max_length=1000)
-    # (saved：0/published：1/running：2/finished：3/arguing：4)
+    # (saved：0/published：1/running：2/finished：3/arguing：4/tryTranslate: 10)
     status = models.IntegerField(default=0)
+    testResult = models.TextField(max_length=1000, null=True)    
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
     order = models.IntegerField()
     translator = models.ForeignKey(Translator, null=True, on_delete=models.CASCADE)
     scores = models.FloatField(null=True)
+    comment = models.TextField(null=True)
     price = models.IntegerField(null=True)
     submission = models.FileField(max_length=256, null=True)
     experience = models.IntegerField(default=0)
@@ -102,7 +102,6 @@ class Language(models.Model):
 # license
 class License(models.Model):
     licenseType = models.IntegerField()
-    licenseImage = models.ImageField(max_length=256)
-    description = models.CharField(max_length=100, null=True)
+    licenseImage = models.ImageField(max_length=256, null=True)
     belonger = models.ForeignKey(Translator, on_delete=models.CASCADE)
     adminVerify = models.IntegerField(default=0) # 0:未处理；1：有效 2: 无效

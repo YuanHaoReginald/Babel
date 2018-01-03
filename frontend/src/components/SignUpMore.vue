@@ -63,7 +63,19 @@
               &nbsp;
               <Row>
                 <Col span="4"><h4>{{ l.label }}:</h4></Col>
-                <Col span="6"><Upload><Button>上传证书扫描件</Button></Upload></Col>
+                <Col span="6">
+                  <Upload
+                    name="license"
+                    :data="{language: language, type: l.value}"
+                    :format="['jpg','jpeg','png']"
+                    :max-size="10240"
+                    :on-format-error="handleFormatError"
+                    :on-exceeded-size="handleMaxSize"
+                    type="drag"
+                    action="api/UploadLicense">
+                    上传证书扫描件
+                  </Upload>
+                </Col>
               </Row>
             </li>
           </ul>
@@ -125,6 +137,42 @@
             }
           ],
           'French': [
+            {
+              value: 'cet4',
+              label: '专业四级',
+              src: ''
+            },
+            {
+              value: 'cet8',
+              label: '专业八级',
+              src: ''
+            }
+          ],
+          'Japanese': [
+            {
+              value: 'cet4',
+              label: '专业四级',
+              src: ''
+            },
+            {
+              value: 'cet8',
+              label: '专业八级',
+              src: ''
+            }
+          ],
+          'Russian': [
+            {
+              value: 'cet4',
+              label: '专业四级',
+              src: ''
+            },
+            {
+              value: 'cet8',
+              label: '专业八级',
+              src: ''
+            }
+          ],
+          'Spanish': [
             {
               value: 'cet4',
               label: '专业四级',
@@ -210,7 +258,6 @@
           that.telephone = data['telephone']
           that.alipay = data['alipayNumber']
           that.wechat = data['wechatNumber']
-          that.language = data['language']
         })
       }).catch(function (ex) {
         alert('Network Error')

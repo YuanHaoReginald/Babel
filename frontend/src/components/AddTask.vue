@@ -15,7 +15,7 @@
         </div>
         <div class="box">
           <h3>截止时间：</h3>
-          <div id="datepicker"><DatePicker v-model="ddlTime" type="date" placeholder="Select date" style="width: 200px"></DatePicker></div>
+          <div id="datepicker"><DatePicker v-model="ddlTime" :options="option"  type="date" placeholder="Select date" style="width: 200px"></DatePicker></div>
         </div>
         <div class="box">
           <h3>译者资质：</h3>
@@ -38,14 +38,30 @@
             action="api/UploadTaskFile">
             <Button type="ghost" icon="ios-cloud-upload-outline" id="fileButton">选择文件</Button>
           </Upload>
-          <div v-if="file !== null">
+          <div v-if="file !== null" class="left">
             Upload file: {{ file.name }}
             <Button type="text" :loading="loadingStatus">{{ loadingStatus ? 'Uploading' : 'Ready' }}</Button>
           </div>
         </div>
-        <div class="box">
+        <div class="box" id="tags">
           <h3>标签：</h3>
-          <div class="input"><Input v-model="tagsStr" placeholder="请输入标签名称，各标签以#分隔"></Input></div>
+          <CheckboxGroup v-model="tagsStr">
+            <Checkbox label="公文"></Checkbox>
+            <Checkbox label="文学"></Checkbox>
+            <Checkbox label="法律"></Checkbox>
+            <Checkbox label="艺术"></Checkbox>
+          </CheckboxGroup>
+        </div>
+        <div class="box"  id="textBox">
+          <h3>是否需要试译：</h3>
+          <RadioGroup v-model="if_test" id="top_10">
+            <Radio label="需要"></Radio>
+            <Radio label="不需要"></Radio>
+          </RadioGroup>
+        </div>
+        <div class="box" v-if="if_test == '需要'">
+          <h3>试译选段：</h3>
+          <div class="input"><Input v-model="testText" type="textarea" maxlength="1000"></Input></div>
         </div>
         <div class="box">
           <h3>任务总体描述：</h3>
@@ -76,7 +92,7 @@
                 </div>
                 </Col>
                 <Col span="4"><div class="task_text"><h4>报酬:</h4></div></Col>
-                <Col span="17"><div class="input_assignment"><InputNumber v-model="a.price"  size="large"></InputNumber>&nbsp;元</div></Col>
+                <Col span="17"><div class="input_assignment"><InputNumber v-model="a.price"  size="large" :max="10000" :min="0"></InputNumber>&nbsp;元</div></Col>
               </Row>
             </li>
           </ul>
@@ -102,6 +118,13 @@
         level: 0,
         file: null,
         loadingStatus: false,
+        testText: null,
+        if_test: '',
+        option: {
+          disabledDate (date) {
+            return date && date.valueOf() < Date.now() - 86400000
+          }
+        },
         languageList: [
           {
             value: 'English',
@@ -239,6 +262,18 @@
   }
   .delete_button {
     margin-top: 5px;
+  }
+  .left {
+    text-align: left;
+  }
+  #textBox {
+    text-align: left;
+  }
+  #top_10 {
+    margin-top: 5px;
+  }
+  #tags {
+    text-align: left;
   }
   #languageSelect {
     float:left;

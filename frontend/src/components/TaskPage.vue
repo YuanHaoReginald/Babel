@@ -7,24 +7,38 @@
         <ul>
           <li v-for="a in assignments">
             <Card>
-              <Row>
+              <Row class="text">
                 <Col span="2"><h3>{{ a.order }}</h3></Col>
-                <Col span="22">
+                <Col span="22" class="left">
                   <p>任务状态: {{ a.status }}</p>
-                  <Button v-if="a.status == '进行中'" type="primary" @click="modalConfirm = true">任务验收</Button>
+                  <p>任务描述: </p>
+                  <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ a.description }}</p>
+                  <p v-if="a.status == '进行中' || a.status == '已完成' || a.status == '纠纷中'">翻译结果:&nbsp;<a :href="DownloadAssignment(a.submission)">{{ a.submission }}</a></p>
+                  <div class="button">
+                    <Button type="primary" @click="modalConfirm = true" v-if="a.status == '进行中'">任务验收</Button>
+                    <Button type="primary" v-if="a.status == '试译中'" @click="testConfirm = true" >查看试译结果</Button>
+                    <span v-if="a.status == '已完成'">任务评分:&nbsp;<Rate allow-half disabled v-model="a.score"><span class="orange">{{ a.score }}</span></Rate></span>
+                  </div>
+                  <Modal title="试译结果" v-model="testConfirm" :mask-closable="false" :loading="loading">
+                    <p class="bottom-10">试译语段：</p>
+                    <p class="bottom-10">{{ testText }}</p>
+                    <p class="bottom-10">翻译结果：</p>
+                    <p class="bottom-10">{{ testResult }}</p>
+                    <div slot="footer">
+                      <Button type="error">不通过</Button>
+                      <Button type="primary">通过</Button>
+                    </div>
+                  </Modal>
                   <Modal title="确认任务" v-model="modalConfirm" :mask-closable="false" @on-ok="acceptAssignment(a)" :loading="loading">
-                    <RadioGroup v-model="confirm">
+                    <RadioGroup v-model="confirm" class="options">
                       <Radio label="accept"></Radio>
                       <Radio label="reject"></Radio>
                     </RadioGroup><br>
                     <Rate v-if="confirm === 'accept'" show-text allow-half v-model="valueCustomText">
-                      <span style="color: #f5a623">{{ valueCustomText }}</span>
+                      <span class="orange">{{ valueCustomText }}</span>
                     </Rate>
                     <Input v-else v-model="text" type="textarea" :rows="4" placeholder="请写出你的拒绝理由"></Input>
                   </Modal>
-                  <span v-if="a.status == '已完成'"><b>任务评分</b>:&nbsp;<Rate allow-half disabled v-model="a.score">{{a.score}}</Rate></span>
-                  <p>任务描述： </p>
-                  <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ a.description }}</p>
                 </Col>
               </Row>
             </Card>
@@ -40,6 +54,7 @@
         <p>任务语言：{{ language }}</p>
         <p>发布时间：{{ publishTime }}</p>
         <p>截止时间：{{ ddlTime }}</p>
+        <p>任务文件：<a :href="DownloadTask(taskFile)">{{ taskFile }}</a></p>
       </Card></div>
     </div>
   </div>
@@ -56,6 +71,7 @@
         publishTime: '2017-3-1',
         ddlTime: '2017-5-10',
         language: '法语',
+        taskFile: '',
         assignments: [
           {
             id: 1,
@@ -66,26 +82,55 @@
             translator: '2333',
             score: 4,
             price: '20元',
-            submission: '/2333/455',
+            submission: '455.txt',
             note: ''
           },
           {
             id: 2,
             order: 2,
             description: 'PartII PartII PartII PartII PartII PartII ',
-            status: '进行中',
+            status: '已完成',
             translator: '2333',
             score: 4,
             price: '20元',
-            submission: '/2333/455',
+            submission: '2333.txt',
+            note: ''
+          },
+          {
+            id: 3,
+            order: 3,
+            description: '这个任务需要翻译我给出的pdf文档的第20-40页，注意主要人名的翻' +
+            '译要与附录中的统一。完成情况好的话我一定会好评的。',
+            status: '试译中',
+            translator: '2333',
+            score: 4,
+            price: '20元',
+            submission: '455.txt',
+            note: ''
+          },
+          {
+            id: 4,
+            order: 4,
+            description: '这个任务需要翻译我给出的pdf文档的第20-40页，注意主要人名的翻' +
+            '译要与附录中的统一。完成情况好的话我一定会好评的。',
+            status: '待领取',
+            translator: '2333',
+            score: 4,
+            price: '20元',
+            submission: '455.txt',
             note: ''
           }
         ],
         modalConfirm: false,
+        testConfirm: false,
         confirm: 'accept',
-        valueCustomText: 3,
+        valueCustomText: 0,
         loading: true,
-        text: ''
+        text: '',
+        testText: 'My name is Van, I\'m an artist, I\'m a performance artist. ' +
+        'I\'m hired for people to fulfill their fantasies, their deep dark fantasies.',
+        testResult: '我的名字叫Van，我是一个艺术家，表演艺术家。' +
+        '我被人雇来实现他们的幻想，他们内心深处的黑暗幻想。'
       }
     },
     created: function () {
@@ -103,6 +148,7 @@
           that.publishTime = Date(data['publishTime'])
           that.ddlTime = Date(data['ddlTime'])
           that.language = data['language']
+          that.taskFile = data['fileUrl']
           switch (data['status']) {
             case 0:
               that.status = '待发布'
@@ -208,6 +254,12 @@
         }).catch(function (ex) {
           alert('Network Error')
         })
+      },
+      DownloadAssignment: function (submission) {
+        return 'api/FileDownload?type=assignments&filename=' + submission
+      },
+      DownloadTask: function (submission) {
+        return 'api/FileDownload?type=tasks&filename=' + submission
       }
     }
   }
@@ -229,8 +281,27 @@
     padding: 3px;
     width: 300px;
     margin-left: 703px;
+    line-height:200%;
+  }
+  .button {
+    margin-top: 10px;
   }
   .card {
+    margin-bottom: 10px;
+  }
+  .orange {
+    color: #f5a623;
+  }
+  .left {
+    text-align: left;
+  }
+  .text {
+    line-height:200%;
+  }
+  .options {
+    margin-bottom: 10px;
+  }
+  .bottom-10 {
     margin-bottom: 10px;
   }
   #taskTitle {
@@ -241,11 +312,13 @@
   }
   h2 {
     color: #1c2438;
+    font-weight: 200;
     text-align: left;
   }
   h3 {
     font-size: 16px;
     color: #495060;
+    font-weight: 200;
   }
   h4 {
     font-size: 14px;

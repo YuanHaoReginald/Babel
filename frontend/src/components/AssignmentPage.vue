@@ -5,17 +5,23 @@
         <Card dis-hover padding="0">
           <div id="task-info">
             <h2 id="task-title">{{ title }}<br></h2>
-            <p>{{ description }}</p>
+            <br>
             <div class="grey">
-              发布者：<Avatar v-bind:src="owner.img_src" />
+              发布者:&nbsp;<Avatar v-bind:src="owner.img_src" />
               {{ owner.name }}
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              任务状态:&nbsp;{{ assignment.status }}
             </div>
+            <p>{{ description }}</p>
           </div>
           <div id="details">
-            <p class="grey">详细信息</p>
+            <p class="grey">详细信息:</p>
             <p>{{ assignment.description }}</p>
             <br>
-            <span v-if="assignment.status == '待领取'"><Button type="primary" size="small">领取任务</Button></span>
+            <span v-if="assignment.status == '待领取'">
+              <Button type="primary"  @click="testConfirm = true">领取任务</Button>
+            </span>
+            <span v-if="assignment.status == '试译中'"></span>
             <span v-if="assignment.status == '进行中'">
               <div>
                 <Upload
@@ -33,10 +39,20 @@
                   <Button shape="circle" icon="close" @click="cancel"></Button>
                 </div>
               </div>
-            </span>            
-            <span v-if="assignment.status == '已完成'"><b>任务评分</b>:&nbsp;<Rate v-model="assignment.score"></Rate></span>            
-            <span v-if="assignment.status == '已完成'"><Button type="error" size="small">申请投诉</Button></span>
-            <span v-if="assignment.status == '待评分'"><b>任务评分</b>:&nbsp;<Rate disabled v-model="assignment.score"></Rate></span>            
+            </span>
+            <span v-if="assignment.status == '已完成'" class="grey">任务评分:&nbsp;&nbsp;<Rate v-model="assignment.score"></Rate></span>
+            <span v-if="assignment.status == '已完成'"><Button type="error">申请投诉</Button></span>
+            <span v-if="assignment.status == '待评分'" class="grey">任务评分:&nbsp;&nbsp;<Rate disabled v-model="assignment.score"></Rate></span>
+            <Modal title="试译" v-model="testConfirm" :mask-closable="false" :loading="loading">
+              <p class="bottom-10">试译语段：</p>
+              <p class="bottom-10">{{ testText }}</p>
+              <p class="bottom-10">翻译结果：</p>
+              <p class="bottom-10"><Input v-model="testResult" type="textarea" :rows="5" placeholder="请输入翻译结果"></Input></p>
+              <div slot="footer" class="right">
+                <Button type="ghost">取消</Button>
+                <Button type="primary">提交</Button>
+              </div>
+            </Modal>
           </div>
         </Card>
       </div>
@@ -74,7 +90,7 @@
         assignment: {
           description: '这个任务需要翻译我给出的pdf文档的第20-40页，注意主要人名的翻' +
           '译要与附录中的统一。完成情况好的话我一定会好评的。',
-          status: '进行中',
+          status: '待领取',
           translator: '2333',
           score: 4,
           price: '20元',
@@ -98,7 +114,11 @@
           }
         ],
         file: null,
-        loadingStatus: false
+        loadingStatus: false,
+        testConfirm: false,
+        testText: 'My name is Van, I\'m an artist, I\'m a performance artist. ' +
+        'I\'m hired for people to fulfill their fantasies, their deep dark fantasies.',
+        testResult: ''
       }
     },
     created: function () {
@@ -187,6 +207,7 @@
     padding: 3px;
     float:left;
     width: 700px;
+    line-height:250%;
   }
   #right{
     padding: 3px;
@@ -205,6 +226,12 @@
   }
   .grey {
     color: #80848f;
+  }
+  .right {
+    text-align: right;
+  }
+  .bottom-10 {
+    margin-bottom: 10px;
   }
   #right-title {
     margin-top: 3px;
@@ -230,6 +257,9 @@
   p {
     font-size: 14px;
     text-align: left;
+  }
+  span {
+    font-size: 14px;
   }
 
 </style>

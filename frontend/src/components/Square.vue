@@ -2,7 +2,7 @@
   <div class="root">
     <div id="left">
       <div class="card" v-for="task in tasklist"><Card dis-hover>
-        <div class="task" >
+        <div class="task">
           <h4>标签：{{ toStr(task.tags) }}</h4>
           <h2 @click="checkTaskDetail(task.id)">{{ task.title }}</h2>
           <ul>
@@ -11,7 +11,7 @@
               <span class="words"><b>报酬</b>：{{ a.price }}</span>
               <span class="words"><b>状态</b>： {{ a.status }}</span>
               <span v-if="a.status == '已完成'"><b>任务评分</b>:&nbsp;<Rate allow-half disabled v-model="a.score"></Rate></span>
-              <span v-if="canPickup(a)"><Button type="primary" size="small" @click="pickup(task.id, a.order)">领取任务</Button></span>
+              <span v-if="canPickup(a)"><Button type="primary" size="small" @click="pickup(task, a)">领取任务</Button></span>
               <p class="description"><b>详情</b>： {{ a.description }}</p>
             </li>
           </ul>
@@ -24,9 +24,10 @@
         <div class="chosen_by">按标签</div>
         <CheckboxGroup v-model="chosen_tags">
           <Checkbox label="全选"></Checkbox>
-          <Checkbox label="香蕉"></Checkbox>
-          <Checkbox label="苹果"></Checkbox>
-          <Checkbox label="西瓜"></Checkbox>
+          <Checkbox label="文件"></Checkbox>
+          <Checkbox label="文学"></Checkbox>
+          <Checkbox label="法律"></Checkbox>
+          <Checkbox label="艺术"></Checkbox>
         </CheckboxGroup>
         <div class="chosen_by">按语言</div>
         <CheckboxGroup v-model="chosen_languages">
@@ -59,39 +60,6 @@
   export default {
     components: {Checkbox},
     name: 'square',
-    methods: {
-      pickup: function (task, assignment) {
-        let body = JSON.stringify({task_id: task, assignment_order: assignment})
-        const headers = new Headers({
-          'Content-Type': 'application/json'
-        })
-        let that = this
-        fetch('api/PickupAssignment', { method: 'POST',
-          headers,
-          credentials: 'include',
-          body: body })
-        .then(function (response) {
-          return response.json().then(function (data) {
-            that.$Message.success('Receive Assignment Success')
-          })
-        }).catch(function (ex) {
-          alert('Network Error')
-        })
-      },
-      toStr: function (tags) {
-        let str = ''
-        for (let i = 0; i < tags.length; i++) {
-          str = str + ' ' + tags[i]
-        }
-        return str
-      },
-      checkTaskDetail: function (taskid) {
-        this.$router.push('/task/' + taskid)
-      },
-      canPickup: function (assignment) {
-        return assignment.status === '待领取' && this.$store.state.utype === 'translator'
-      }
-    },
     data () {
       return {
         theme: 'light',
@@ -163,6 +131,46 @@
           }
         ]
         // TODO: 实现全选
+      }
+    },
+    methods: {
+      pickup: function (task, assignment) {
+        let body = JSON.stringify({task_id: task.id, assignment_order: assignment.order})
+        const headers = new Headers({
+          'Content-Type': 'application/json'
+        })
+        let that = this
+        fetch('api/PickupAssignment', { method: 'POST',
+          headers,
+          credentials: 'include',
+          body: body })
+        .then(function (response) {
+          return response.json().then(function (data) {
+            if (data.status) {
+              that.$Message.success('Receive Assignment Success')
+              assignment.status = '进行中'
+              assignment.translator = that.$store.state.username
+              that.$forceUpdate()
+            } else {
+              that.$Message.warning('The Assignment has been picked by another translator')
+            }
+          })
+        }).catch(function (ex) {
+          alert('Network Error')
+        })
+      },
+      toStr: function (tags) {
+        let str = ''
+        for (let i = 0; i < tags.length; i++) {
+          str = str + ' ' + tags[i]
+        }
+        return str
+      },
+      checkTaskDetail: function (taskid) {
+        this.$router.push('/task/' + taskid)
+      },
+      canPickup: function (assignment) {
+        return assignment.status === '待领取' && this.$store.state.utype === 'translator'
       }
     },
     created: function () {
@@ -271,6 +279,7 @@
   li {
     text-align: left;
     margin-top:5px;
+    line-height: 200%;
   }
   h2 {
     color: #1c2438;
