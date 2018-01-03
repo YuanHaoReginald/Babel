@@ -216,7 +216,9 @@ def GetTaskDetail(request):
         print('-----------------------GetTaskDetail-----------------')
         taskId = request.GET.get('taskid')
         task = Task.objects.get(id=taskId)
+
         responseDict = {
+            'id': task.id,
             'title': task.title,
             'status': task.status,
             'description': task.description,
@@ -224,6 +226,7 @@ def GetTaskDetail(request):
             'ddlTime': task.ddlTime.timestamp(),
             'language': task.languageOrigin if task.languageOrigin == 0 else task.languageTarget,
             'fileUrl': task.fileUrl.name.split('/')[-1] if task.fileUrl else '',
+            'employerId': task.employer.id,
             'assignment': []
         }
         assignment_set = task.assignment_set.all()
