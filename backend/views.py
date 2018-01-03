@@ -501,9 +501,9 @@ def AcceptResult(request):
         assignment.save()
         return JsonResponse({'status': True})
 
-def argueResult(request):
+def ArgueResult(request):
     if request.method == 'POST':
         info_dict = json.loads(request.body.decode())
         assignment = Assignment.objects.get(id=info_dict['assignmentId'])
-        Dispute.objects.create(assignment=assignment, employerStatement=comment)
+        Dispute.objects.create(assignment=assignment, employerStatement=assignment.comment)
         return JsonResponse({'status': True})

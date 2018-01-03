@@ -30,4 +30,5 @@ urlpatterns = [
     url(r'^ResponseTestResult$', views.ResponseTestResult, name='ResponseTestResult'),
     url(r'^SubmitTestResult$', views.SubmitTestResult, name='SubmitTestResult'),
     url(r'^AcceptResult$', views.AcceptResult, name='AcceptResult'),
+    url(r'^ArgueResult$', views.ArgueResult, name='ArgueResult'),
 ]
