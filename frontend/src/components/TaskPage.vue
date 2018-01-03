@@ -15,36 +15,36 @@
                   <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ a.description }}</p>
                   <p v-if="(a.status == '进行中' || a.status == '已完成' || a.status == '纠纷中') && isowner">翻译结果:&nbsp;<a :href="DownloadAssignment(a.submission)">{{ a.submission }}</a></p>
                   <div class="button">
-                    <Button type="primary" @click="modalConfirm = true" v-if="a.status == '进行中' && isowner">任务验收</Button>
-                    <Button type="primary" v-if="a.status == '试译中' && isowner" @click="testConfirm = true" >查看试译结果</Button>
+                    <Button type="primary" @click="callConfirm(a)" v-if="a.status == '进行中' && isowner">任务验收</Button>
+                    <Button type="primary" v-if="a.status == '试译中' && isowner" @click="callTestConfirm(a)" >查看试译结果</Button>
                     <Button type="primary" @click="pickup(a)" v-if="a.status == '待领取' && !isowner">领取任务</Button>
                     <span v-if="a.status == '已完成'">任务评分:&nbsp;<Rate allow-half disabled v-model="a.score"><span class="orange">{{ a.score }}</span></Rate></span>
                   </div>
-                  <Modal title="试译结果" v-model="testConfirm" :mask-closable="false" :loading="loading">
-                    <p class="bottom-10">试译语段：</p>
-                    <p class="bottom-10">{{ testText }}</p>
-                    <p class="bottom-10">翻译结果：</p>
-                    <p class="bottom-10">{{ testResult }}</p>
-                    <div slot="footer">
-                      <Button type="error">不通过</Button>
-                      <Button type="primary">通过</Button>
-                    </div>
-                  </Modal>
-                  <Modal title="确认任务" v-model="modalConfirm" :mask-closable="false" @on-ok="acceptAssignment(a)" :loading="loading">
-                    <RadioGroup v-model="confirm" class="options">
-                      <Radio label="accept"></Radio>
-                      <Radio label="reject"></Radio>
-                    </RadioGroup><br>
-                    <Rate v-if="confirm === 'accept'" show-text allow-half v-model="valueCustomText">
-                      <span class="orange">{{ valueCustomText }}</span>
-                    </Rate>
-                    <Input v-else v-model="text" type="textarea" :rows="4" placeholder="请写出你的拒绝理由"></Input>
-                  </Modal>
                 </Col>
               </Row>
             </Card>
           </li>
         </ul>
+        <Modal title="试译结果" v-model="testConfirm" :mask-closable="false" :loading="loading">
+          <p class="bottom-10">试译语段：</p>
+          <p class="bottom-10">{{ testText }}</p>
+          <p class="bottom-10">翻译结果：</p>
+          <p class="bottom-10">{{ testResult }}</p>
+          <div slot="footer">
+            <Button type="error" @click="responseTestResult(false)">不通过</Button>
+            <Button type="primary" @click="responseTestResult(true)">通过</Button>
+          </div>
+        </Modal>
+        <Modal title="确认任务" v-model="modalConfirm" :mask-closable="false" @on-ok="acceptAssignment" :loading="loading">
+          <RadioGroup v-model="confirm" class="options">
+            <Radio label="accept"></Radio>
+            <Radio label="reject"></Radio>
+          </RadioGroup><br>
+          <Rate v-if="confirm === 'accept'" show-text allow-half v-model="valueCustomText">
+            <span class="orange">{{ valueCustomText }}</span>
+          </Rate>
+          <Input v-else v-model="text" type="textarea" :rows="4" placeholder="请写出你的拒绝理由"></Input>
+        </Modal>
       </Card></div>
     </div>
     <div id="right">
@@ -87,7 +87,9 @@
             score: 4,
             price: '20元',
             submission: '455.txt',
-            note: ''
+            note: '',
+            testResult: '我的名字叫Van，我是一个艺术家，表演艺术家。' +
+            '我被人雇来实现他们的幻想，他们内心深处的黑暗幻想。'
           },
           {
             id: 2,
@@ -98,10 +100,12 @@
             score: 4,
             price: '20元',
             submission: '2333.txt',
-            note: ''
+            note: '',
+            testResult: '我的名字叫Van，我是一个艺术家，表演艺术家。' +
+            '我被人雇来实现他们的幻想，他们内心深处的黑暗幻想。'
           },
           {
-            id: 3,
+            id: 30,
             order: 3,
             description: '这个任务需要翻译我给出的pdf文档的第20-40页，注意主要人名的翻' +
             '译要与附录中的统一。完成情况好的话我一定会好评的。',
@@ -110,7 +114,9 @@
             score: 4,
             price: '20元',
             submission: '455.txt',
-            note: ''
+            note: '',
+            testResult: '我的名字叫Van，我是一个艺术家，表演艺术家。' +
+            '我被人雇来实现他们的幻想，他们内心深处的黑暗幻想。'
           },
           {
             id: 4,
@@ -122,7 +128,9 @@
             score: 4,
             price: '20元',
             submission: '455.txt',
-            note: ''
+            note: '',
+            testResult: '我的名字叫Van，我是一个艺术家，表演艺术家。' +
+            '我被人雇来实现他们的幻想，他们内心深处的黑暗幻想。'
           }
         ],
         modalConfirm: false,
@@ -133,8 +141,8 @@
         text: '',
         testText: 'My name is Van, I\'m an artist, I\'m a performance artist. ' +
         'I\'m hired for people to fulfill their fantasies, their deep dark fantasies.',
-        testResult: '我的名字叫Van，我是一个艺术家，表演艺术家。' +
-        '我被人雇来实现他们的幻想，他们内心深处的黑暗幻想。'
+        testResult: '',
+        currentAssignment: null
       }
     },
     created: function () {
@@ -155,6 +163,7 @@
           that.language = data['language']
           that.taskFile = data['fileUrl']
           that.employerId = data['employerId']
+          that.testText = data['testText']
           switch (data['status']) {
             case 0:
               that.status = '待发布'
@@ -230,16 +239,16 @@
           alert('Network Error')
         })
       },
-      acceptAssignment: function (assignment) {
+      acceptAssignment: function () {
         var result
         if (this.confirm === 'accept') {
-          result = assignment.score = this.valueCustomText
+          result = this.currentAssignment.score = this.valueCustomText
         } else {
-          result = assignment.note = this.text
-          assignment.score = 0
+          result = this.currentAssignment.note = this.text
+          this.currentAssignment.score = 0
         }
         let body = JSON.stringify({
-          assignmentid: assignment.id,
+          assignmentid: this.currentAssignment.id,
           acceptance: this.confirm,
           result: result
         })
@@ -256,7 +265,7 @@
         .then(function (response) {
           return response.json().then(function (data) {
             if (data.status) {
-              assignment.status = '已完成'
+              that.currentAssignment.status = '已完成'
               that.valueCustomText = 3
               that.text = ''
               that.modalConfirm = false
@@ -296,6 +305,40 @@
         }).catch(function (ex) {
           alert('Network Error')
         })
+      },
+      responseTestResult: function (result) {
+        console.log(this.currentAssignment, result)
+        let body = JSON.stringify({assignment_id: this.currentAssignment.id, result: result})
+        const headers = new Headers({
+          'Content-Type': 'application/json'
+        })
+        let that = this
+        fetch('api/ResponseTestResult', { method: 'POST',
+          headers,
+          credentials: 'include',
+          body: body })
+        .then(function (response) {
+          return response.json().then(function (data) {
+            if (result) {
+              this.currentAssignment.status = '进行中'
+            } else {
+              this.currentAssignment.status = '待领取'
+              this.currentAssignment.translator = ''
+              that.testConfirm = false
+            }
+          })
+        }).catch(function (ex) {
+          alert('Network Error')
+        })
+      },
+      callConfirm: function (assignment) {
+        this.currentAssignment = assignment
+        this.modalConfirm = true
+      },
+      callTestConfirm: function (assignment) {
+        this.currentAssignment = assignment
+        this.testResult = this.currentAssignment.testResult
+        this.testConfirm = true
       }
     }
   }

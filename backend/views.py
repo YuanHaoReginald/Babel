@@ -248,6 +248,7 @@ def GetTaskDetail(request):
             'language': task.languageOrigin if task.languageOrigin == 0 else task.languageTarget,
             'fileUrl': task.fileUrl.name.split('/')[-1] if task.fileUrl else '',
             'employerId': task.employer.id,
+            'testText': task.testText,
             'assignment': []
         }
         assignment_set = task.assignment_set.all()
@@ -260,6 +261,7 @@ def GetTaskDetail(request):
                 'status': assignment.status,
                 'score': assignment.scores,
                 'price': assignment.price,
+                'testResult': assignment.testResult,
                 'submission': assignment.submission.name.split('/')[-1] if assignment.submission else '',
             })
         return JsonResponse(responseDict)
@@ -326,6 +328,7 @@ def GetSquareTasks(request):
                 'tags': _temp_tag_list,
                 'language': task.languageOrigin if task.languageOrigin == 0 else task.languageTarget,
                 'description': task.description,
+                'testText': task.testText,
                 'assignment': _temp_assignment
             })
         return JsonResponse(responseDict)
@@ -454,3 +457,18 @@ def UploadLicense(request):
         _license = License.objects.create(licenseType = ltype, belonger = user.translator)
         _license.licenseImage.save('licenses/' + lfile.name, lfile)
     return JsonResponse({'url': user.avatar.name})
+
+def ResponseTestResult(request):
+    if request.method == 'POST':
+        infoDict = json.loads(request.body.decode())
+        print(infoDict)
+        assignmentId  = infoDict['assignment_id']
+        assignment = Assignment.objects.get(id = assignmentId)
+        result = infoDict['result']
+        if result:
+            assignment.status = 2
+        else:
+            assignment.status = 1
+            assignment.translator = NULL
+        assignment.save()
+        return HttpResponse(0)

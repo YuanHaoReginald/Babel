@@ -74,6 +74,7 @@
             ddlTime: '2017-5-10',
             tags: ['art', 'math'],
             language: 'French',
+            testText: '干不动了',
             assignments: [
               {
                 order: 1,
@@ -109,6 +110,7 @@
             ddlTime: 'ddlTime',
             tags: ['art', 'math'],
             language: 'English',
+            testText: '',
             assignments: [
               {
                 order: 1,
@@ -135,6 +137,7 @@
     },
     methods: {
       pickup: function (task, assignment) {
+        // todo
         let body = JSON.stringify({task_id: task.id, assignment_order: assignment.order})
         const headers = new Headers({
           'Content-Type': 'application/json'

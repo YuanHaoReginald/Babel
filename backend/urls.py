@@ -27,4 +27,5 @@ urlpatterns = [
     url(r'^AcceptAssignment$', views.AcceptAssignment, name='AcceptAssignment'),
     url(r'^FileDownload$', views.FileDownload, name='FileDownload'),
     url(r'^UploadLicense$', views.UploadLicense, name='UploadLicense'),
+    url(r'^ResponseTestResult$', views.ResponseTestResult, name='ResponseTestResult'),
 ]
