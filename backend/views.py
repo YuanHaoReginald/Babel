@@ -201,9 +201,9 @@ def PickupAssignment(request):
         task = Task.objects.get(id = task_id)
         assignment = Assignment.objects.get(task = task, order = assignment_order)
         assignment.translator = user
-        assignment.status = 1
+        assignment.status = 2
         assignment.save()
-        return HttpResponse(0)
+        return JsonResponse({'status': True})
     
 def GetTaskDetail(request):
     if request.method == 'GET':
@@ -280,7 +280,7 @@ def GetSquareTasks(request):
                 _temp_assignment.append({
                     'order': assignment.order,
                     'description': assignment.description,
-                    'translator': assignment.translator,
+                    'translator': assignment.translator.username if assignment.translator else '',
                     'status': assignment.status,
                     'score': assignment.scores,
                     'price': assignment.price,
