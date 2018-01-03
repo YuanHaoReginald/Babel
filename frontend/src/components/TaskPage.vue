@@ -7,24 +7,24 @@
         <ul>
           <li v-for="a in assignments">
             <Card>
-              <Row>
+              <Row class="text">
                 <Col span="2"><h3>{{ a.order }}</h3></Col>
-                <Col span="22">
+                <Col span="22" class="left">
                   <p>任务状态: {{ a.status }}</p>
-                  <Button v-if="a.status == '进行中'" type="primary" @click="modalConfirm = true">任务验收</Button>
+                  <p>任务描述： </p>
+                  <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ a.description }}</p>
+                  <div class="button"><Button v-if="a.status == '进行中'" type="primary" @click="modalConfirm = true">任务验收</Button></div>
                   <Modal title="确认任务" v-model="modalConfirm" :mask-closable="false" @on-ok="acceptAssignment(a)" :loading="loading">
-                    <RadioGroup v-model="confirm">
+                    <RadioGroup v-model="confirm" class="options">
                       <Radio label="accept"></Radio>
                       <Radio label="reject"></Radio>
                     </RadioGroup><br>
                     <Rate v-if="confirm === 'accept'" show-text allow-half v-model="valueCustomText">
-                      <span style="color: #f5a623">{{ valueCustomText }}</span>
+                      <span class="orange">{{ valueCustomText }}</span>
                     </Rate>
                     <Input v-else v-model="text" type="textarea" :rows="4" placeholder="请写出你的拒绝理由"></Input>
                   </Modal>
-                  <span v-if="a.status == '已完成'"><b>任务评分</b>:&nbsp;<Rate allow-half disabled v-model="a.score">{{a.score}}</Rate></span>
-                  <p>任务描述： </p>
-                  <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ a.description }}</p>
+                <span v-if="a.status == '已完成'">任务评分:&nbsp;<Rate allow-half disabled v-model="a.score"><span class="orange">{{ a.score }}</span></Rate></span>
                 </Col>
               </Row>
             </Card>
@@ -62,7 +62,7 @@
             order: 1,
             description: '这个任务需要翻译我给出的pdf文档的第20-40页，注意主要人名的翻' +
             '译要与附录中的统一。完成情况好的话我一定会好评的。',
-            status: '进行中',
+            status: '待发布',
             translator: '2333',
             score: 4,
             price: '20元',
@@ -73,7 +73,7 @@
             id: 2,
             order: 2,
             description: 'PartII PartII PartII PartII PartII PartII ',
-            status: '进行中',
+            status: '待纠纷',
             translator: '2333',
             score: 4,
             price: '20元',
@@ -83,7 +83,7 @@
         ],
         modalConfirm: false,
         confirm: 'accept',
-        valueCustomText: 3,
+        valueCustomText: 0,
         loading: true,
         text: ''
       }
@@ -229,8 +229,24 @@
     padding: 3px;
     width: 300px;
     margin-left: 703px;
+    line-height:200%;
+  }
+  .button {
+    margin-top: 10px;
   }
   .card {
+    margin-bottom: 10px;
+  }
+  .orange {
+    color: #f5a623;
+  }
+  .left {
+    text-align: left;
+  }
+  .text {
+    line-height:200%;
+  }
+  .options {
     margin-bottom: 10px;
   }
   #taskTitle {
