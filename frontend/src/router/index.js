@@ -97,7 +97,7 @@ const router = new Router({
     },
     {
       path: '/manager',
-      name: 'manager',
+      name: 'admin',
       component: Manager
     }
     // nginx:no 404 -> index.html(history)
