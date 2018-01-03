@@ -254,7 +254,6 @@
               id: license['id'],
               status: '待审核',
               type: license['type'],
-              description: license['description'],
               url: license['url'],
               result: null
             })

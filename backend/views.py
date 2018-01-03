@@ -381,7 +381,6 @@ def GetManager(request):
             response_dict['LicenseList'].append({
                 'id': _license.id,
                 'type': _license.licenseType,
-                'description': _license.description,
                 'url': _license.licenseImage.url,
             })
         return JsonResponse(response_dict)

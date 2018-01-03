@@ -147,6 +147,42 @@
               label: '专业八级',
               src: ''
             }
+          ],
+          'Japanese': [
+            {
+              value: 'cet4',
+              label: '专业四级',
+              src: ''
+            },
+            {
+              value: 'cet8',
+              label: '专业八级',
+              src: ''
+            }
+          ],
+          'Russian': [
+            {
+              value: 'cet4',
+              label: '专业四级',
+              src: ''
+            },
+            {
+              value: 'cet8',
+              label: '专业八级',
+              src: ''
+            }
+          ],
+          'Spanish': [
+            {
+              value: 'cet4',
+              label: '专业四级',
+              src: ''
+            },
+            {
+              value: 'cet8',
+              label: '专业八级',
+              src: ''
+            }
           ]
         }
       }
@@ -222,7 +258,6 @@
           that.telephone = data['telephone']
           that.alipay = data['alipayNumber']
           that.wechat = data['wechatNumber']
-          that.language = data['language']
         })
       }).catch(function (ex) {
         alert('Network Error')
