@@ -2,7 +2,7 @@
   <div class="root">
     <div id="left">
       <div class="card" v-for="task in tasklist"><Card dis-hover>
-        <div class="task" >
+        <div class="task">
           <h4>标签：{{ toStr(task.tags) }}</h4>
           <h2 @click="checkTaskDetail(task.id)">{{ task.title }}</h2>
           <ul>
@@ -24,9 +24,10 @@
         <div class="chosen_by">按标签</div>
         <CheckboxGroup v-model="chosen_tags">
           <Checkbox label="全选"></Checkbox>
-          <Checkbox label="香蕉"></Checkbox>
-          <Checkbox label="苹果"></Checkbox>
-          <Checkbox label="西瓜"></Checkbox>
+          <Checkbox label="文件"></Checkbox>
+          <Checkbox label="文学"></Checkbox>
+          <Checkbox label="法律"></Checkbox>
+          <Checkbox label="艺术"></Checkbox>
         </CheckboxGroup>
         <div class="chosen_by">按语言</div>
         <CheckboxGroup v-model="chosen_languages">
@@ -277,6 +278,7 @@
   li {
     text-align: left;
     margin-top:5px;
+    line-height: 200%;
   }
   h2 {
     color: #1c2438;
