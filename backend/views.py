@@ -421,9 +421,10 @@ def AcceptAssignment(request):
         assignment = Assignment.objects.get(id=assignmentId)
         if acceptance == 'accept':
             assignment.scores = result
+            assignment.status = 3            
         elif acceptance == 'reject':
-            Dispute.objects.create(assignment=assignmentId, employerStatement=result)
-        assignment.status = 3
+            assignment.comment = result
+            assignment.status = 4
         assignment.save()
         return JsonResponse({'status': True})
 
