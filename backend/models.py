@@ -12,7 +12,6 @@ class User(AbstractUser):
 class Admin(User):
     pass
 
-
 # Commen User
 class CommonUser(User):
     creditLevel = models.FloatField(default=3)
@@ -23,7 +22,6 @@ class CommonUser(User):
 
     class Meta:
         abstract = True
-
 
 # translator
 class Translator(CommonUser):
@@ -49,13 +47,13 @@ class Task(models.Model):
     # time
     publishTime = models.DateTimeField(default=timezone.now)
     ddlTime = models.DateTimeField()
-
     languageOrigin = models.IntegerField(default = 0)
     languageTarget = models.IntegerField()
     requirementLicense = models.IntegerField(null=True)
     requirementCreditLevel = models.FloatField(null=True)
     testText = models.TextField(max_length=1000, null=True)
     testResult = models.TextField(max_length=1000, null=True)
+
 
 class Tag(models.Model):
     tag = models.CharField(max_length=128, unique=True)
@@ -101,7 +99,6 @@ class Language(models.Model):
 # CET6 = 1
 # TOFEL100 = 2
 # TOFEL110 = 3
-
 # license
 class License(models.Model):
     licenseType = models.IntegerField()

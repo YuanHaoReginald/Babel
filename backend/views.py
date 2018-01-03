@@ -3,12 +3,14 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
 from .models import *
-from Babel import settings
+from django.core import serializers
+import datetime
 
 import os
 import json
+import time
+from Babel import settings
 from urllib.parse import urljoin
-import datetime
 
 # Create your views here.
 
@@ -29,7 +31,7 @@ def UserSignUp(request):
             elif user_type == 'employer':
                 new_user = Employer.objects.create_user(username=new_username, password=new_password, email=new_email, utype='employer')
             response_dict = {'id': new_user.id}
-            login(request, new_user)
+            auth.login(request, new_user)
         return JsonResponse(response_dict)
 
 
@@ -39,30 +41,28 @@ def UserSignIn(request):
         info_dict = json.loads(request.body.decode())
         username = info_dict['username']
         password = info_dict['password']
-        user = authenticate(username=username, password=password)
+        user = auth.authenticate(username=username, password=password)
         if user is None:
             return JsonResponse({'id': 0})
         else:
-            login(request, user)
+            auth.login(request, user)
             return JsonResponse({'id': user.id, 'utype': user.utype})
+
 
 def UsernameCheck(request):
     if request.method == 'POST':
         username = json.loads(request.body.decode())['username']
-        print(username)
         try:
             user = User.objects.get(username=username)
             return JsonResponse({'status': True})
         except:
             return JsonResponse({'status': False})
 
-@login_required
 def UserLogout(request):
-    logout(request)
+    auth.logout(request)
     return HttpResponse(0)
 
 # get user info
-@login_required
 def GetUserInfo(request):
     if request.method == 'GET':
         user = auth.get_user(request)
@@ -79,6 +79,7 @@ def GetUserInfo(request):
             response_dict['headSrc'] = user.avatar.url
         return JsonResponse(response_dict)
 
+##### 18/1/2 2:18 ###
 
 # sign up more
 def UserModify(request):
@@ -105,6 +106,7 @@ def UserModify(request):
                          'avatar': user.avatar.url if user.avatar else ''}
         return JsonResponse(response_dict)
 
+# not finish this function
 def UploadAvatar(request):
     if request.method == 'POST':
         avatar = request.FILES.get('avatar')
@@ -145,7 +147,9 @@ def UploadTaskFile(request):
         taskid = request.POST.get('id')
         task = Task.objects.get(id = taskid)
         task.fileUrl.save('tasks/' + file.name, file)
+        print(55)
     return JsonResponse({'url': task.fileUrl.name})
+
 
 def GetEmployerTasks(request):
     if request.method == 'GET':
@@ -320,6 +324,7 @@ def PublishTask(request):
             assignment.status = 1
             assignment.save()
         return JsonResponse({'status': True})
+
 
 def SolveDispute(request):
     if request.method == 'POST':
