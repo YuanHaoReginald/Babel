@@ -49,7 +49,7 @@
         return response.json().then(function (data) {
           that.username = data['username']
           that.email = data['email']
-          // that.headSrc = data['avatar']
+          that.headSrc = data['avatar']
           that.level = data['level']
           that.experienceNumber = data['experience']
         })

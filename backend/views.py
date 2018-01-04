@@ -73,11 +73,11 @@ def GetUserInfo(request):
             user = user.employer
         responseDict = {'username': user.username,
                          'email': user.email,
-                         'headSrc': '',
+                         'avatar': '',
                          'level': user.creditLevel,
                          'experience': user.experience}
         if user.avatar:
-            responseDict['headSrc'] = user.avatar.url
+            responseDict['avatar'] = user.avatar.url
         return JsonResponse(responseDict)
 
 ##### 18/1/2 2:18 ###
