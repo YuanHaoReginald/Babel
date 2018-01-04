@@ -20,6 +20,15 @@
                     <Button type="primary" @click="pickup(a)" v-if="a.status == '待领取' && !isowner">领取任务</Button>
                     <span v-if="a.status == '已完成'">任务评分:&nbsp;<Rate allow-half disabled v-model="a.score"><span class="orange">{{ a.score }}</span></Rate></span>
                   </div>
+                  <span v-if="a.status == '纠纷中' && isowner">
+                    <p v-if="!a.hasDispute">请耐心等待翻译者回应</p>
+                    <p v-if="a.hasDispute">请耐心等待管理员处理</p>
+                  </span>
+                  <span v-if="a.status == '已完成' && isowner && a.hasDispute">
+                    <p v-if="a.disputeResult == 0"> 申诉状态：未完成（发生未知错误） </p>
+                    <p v-if="a.disputeResult == 1"> 申诉状态：管理员同意了翻译者的申诉，评语：{{a.statement}} </p>
+                    <p v-if="a.disputeResult == 2"> 申诉状态：管理员拒绝了翻译者的申诉，评语：{{a.statement}} </p>
+                  </span>
                 </Col>
               </Row>
             </Card>
@@ -80,6 +89,9 @@
           {
             id: 1,
             order: 1,
+            hasDispute: false,
+            disputeResult: 0,
+            statement: '',
             description: '这个任务需要翻译我给出的pdf文档的第20-40页，注意主要人名的翻' +
             '译要与附录中的统一。完成情况好的话我一定会好评的。',
             status: '进行中',
@@ -94,6 +106,9 @@
           {
             id: 2,
             order: 2,
+            hasDispute: false,
+            disputeResult: 0,
+            statement: '',
             description: 'PartII PartII PartII PartII PartII PartII ',
             status: '已完成',
             translator: '2333',
@@ -107,6 +122,9 @@
           {
             id: 30,
             order: 3,
+            hasDispute: false,
+            disputeResult: 0,
+            statement: '',
             description: '这个任务需要翻译我给出的pdf文档的第20-40页，注意主要人名的翻' +
             '译要与附录中的统一。完成情况好的话我一定会好评的。',
             status: '试译中',
@@ -121,6 +139,9 @@
           {
             id: 4,
             order: 4,
+            hasDispute: false,
+            disputeResult: 0,
+            statement: '',
             description: '这个任务需要翻译我给出的pdf文档的第20-40页，注意主要人名的翻' +
             '译要与附录中的统一。完成情况好的话我一定会好评的。',
             status: '待领取',
@@ -199,6 +220,9 @@
             let tmp = []
             tmp['id'] = assignment.id
             tmp['order'] = assignment.order
+            tmp['hasDispute'] = assignment.hasDispute
+            tmp['disputeResult'] = assignment.disputeResult
+            tmp['statement'] = assignment.statement
             tmp['description'] = assignment.description
             tmp['translator'] = assignment.translator
             switch (assignment.status) {
