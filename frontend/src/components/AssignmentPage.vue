@@ -41,7 +41,7 @@
               </div>
             </span>
             <span v-if="assignment.status == '已完成'" class="grey">
-              任务评分:&nbsp;&nbsp;<Rate v-model="assignment.score"></Rate>
+              任务评分:&nbsp;&nbsp;<Rate allow-half disbaled v-model="assignment.score"></Rate>
               <span v-if="assignment.hasDispute">
                 <p> 申诉状态：{{assignment.statement}} </p>
               </span>
@@ -55,7 +55,7 @@
                 <p>请耐心等待结果</p>
               </span>
             </span>
-            <span v-if="assignment.status == '待评分'" class="grey">任务评分:&nbsp;&nbsp;<Rate disabled v-model="assignment.score"></Rate></span>
+            <span v-if="assignment.status == '待评分'" class="grey">任务评分:&nbsp;&nbsp;<Rate allow-half disabled v-model="assignment.score"></Rate></span>
             <Modal title="试译" v-model="testConfirm" :mask-closable="false" :loading="loading">
               <p class="bottom-10">试译语段：</p>
               <p class="bottom-10">{{ testText }}</p>

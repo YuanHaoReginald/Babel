@@ -51,7 +51,7 @@
       return {
         filter: [],
         sort: '',
-        page_total_num: 100,
+        page_total_num: 0,
         sortList: [
           {
             label: '按发布时间',

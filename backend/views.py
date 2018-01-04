@@ -103,7 +103,7 @@ def UserModify(request):
         responseDict = {'telephone': user.telephone,
                          'wechatNumber': user.wechatNumber,
                          'alipayNumber': user.alipayNumber,
-                         'language': 'French',
+                         'language': '',
                          'avatar': user.avatar.url if user.avatar else ''}
         return JsonResponse(responseDict)
 
@@ -114,7 +114,7 @@ def UploadAvatar(request):
         fileExtension = avatar.name.split('.')[-1]
         user.avatar.delete()
         user.avatar.save('avatars/' + user.username + '.' + fileExtension, avatar)
-    return JsonResponse({'url': user.avatar.name})
+    return JsonResponse({'url': user.avatar.url})
 
 def CreateTask(request):
     if request.method == 'POST':
@@ -167,7 +167,6 @@ def UploadTaskFile(request):
         taskId = request.POST.get('id')
         task = Task.objects.get(id = taskId)
         task.fileUrl.save('tasks/' + file.name, file)
-        print(55)
     return JsonResponse({'url': task.fileUrl.name})
 
 
@@ -346,7 +345,7 @@ def SubmitAssignment(request):
         print(assignmentId)
         assignment = Assignment.objects.get(id = assignmentId)
         assignment.submission.save('assignments/' + file.name, file)
-    return JsonResponse({'url': assignment.submission.name})
+    return JsonResponse({'url': assignment.submission.name.split('/')[-1]})
 
 def PublishTask(request):
     if request.method == 'POST':
@@ -476,7 +475,7 @@ def UploadLicense(request):
         user = auth.get_user(request)
         _license = License.objects.create(licenseType = ltype, belonger = user.translator)
         _license.licenseImage.save('licenses/' + lfile.name, lfile)
-    return JsonResponse({'url': user.avatar.name})
+    return JsonResponse({'url': _license.name.split('/')[-1]})
 
 def ResponseTestResult(request):
     if request.method == 'POST':

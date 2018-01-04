@@ -6,7 +6,7 @@
         <div class="title"><h2>完善个人信息</h2></div>
         <div class="box" id="head">
           <h3>上传头像：</h3>
-          <div class="input"><div class="avatar-upload" v-if="avatar.url != ''">
+          <div><div class="avatar-upload" v-if="avatar.url != ''">
             <template v-if="avatar.status === 'finished'">
               <img :src="avatar.url">
               <div class="upload-cover">
@@ -93,7 +93,6 @@
       return {
         avatar: {
           url: '',
-          status: 'none',
           showProgress: false
         },
         visible: false,
@@ -216,14 +215,12 @@
         this.visible = true
       },
       handleRemove (file) {
-        this.avatar.status = 'none'
         this.avatar.url = ''
       },
       handleBeforeUpload () {
-        this.avatar.url = ' '
+        // this.avatar.url = ' '
       },
       handleSuccess (res, file) {
-        console.log('abcdefg')
         console.log(res.url)
         this.avatar.url = 'https://o5wwk8baw.qnssl.com/7eb99afb9d5f317c912f08b5212fd69a/avatar'
         this.avatar.status = 'finished'
@@ -260,6 +257,7 @@
         credentials: 'include'})
       .then(function (response) {
         return response.json().then(function (data) {
+          // that.avatar.url = data['avatar']
           that.telephone = data['telephone']
           that.alipay = data['alipayNumber']
           that.wechat = data['wechatNumber']
