@@ -25,7 +25,7 @@
         </div>
       </Card>
       <div id="pages">
-        <Page :total="page_total_num"></Page>
+        <Page :total="page_total_num" page-size="5" show-elevator @on-change="setPageList"></Page>
       </div>
     </div>
   </div>
@@ -59,8 +59,7 @@
             'I am the description.I am the description.I am the description.I am the description.'
           }
         ],
-        page_total_num: 500,
-        page_current_num: 1
+        page_total_num: 0
       }
     },
     mounted: function () {
@@ -97,6 +96,8 @@
               description: task.description
             })
           }
+          that.page_total_num = that.tasklist.length
+          that.setPageList(1)
         })
       }).catch(function (ex) {
         alert('Network Error')
@@ -105,6 +106,10 @@
     methods: {
       checkTaskDetail: function (taskid) {
         this.$router.push('/task/' + taskid)
+      },
+      setPageList (page) {
+        this.pageList.splice(0, this.pageList.length)
+        this.pageList = this.tasklist.slice((page - 1) * 5, page * 5)
       }
     }
   }

@@ -24,7 +24,7 @@
         </div>
         <div>
           <ul>
-            <li v-for="assignment in assignmentlist">
+            <li v-for="assignment in pageList">
               <Card padding=10 @click.native="checkAssignment(assignment.id)">
                 <p slot="title" id="assignmentTitle">
                   {{ assignment.title }}&nbsp;&nbsp;&nbsp;<span v-for="tag in assignment.tags"><Tag><h4>{{ tag }}</h4></Tag></span>
@@ -36,6 +36,9 @@
           </ul>
         </div>
       </Card>
+      <div id="pages">
+        <Page :total="page_total_num" page-size="5" show-elevator @on-change="setPageList"></Page>
+      </div>
     </div>
   </div>
 </template>
@@ -48,6 +51,7 @@
       return {
         filter: [],
         sort: '',
+        page_total_num: 100,
         sortList: [
           {
             label: '按发布时间',
@@ -77,7 +81,8 @@
             description: 'I am the description.I am the description.I am the description.' +
             'I am the description.I am the description.I am the description.I am the description.'
           }
-        ]
+        ],
+        pageList: []
       }
     },
     created: function () {
@@ -102,6 +107,8 @@
               description: assignment.description
             })
           }
+          that.page_total_num = that.assignmentlist.length
+          that.setPageList(1)
         })
       }).catch(function (ex) {
         alert('Network Error')
@@ -110,6 +117,10 @@
     methods: {
       checkAssignment (assignmentid) {
         this.$router.push('/assignment/' + assignmentid)
+      },
+      setPageList (page) {
+        this.pageList.splice(0, this.pageList.length)
+        this.pageList = this.assignmentlist.slice((page - 1) * 5, page * 5)
       }
     }
   }
@@ -153,6 +164,9 @@
     font-size: 12px;
     text-align: left;
     color: #80848f;
+  }
+  #pages {
+    padding: 20px;
   }
   h2 {
     font-size: 20px;
