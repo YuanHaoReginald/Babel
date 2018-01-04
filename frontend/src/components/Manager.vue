@@ -6,6 +6,7 @@
           <MenuItem name="1" @click.native="switchTo('argues_notSolved')">
             <Icon type="document-text"></Icon>
             尚未处理
+            <Badge :count="argues.notSolved.length" class="todos"></Badge>
           </MenuItem>
           <MenuItem name="2" @click.native="switchTo('argues_solved')">
             <Icon type="document-text"></Icon>
@@ -16,6 +17,7 @@
           <MenuItem name="3" @click.native="switchTo('licenses_notVerified')">
             <Icon type="document-text"></Icon>
             尚未处理
+            <Badge :count="licenses.notVerified.length" class="todos"></Badge>
           </MenuItem>
           <MenuItem name="4" @click.native="switchTo('licenses_verified')">
             <Icon type="document-text"></Icon>
@@ -93,7 +95,7 @@
           </div>
         </li>
       </ul>
-      <div class="center" v-if="total !== 0"><Page :total="total" show-elevator></Page></div>
+      <!-- <div class="center" v-if="total !== 0"><Page :total="total" show-elevator></Page></div> -->
     </div>
   </div>
 </template>
@@ -172,7 +174,7 @@
       setArgue: function (argue, result) {
         argue.status = '已审核'
         argue.result = result
-        this.argues.solved[this.argues.solved.length] = argue
+        this.argues.solved.splice(0, 0, argue)
         for (var i = 0; i < this.argues.notSolved.length; ++i) {
           if (this.argues.notSolved[i] === argue) {
             this.argues.notSolved.splice(i, 1)
@@ -200,7 +202,7 @@
       setLicense: function (license, result) {
         license.status = '已审核'
         license.result = result
-        this.licenses.verified[this.licenses.verified.length] = license
+        this.licenses.verified.splice(0, 0, license)
         for (var i = 0; i < this.licenses.notVerified.length; ++i) {
           if (this.licenses.notVerified[i] === license) {
             this.licenses.notVerified.splice(i, 1)
@@ -348,5 +350,9 @@
   }
   .type_text {
     font-size: 15px;
+  }
+  .todos {
+    margin: 0 0 0 0;
+    float: right;
   }
 </style>
