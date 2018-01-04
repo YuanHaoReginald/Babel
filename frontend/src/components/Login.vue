@@ -1,13 +1,13 @@
 <template>
   <div class="root">
-    <div class="title"><h2>Login</h2></div>
+    <div class="title"><h2>登录</h2></div>
     <div class="input">
-      <h3>Username:</h3>
+      <h3>用户名:</h3>
       <Input v-model="username" style="width: 300px"> </Input>
     </div>
     <div class="input">
-      <h3>Password:</h3>
-      <Input v-model="password" style="width: 300px"> </Input>
+      <h3>密码:</h3>
+      <Input v-model="password" type="password" style="width: 300px"> </Input>
     </div>
     <div class="button">
       <Button size="large" type="primary" v-on:click="login">Sign in</Button>
@@ -38,17 +38,13 @@
           body: body })
         .then(function (response) {
           return response.json().then(function (data) {
-            console.log(123)
             if (data['id'] === 0) {
-              alert('Username or Password Error')
+              that.$Message.warning('Username or Password Error')
             } else {
-              if (data['utype'] === 'employer') {
-                console.log('emp')
-                that.$router.push({name: 'employer', params: {id: data['id']}})
-              } else if (data['utype'] === 'translator') {
-                console.log('tra')
-                that.$router.push({name: 'translator', params: {id: data['id']}})
-              }
+              sessionStorage.setItem('userid', data['id'])
+              sessionStorage.setItem('utype', data['utype'])
+              that.$store.commit('login', {'userid': Number(data['id']), 'utype': data['utype'], 'username': that.username})
+              that.$router.push({name: data['utype']})
             }
           }).catch(function (ex) {
             alert('Network Error')

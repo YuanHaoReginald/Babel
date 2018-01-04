@@ -22,5 +22,8 @@ export default {
 </script>
 
 <style scoped>
-
+  #employerpage {
+    margin-left: auto;
+    margin-right: auto;
+  }
 </style>

@@ -2,9 +2,8 @@
   <div class="root">
     <div id="add" class="card">
       <Card class="add" padding=10>
-        <router-link to="/addtask"><div id="addIcon"><Icon type="android-add-circle" size=35></Icon></div></router-link>
+        <div id="addIcon"><router-link to="/addtask"><Icon type="android-add-circle" size=35></Icon></router-link></div>
         <div id="addText"><h2>创建新任务</h2></div>
-
       </Card>
     </div>
     <div id="tasks" class="card">
@@ -13,10 +12,11 @@
         <div>
           <ul>
             <li v-for="task in tasklist">
-              <Card padding=10>
+              <Card padding=10 @click.native="checkTaskDetail(task.id)">
                 <p slot="title" id="taskTitle">
-                  {{ task.title }}&nbsp;&nbsp;&nbsp;<Tag v-for="tag in task.tags"><h4>{{ tag }}</h4></Tag>
+                  {{ task.title }}&nbsp;&nbsp;&nbsp;<span v-for="tag in task.tags"><Tag><h4>{{ tag }}</h4></Tag></span>
                 </p>
+                <p id="taskStatus">任务状态：{{ task.status }}</p>
                 <p id="taskTime">起始时间：{{ task.publishTime }}&nbsp;&nbsp;&nbsp;截止时间：{{ task.ddlTime }}</p>
                 <p id="taskDescription">{{ task.description }}</p>
               </Card>
@@ -24,6 +24,9 @@
           </ul>
         </div>
       </Card>
+      <div id="pages">
+        <Page :total="page_total_num"></Page>
+      </div>
     </div>
   </div>
 </template>
@@ -37,6 +40,7 @@
         tasklist: [
           {
             title: '中法信件翻译任务',
+            status: '进行中',
             publishTime: '2017-3-1',
             ddlTime: '2017-5-10',
             tags: ['art', 'math'],
@@ -46,6 +50,7 @@
           },
           {
             title: 'title',
+            status: '待发布',
             publishTime: 'publishTime',
             ddlTime: 'ddlTime',
             tags: ['art', 'math'],
@@ -53,7 +58,53 @@
             description: 'I am the description.I am the description.I am the description.' +
             'I am the description.I am the description.I am the description.I am the description.'
           }
-        ]
+        ],
+        page_total_num: 500,
+        page_current_num: 1
+      }
+    },
+    mounted: function () {
+      const headers = new Headers({
+        'Content-Type': 'application/json'
+      })
+      let that = this
+      fetch('api/GetEmployerTasks', { method: 'GET',
+        headers,
+        credentials: 'include'})
+      .then(function (response) {
+        return response.json().then(function (data) {
+          that.tasklist = []
+          for (let task of data.taskList) {
+            switch (task.status) {
+              case 0:
+                task.status = '待发布'
+                break
+              case 1:
+                task.status = '进行中'
+                break
+              case 2:
+                task.status = '已结束'
+                break
+            }
+            that.tasklist.push({
+              id: task.id,
+              title: task.title,
+              status: task.status,
+              publishTime: Date(task.publishTime),
+              ddlTime: Date(task.ddlTime),
+              tags: task.tag,
+              language: task.language,
+              description: task.description
+            })
+          }
+        })
+      }).catch(function (ex) {
+        alert('Network Error')
+      })
+    },
+    methods: {
+      checkTaskDetail: function (taskid) {
+        this.$router.push('/task/' + taskid)
       }
     }
   }
@@ -88,10 +139,13 @@
     text-align: left;
     color: #495060;
   }
-  #taskTime {
+  #taskTime, #taskStatus {
     font-size: 12px;
     text-align: left;
     color: #80848f;
+  }
+  #pages {
+    padding: 20px;
   }
   h2 {
     font-size: 24px;

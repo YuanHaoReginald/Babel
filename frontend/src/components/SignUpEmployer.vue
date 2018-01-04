@@ -1,12 +1,12 @@
-<!--This is for translator-->
+<!--This is for employer-->
 <template>
   <div class="root">
     <Card dis-hover>
       <div class="card">
         <div class="title"><h2>完善个人信息</h2></div>
-        <div class="box" id="head">
+        <div class="box">
           <h3>上传头像：</h3>
-          <div class="input"><div class="avatar-upload" v-if="avatar.url != ''">
+          <div class="avatar-upload" v-if="avatar.status != 'none'">
             <template v-if="avatar.status === 'finished'">
               <img :src="avatar.url">
               <div class="upload-cover">
@@ -25,9 +25,7 @@
             <Upload
               name="avatar"
               :data="{id: userid()}"
-              :before-upload="handleBeforeUpload"
               :on-success="handleSuccess"
-              :show-upload-list="false"
               :format="['jpg','jpeg','png']"
               :max-size="2048"
               :on-format-error="handleFormatError"
@@ -39,7 +37,7 @@
                 <Icon type="camera" size="20"></Icon>
               </div>
             </Upload>
-          </div></div>
+          </div>
         </div>
         <div class="box">
           <h3>电话：</h3>
@@ -52,33 +50,6 @@
         <div class="box">
           <h3>微信号：</h3>
           <div class="input"><Input v-model="wechat"></Input></div>
-        </div>
-        <div class="box" v-if="translatorCheck">
-          <h3>上传证书：</h3>
-          <Select v-model="language" style="width:200px;" id="languageSelect"  placeholder="<选择语言>">
-            <Option v-for="item in languageList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-          </Select>
-          <ul>
-            <li v-for="l in licenseList[language]">
-              &nbsp;
-              <Row>
-                <Col span="4"><h4>{{ l.label }}:</h4></Col>
-                <Col span="6">
-                  <Upload
-                    name="license"
-                    :data="{language: language, type: l.value}"
-                    :format="['jpg','jpeg','png']"
-                    :max-size="10240"
-                    :on-format-error="handleFormatError"
-                    :on-exceeded-size="handleMaxSize"
-                    type="drag"
-                    action="api/UploadLicense">
-                    上传证书扫描件
-                  </Upload>
-                </Col>
-              </Row>
-            </li>
-          </ul>
         </div>
         <div id="submitButton"><Button type="primary" @click="modify_info">提交修改</Button></div>
       </div>
@@ -104,23 +75,23 @@
         languageList: [
           {
             value: 'English',
-            label: '英语 / English'
+            label: '英语'
           },
           {
             value: 'Japanese',
-            label: '日语 / 日本語'
+            label: '日语'
           },
           {
             value: 'French',
-            label: '法语 / Français'
+            label: '法语'
           },
           {
             value: 'Russian',
-            label: '俄语 / русский'
+            label: '俄语'
           },
           {
             value: 'Spanish',
-            label: '西班牙语 / Español'
+            label: '西班牙语'
           }
         ],
         licenseList: {
@@ -137,42 +108,6 @@
             }
           ],
           'French': [
-            {
-              value: 'cet4',
-              label: '专业四级',
-              src: ''
-            },
-            {
-              value: 'cet8',
-              label: '专业八级',
-              src: ''
-            }
-          ],
-          'Japanese': [
-            {
-              value: 'cet4',
-              label: '专业四级',
-              src: ''
-            },
-            {
-              value: 'cet8',
-              label: '专业八级',
-              src: ''
-            }
-          ],
-          'Russian': [
-            {
-              value: 'cet4',
-              label: '专业四级',
-              src: ''
-            },
-            {
-              value: 'cet8',
-              label: '专业八级',
-              src: ''
-            }
-          ],
-          'Spanish': [
             {
               value: 'cet4',
               label: '专业四级',
@@ -200,17 +135,17 @@
           headers,
           credentials: 'include',
           body: body })
-        .then(function (response) {
-          return response.json().then(function (data) {
-            if (data['status']) {
-              that.$Message.success('Modify successfully.')
-            } else {
-              that.$Message.warning('Modify Failed.')
-            }
+          .then(function (response) {
+            return response.json().then(function (data) {
+              if (data['status']) {
+                that.$Message.success('Modify successfully.')
+              } else {
+                that.$Message.warning('Modify Failed.')
+              }
+            })
+          }).catch(function (ex) {
+            alert('Network Error')
           })
-        }).catch(function (ex) {
-          alert('Network Error')
-        })
       },
       handleView () {
         this.visible = true
@@ -218,9 +153,6 @@
       handleRemove (file) {
         this.avatar.status = 'none'
         this.avatar.url = ''
-      },
-      handleBeforeUpload () {
-        this.avatar.url = ' '
       },
       handleSuccess (res, file) {
         console.log('abcdefg')
@@ -245,11 +177,6 @@
         return Number(this.$store.state.userid)
       }
     },
-    computed: {
-      translatorCheck: function () {
-        return this.$store.state.utype === 'translator'
-      }
-    },
     created: function () {
       const headers = new Headers({
         'Content-Type': 'application/json'
@@ -258,15 +185,16 @@
       fetch('api/UserModify', { method: 'GET',
         headers,
         credentials: 'include'})
-      .then(function (response) {
-        return response.json().then(function (data) {
-          that.telephone = data['telephone']
-          that.alipay = data['alipayNumber']
-          that.wechat = data['wechatNumber']
+        .then(function (response) {
+          return response.json().then(function (data) {
+            that.telephone = data['telephone']
+            that.alipay = data['alipayNumber']
+            that.wechat = data['wechatNumber']
+            that.language = data['language']
+          })
+        }).catch(function (ex) {
+          alert('Network Error')
         })
-      }).catch(function (ex) {
-        alert('Network Error')
-      })
     }
   }
 </script>
@@ -306,9 +234,6 @@
   #submitButton {
     margin-top: 150px;
   }
-  #head {
-    text-align: left;
-  }
   h2 {
     color: #1c2438;
     text-align: left;
@@ -325,13 +250,16 @@
     margin-bottom: 20px;
   }
   .avatar-upload{
+    display: inline-block;
     width: 60px;
     height: 60px;
+    text-align: center;
     line-height: 60px;
     border: 1px solid transparent;
     border-radius: 4px;
     overflow: hidden;
     background: #fff;
+    position: relative;
     box-shadow: 0 1px 1px rgba(0,0,0,.2);
     margin-right: 4px;
   }
@@ -340,21 +268,21 @@
     height: 100%;
   }
   .upload-cover{
-      display: none;
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: rgba(0,0,0,.6);
+    display: none;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0,0,0,.6);
   }
   .avatar-upload:hover .upload-cover{
-      display: block;
+    display: block;
   }
   .upload-cover i{
-      color: #fff;
-      font-size: 20px;
-      cursor: pointer;
-      margin: 0 2px;
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+    margin: 0 2px;
   }
 </style>

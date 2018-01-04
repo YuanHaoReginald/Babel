@@ -1,8 +1,8 @@
 <template>
   <div class="root">
-    <div id="tasks" class="card">
-      <Card shadow class="tasks" padding=0>
-        <div id="taskListTitle"><h2>我的任务</h2></div>
+    <div id="assignments" class="card">
+      <Card shadow class="assignments" padding=0>
+        <div id="assignmentListTitle"><h2>我的任务</h2></div>
         <div id="bigCheckBox">
           <Row>
             <Col span="3"><div id="checkText"><h4>筛选：</h4></div></Col>
@@ -24,13 +24,13 @@
         </div>
         <div>
           <ul>
-            <li v-for="task in tasklist">
-              <Card padding=10>
-                <p slot="title" id="taskTitle">
-                  {{ task.title }}&nbsp;&nbsp;&nbsp;<Tag v-for="tag in task.tags"><h4>{{ tag }}</h4></Tag>
+            <li v-for="assignment in assignmentlist">
+              <Card padding=10 @click.native="checkAssignment(assignment.id)">
+                <p slot="title" id="assignmentTitle">
+                  {{ assignment.title }}&nbsp;&nbsp;&nbsp;<span v-for="tag in assignment.tags"><Tag><h4>{{ tag }}</h4></Tag></span>
                 </p>
-                <p id="taskTime">起始时间：{{ task.publishTime }}&nbsp;&nbsp;&nbsp;截止时间：{{ task.ddlTime }}</p>
-                <p id="taskDescription">{{ task.description }}</p>
+                <p id="assignmentTime">起始时间：{{ assignment.publishTime }}&nbsp;&nbsp;&nbsp;截止时间：{{ assignment.ddlTime }}</p>
+                <p id="assignmentDescription">{{ assignment.description }}</p>
               </Card>
             </li>
           </ul>
@@ -43,7 +43,7 @@
 <script>
   /* eslint-disable no-new */
   export default {
-    name: 'tasks',
+    name: 'assignments',
     data () {
       return {
         filter: [],
@@ -58,7 +58,7 @@
             value: 'changeTime'
           }
         ],
-        tasklist: [
+        assignmentlist: [
           {
             title: '中法信件翻译任务',
             publishTime: '2017-3-1',
@@ -78,6 +78,38 @@
             'I am the description.I am the description.I am the description.I am the description.'
           }
         ]
+      }
+    },
+    created: function () {
+      const headers = new Headers({
+        'Content-Type': 'application/json'
+      })
+      let that = this
+      fetch('api/GetTranslatorAssignments', { method: 'GET',
+        headers,
+        credentials: 'include'})
+      .then(function (response) {
+        return response.json().then(function (data) {
+          that.assignmentlist = []
+          for (let assignment of data.assignmentList) {
+            that.assignmentlist.push({
+              id: assignment.id,
+              title: assignment.title,
+              publishTime: Date(assignment.publishTime),
+              ddlTime: Date(assignment.ddlTime),
+              tags: assignment.tag,
+              language: assignment.language,
+              description: assignment.description
+            })
+          }
+        })
+      }).catch(function (ex) {
+        alert('Network Error')
+      })
+    },
+    methods: {
+      checkAssignment (assignmentid) {
+        this.$router.push('/assignment/' + assignmentid)
       }
     }
   }
@@ -105,19 +137,19 @@
     margin-top: 10px;
     margin-bottom: 20px;
   }
-  #taskListTitle {
+  #assignmentListTitle {
     text-align: left;
     padding: 20px 0 10px 20px;
   }
-  #taskTitle {
+  #assignmentTitle {
     font-size: 16px;
     text-align: left;
   }
-  #taskDescription {
+  #assignmentDescription {
     text-align: left;
     color: #495060;
   }
-  #taskTime {
+  #assignmentTime {
     font-size: 12px;
     text-align: left;
     color: #80848f;

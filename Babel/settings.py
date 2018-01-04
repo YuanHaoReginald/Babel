@@ -147,3 +147,4 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "frontend/dist/static"),
 ]
 
+AUTH_USER_MODEL = 'backend.User'

@@ -1,26 +1,25 @@
 <template>
   <div class="root">
     <div class="container">
-    <div class="title"><h2>Join Babel</h2></div>
-      <br>
-      <div class="input">
-        <h3>Username:</h3>
-        <Input v-model="username" style="width: 400px"> </Input>
-      </div>
-      <br>
-      <div class="input">
-        <h3>Password:</h3>
-        <Input v-model="password" style="width: 400px"> </Input>
-      </div>
-      <br>
-      <div class="input">
-        <h3>Email:</h3>
-        <Input v-model="email" style="width: 400px"> </Input>
-      </div>
-      <br>
-      <div class="button">
-        <Button size="large" type="primary" v-on:click="sign_up_simple">Sign Up</Button>
-      </div>
+    <div class="title"><h2>加入巴别塔</h2></div>
+      <Form ref="formCustom" :model="formCustom" :rules="ruleCustom" :label-width="80">
+        <FormItem label="Username" prop="username">
+          <Input type="username" v-model="formCustom.username"></Input>
+        </FormItem>
+        <FormItem label="Password" prop="passwd">
+          <Input type="password" v-model="formCustom.passwd"></Input>
+        </FormItem>
+        <FormItem label="Confirm" prop="passwdCheck">
+          <Input type="password" v-model="formCustom.passwdCheck"></Input>
+        </FormItem>
+        <FormItem label="Email" prop="email">
+          <Input type="text" v-model="formCustom.email"></Input>
+        </FormItem>
+        <FormItem>
+          <Button type="primary" @click="handleSubmit('formCustom')">Sign Up</Button>
+          <Button type="ghost" @click="handleReset('formCustom')" style="margin-left: 8px">Reset</Button>
+        </FormItem>
+      </Form>
     </div>
   </div>
 </template>
@@ -29,17 +28,91 @@
   export default {
     name: 'sign_up_simple',
     data () {
+      const reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/
+      const validateUsername = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('Please enter your username'))
+        } else {
+          var checkUsername
+          const headers = new Headers({
+            'Content-Type': 'application/json'
+          })
+          fetch('api/UsernameCheck', {
+            method: 'POST',
+            headers,
+            credentials: 'include',
+            body: JSON.stringify({username: value})
+          }).then(function (response) {
+            return response.json().then(function (data) {
+              checkUsername = data.status
+              if (checkUsername) {
+                callback(new Error('This username has been picked.'))
+              } else {
+                callback()
+              }
+            })
+          }).catch(function (ex) {
+            alert('Network Error')
+          })
+        }
+      }
+      const validatePass = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('Please enter your password'))
+        } else {
+          if (this.formCustom.passwdCheck !== '') {
+            this.$refs.formCustom.validateField('passwdCheck')
+          }
+          callback()
+        }
+      }
+      const validatePassCheck = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('Please enter your password again'))
+        } else if (value !== this.formCustom.passwd) {
+          callback(new Error('The two input passwords do not match!'))
+        } else {
+          callback()
+        }
+      }
+      const validateEmail = (rule, value, callback) => {
+        if (!value) {
+          return callback(new Error('Email cannot be empty'))
+        }
+        if (!reg.test(value)) {
+          return callback(new Error('Please input a valid e-mail address.'))
+        } else {
+          callback()
+        }
+      }
       return {
-        username: '',
-        password: '',
-        email: ''
+        formCustom: {
+          username: '',
+          passwd: '',
+          passwdCheck: '',
+          email: ''
+        },
+        ruleCustom: {
+          username: [
+            { validator: validateUsername, trigger: 'blur' }
+          ],
+          passwd: [
+            { validator: validatePass, trigger: 'blur' }
+          ],
+          passwdCheck: [
+            { validator: validatePassCheck, trigger: 'blur' }
+          ],
+          email: [
+            { validator: validateEmail, trigger: 'blur' }
+          ]
+        }
       }
     },
     methods: {
-      sign_up_simple: function () {
-        let body = JSON.stringify({username: this.username,
-          password: this.password,
-          email: this.email,
+      handleSubmit (name) {
+        let body = JSON.stringify({username: this.formCustom.username,
+          password: this.formCustom.passwd,
+          email: this.formCustom.email,
           utype: this.$route.params.utype})
         const headers = new Headers({
           'Content-Type': 'application/json'
@@ -52,14 +125,20 @@
         .then(function (response) {
           return response.json().then(function (data) {
             if (data['id'] === 0) {
-              alert('Invalid username or password, please retry.')
+              that.$Message.warning('The username or e-mail address has already been picked, please retry.')
             } else {
-              that.$router.push({name: 'Signupmore', params: {id: data['id']}})
+              sessionStorage.setItem('userid', data.id)
+              sessionStorage.setItem('utype', that.$route.params.utype)
+              that.$store.commit('login', {'userid': data.id, 'utype': that.$route.params.utype, 'username': that.formCustom.username})
+              that.$router.push('/signupmore')
             }
           })
         }).catch(function (ex) {
           alert('Network Error')
         })
+      },
+      handleReset (name) {
+        this.$refs[name].resetFields()
       }
     }
   }
