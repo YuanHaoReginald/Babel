@@ -56,7 +56,7 @@ class Task(models.Model):
 
 class Tag(models.Model):
     tag = models.CharField(max_length=128, unique=True)
-    task = models.ManyToManyField(Task)
+    tasks = models.ManyToManyField(Task)
 
 class Assignment(models.Model):
     description = models.TextField(max_length=1000)
@@ -92,7 +92,7 @@ class Dispute(models.Model):
 # language
 class Language(models.Model):
     languageType = models.IntegerField()
-    TranslatorId = models.ManyToManyField(Translator)
+    translators = models.ManyToManyField(Translator)
 
 # license type
 # CET4 = 0

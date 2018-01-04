@@ -162,13 +162,13 @@
             body: body })
           .then(function (response) {
             return response.json().then(function (data) {
-              if (data.translator === that.$store.state.username) {
+              if (data.status) {
                 that.$Message.success('Receive Assignment Success')
                 assignment.status = '进行中'
                 assignment.translator = that.$store.state.username
                 that.$forceUpdate()
               } else {
-                that.$Message.warning('The Assignment has been picked by another translator')
+                that.$Message.warning(data.reason)
               }
             })
           }).catch(function (ex) {

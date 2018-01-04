@@ -223,12 +223,26 @@ def PickupAssignment(request):
         assignmentOrder = infoDict['assignment_order']
         task = Task.objects.get(id = taskId)
         assignment = Assignment.objects.get(task = task, order = assignmentOrder)
+        # Check Translator Qualification Review
+        if user.creditLevel < task.requirementCreditLevel:
+            return JsonResponse({'status': False, 'reason': 'Level don\'t meet requirements.'})
+        licenseSet = user.license_set.filter(adminVerify=1)
+        flag = False
+        for _license in licenseSet:
+            if _license.licenseType // 10 == task.languageTarget:
+                flag = True
+                break
+        if not Flag:
+            return JsonResponse({'status': False, 'reason': 'Language License don\'t meet requirements.'})
+        # Try Receive Assignment
         with transaction.atomic():
             if assignment.status == 1:
                 assignment.translator = user
                 assignment.status = 2
                 assignment.save()
-            return JsonResponse({'translator': assignment.translator.username})
+                return JsonResponse({'status': True})
+            else:
+                return JsonResponse({'status': False, 'reason': 'Assignment has been picked up by others.'})
     
 def GetTaskDetail(request):
     if request.method == 'GET':
