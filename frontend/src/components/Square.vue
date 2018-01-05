@@ -1,22 +1,24 @@
 <template>
   <div class="root">
     <div id="left">
-      <div class="card" v-for="task in tasklist"><Card dis-hover>
-        <div class="task">
-          <h4>标签：{{ toStr(task.tags) }}</h4>
-          <h2 @click="checkTaskDetail(task.id)">{{ task.title }}</h2>
-          <ul>
-            <li v-for="a in task.assignments">
-              <span class="order">{{ a.order }}</span>
-              <span class="words"><b>报酬</b>：{{ a.price }}</span>
-              <span class="words"><b>状态</b>： {{ a.status }}</span>
-              <span v-if="a.status == '已完成'"><b>任务评分</b>:&nbsp;<Rate allow-half disabled v-model="a.score"></Rate></span>
-              <span v-if="canPickup(a)"><Button type="primary" size="small" @click="pickup(task, a)">领取任务</Button></span>
-              <p class="description"><b>详情</b>： {{ a.description }}</p>
-            </li>
-          </ul>
-        </div>
-      </Card></div>
+      <div class="card" v-for="task in tasklist" v-if="taskFilter(task)">
+        <Card dis-hover>
+          <div class="task">
+            <h4>标签：{{ toStr(task.tags) }}</h4>
+            <h2 @click="checkTaskDetail(task.id)">{{ task.title }}</h2>
+            <ul>
+              <li v-for="a in task.assignments" v-if="assignmentFilter(a)">
+                <span class="order">{{ a.order }}</span>
+                <span class="words"><b>报酬</b>：{{ a.price }}元</span>
+                <span class="words"><b>状态</b>： {{ a.status }}</span>
+                <span v-if="a.status == '已完成'"><b>任务评分</b>:&nbsp;<Rate allow-half disabled v-model="a.score"></Rate></span>
+                <span v-if="canPickup(a)"><Button type="primary" size="small" @click="pickup(task, a)">领取任务</Button></span>
+                <p class="description"><b>详情</b>： {{ a.description }}</p>
+              </li>
+            </ul>
+          </div>
+        </Card>
+      </div>
       <Modal title="请试译" v-model="testConfirm" :mask-closable="false" @on-ok="submitTestResult" :loading="loading">
         <p class="bottom-10">试译语段：</p>
         <p class="bottom-10">{{ testText }}</p>
@@ -25,13 +27,13 @@
         <Input v-model="testResult" type="textarea" :rows="4" placeholder="请写出你的翻译结果"></Input>
       </Modal>
     </div>
-    <div id="right">
+    <div id="right" :class="rightFixed === true ? 'isFixed' :''">
       <div class="card" id="chosen"><Card dis-hover>
         <h3 style="margin-bottom: 5px;">筛选任务</h3>
         <div class="chosen_by">按标签</div>
         <CheckboxGroup v-model="chosen_tags">
           <Checkbox label="全选"></Checkbox>
-          <Checkbox label="文件"></Checkbox>
+          <Checkbox label="公文"></Checkbox>
           <Checkbox label="文学"></Checkbox>
           <Checkbox label="法律"></Checkbox>
           <Checkbox label="艺术"></Checkbox>
@@ -59,6 +61,7 @@
         <div id="ads">此广告位常年招租</div>
       </Card></div>
     </div>
+    <BackTop></BackTop>
   </div>
 </template>
 
@@ -103,7 +106,7 @@
                 status: '进行中',
                 translator: '2333',
                 score: 4,
-                price: '20元'
+                price: 20
               },
               {
                 order: 3,
@@ -111,7 +114,7 @@
                 status: '待领取',
                 translator: '2333',
                 score: 4,
-                price: '20元'
+                price: 20
               }
             ]
           },
@@ -143,8 +146,8 @@
               }
             ]
           }
-        ]
-        // TODO: 实现全选
+        ],
+        rightFixed: false
       }
     },
     methods: {
@@ -224,6 +227,106 @@
       },
       canPickup: function (assignment) {
         return assignment.status === '待领取' && this.$store.state.utype === 'translator'
+      },
+      taskFilter (task) {
+        var flag = 0
+        if (!this.chosen_languages.length) {
+          flag++
+        } else {
+          for (let language of this.chosen_languages) {
+            if (language === '全选' || language === task.language) {
+              flag++
+              break
+            }
+          }
+        }
+        if (!this.chosen_tags.length) {
+          flag++
+        } else {
+          for (let tag of this.chosen_tags) {
+            if (tag === '全选' || task.tags.indexOf(tag) > -1) {
+              flag++
+              break
+            }
+          }
+        }
+        if (!this.chosen_price.length) {
+          flag++
+        } else {
+          var priceflag = false
+          for (let assignment of task.assignments) {
+            for (let price of this.chosen_price) {
+              if (price === '全选') {
+                priceflag++
+              } else {
+                switch (price) {
+                  case '0-30元':
+                    if (assignment.price >= 0 && assignment.price <= 30) {
+                      priceflag = true
+                    }
+                    break
+                  case '30-100元':
+                    if (assignment.price >= 30 && assignment.price <= 100) {
+                      priceflag = true
+                    }
+                    break
+                  case '100元以上':
+                    if (assignment.price >= 100) {
+                      priceflag = true
+                    }
+                    break
+                }
+              }
+              if (priceflag) {
+                break
+              }
+            }
+            if (priceflag) {
+              flag++
+              break
+            }
+          }
+        }
+        return flag === 3
+      },
+      assignmentFilter (assignment) {
+        if (!this.chosen_price.length) {
+          return true
+        }
+        for (let price of this.chosen_price) {
+          if (price === '全选') {
+            return true
+          } else {
+            switch (price) {
+              case '0-30元':
+                if (assignment.price >= 0 && assignment.price <= 30) {
+                  return true
+                }
+                break
+              case '30-100元':
+                if (assignment.price >= 30 && assignment.price <= 100) {
+                  return true
+                }
+                break
+              case '100元以上':
+                if (assignment.price >= 100) {
+                  return true
+                }
+                break
+            }
+          }
+        }
+        return false
+      },
+      handleScroll () {
+        var scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
+        var offsetTop = document.querySelector('#right').offsetTop
+        if (scrollTop > offsetTop && !this.rightFixed) {
+          this.rightFixed = true
+        } else if (scrollTop < 80 && this.rightFixed) {
+          this.rightFixed = false
+        }
+        console.log(scrollTop, offsetTop, this.rightFixed)
       }
     },
     created: function () {
@@ -239,13 +342,34 @@
       })
       .then(function (response) {
         return response.json().then(function (data) {
+          that.tasklist = []
           for (let task of data.taskList) {
             let tmptask = []
             tmptask.id = task['id']
             tmptask.title = task['title']
             tmptask.publishTime = task['publishTime']
             tmptask.ddlTime = task['ddlTime']
-            tmptask.language = task['language']
+            // tmptask.language = task['language']
+            switch (task['language']) {
+              case 0:
+                tmptask.language = '中文'
+                break
+              case 1:
+                tmptask.language = '英语'
+                break
+              case 2:
+                tmptask.language = '日语'
+                break
+              case 3:
+                tmptask.language = '法语'
+                break
+              case 4:
+                tmptask.language = '俄语'
+                break
+              case 5:
+                tmptask.language = '西班牙语'
+                break
+            }
             tmptask.tags = task['tags']
             tmptask.testText = task['testText']
             tmptask.assignments = []
@@ -286,6 +410,12 @@
       }).catch(function (ex) {
         alert('Network Error')
       })
+    },
+    mounted: function () {
+      window.addEventListener('scroll', this.handleScroll)
+    },
+    destroyed: function () {
+      window.removeEventListener('scroll', this.handleScroll)
     }
   }
 </script>
@@ -302,7 +432,7 @@
     float:left;
     width: 700px;
   }
-  #right{
+  #right {
     padding: 3px;
     width: 300px;
     margin-left: 703px;
@@ -358,5 +488,9 @@
     color: #495060;
     text-align: left;
   }
-
+  .isFixed {
+    position: fixed;
+    top: 0;
+    z-index: 999;
+  }
 </style>

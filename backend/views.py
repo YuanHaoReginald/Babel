@@ -154,6 +154,8 @@ def CreateTask(request):
                                    requirementCreditLevel = taskLevel,
                                    requirementLicense = taskLicense,
                                    testText = taskTestText)
+        for tag in taskTags:
+            Tag.objects.get(tag=tag).tasks.add(task)
         for assignment in taskAssignments:
             Assignment.objects.create(task = task,
                                       order = assignment['order'],
@@ -179,7 +181,7 @@ def GetEmployerTasks(request):
             _task_tag = task.tag_set.all()
             _temp_tag_list = []
             for tag in _task_tag:
-                _temp_tag_list.append(tag)
+                _temp_tag_list.append(tag.tag)
             responseDict['taskList'].append({
                 'id': task.id,                
                 'title': task.title,
@@ -316,15 +318,15 @@ def GetSquareTasks(request):
     if request.method == 'GET':
         print('-----------------------GetSquareTasks-----------------')
         # current_user = auth.get_user(request).employer
-        taskSet = Task.objects.order_by('publishTime')
-        if taskSet.count() > 5:
-            taskSet = taskSet.reverse()[:5]
+        taskSet = Task.objects.filter(status=1).order_by('publishTime')
+        if taskSet.count() > 50:
+            taskSet = taskSet.reverse()[:50]
         responseDict = {'taskList': []}
         for task in taskSet:
             _task_tag = task.tag_set.all()
             _temp_tag_list = []
             for tag in _task_tag:
-                _temp_tag_list.append(tag)
+                _temp_tag_list.append(tag.tag)
 
             assignmentSet = task.assignment_set.all()
             _temp_assignment = []
@@ -345,7 +347,7 @@ def GetSquareTasks(request):
                 'publishTime': task.publishTime.timestamp(),
                 'ddlTime': task.ddlTime.timestamp(),
                 'tags': _temp_tag_list,
-                'language': task.languageOrigin if task.languageOrigin == 0 else task.languageTarget,
+                'language': task.languageTarget if task.languageOrigin == 0 else task.languageTarget,
                 'description': task.description,
                 'testText': task.testText,
                 'assignment': _temp_assignment
