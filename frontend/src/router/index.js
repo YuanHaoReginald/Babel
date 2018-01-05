@@ -87,6 +87,11 @@ const router = new Router({
       component: Square
     },
     {
+      path: '/square/:keyword',
+      name: 'search',
+      component: Square
+    },
+    {
       path: '/manager',
       name: 'admin',
       component: Manager

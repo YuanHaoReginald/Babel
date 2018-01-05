@@ -327,8 +327,10 @@ def GetAssignmentDetail(request):
 def GetSquareTasks(request):
     if request.method == 'GET':
         print('-----------------------GetSquareTasks-----------------')
-        # current_user = auth.get_user(request).employer
+        keyword = request.GET.get('keyword')
         taskSet = Task.objects.filter(status=1).order_by('publishTime')
+        if keyword != None:
+            taskSet = taskSet.filter(title__contains=keyword)        
         if taskSet.count() > 50:
             taskSet = taskSet.reverse()[:50]
         responseDict = {'taskList': []}

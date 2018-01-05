@@ -1,31 +1,36 @@
 <template>
   <div class="root">
     <div id="left">
-      <div class="card" v-for="task in tasklist" v-if="taskFilter(task)">
-        <Card dis-hover>
-          <div class="task">
-            <h4>标签：{{ toStr(task.tags) }}</h4>
-            <h2 @click="checkTaskDetail(task.id)">{{ task.title }}</h2>
-            <ul>
-              <li v-for="a in task.assignments" v-if="assignmentFilter(a)">
-                <span class="order">{{ a.order }}</span>
-                <span class="words"><b>报酬</b>：{{ a.price }}元</span>
-                <span class="words"><b>状态</b>： {{ a.status }}</span>
-                <span v-if="a.status == '已完成'"><b>任务评分</b>:&nbsp;<Rate allow-half disabled v-model="a.score"></Rate></span>
-                <span v-if="canPickup(a)"><Button type="primary" size="small" @click="pickup(task, a)">领取任务</Button></span>
-                <p class="description"><b>详情</b>： {{ a.description }}</p>
-              </li>
-            </ul>
-          </div>
-        </Card>
+      <div v-if="tasklist.length">
+        <div class="card" v-for="task in tasklist" v-if="taskFilter(task)">
+          <Card dis-hover>
+            <div class="task">
+              <h4>标签：{{ toStr(task.tags) }}</h4>
+              <h2 @click="checkTaskDetail(task.id)">{{ task.title }}</h2>
+              <ul>
+                <li v-for="a in task.assignments" v-if="assignmentFilter(a)">
+                  <span class="order">{{ a.order }}</span>
+                  <span class="words"><b>报酬</b>：{{ a.price }}元</span>
+                  <span class="words"><b>状态</b>： {{ a.status }}</span>
+                  <span v-if="a.status == '已完成'"><b>任务评分</b>:&nbsp;<Rate allow-half disabled v-model="a.score"></Rate></span>
+                  <span v-if="canPickup(a)"><Button type="primary" size="small" @click="pickup(task, a)">领取任务</Button></span>
+                  <p class="description"><b>详情</b>： {{ a.description }}</p>
+                </li>
+              </ul>
+            </div>
+          </Card>
+        </div>
+        <Modal title="请试译" v-model="testConfirm" :mask-closable="false" @on-ok="submitTestResult" :loading="loading">
+          <p class="bottom-10">试译语段：</p>
+          <p class="bottom-10">{{ testText }}</p>
+          <p class="bottom-10">翻译结果：</p>
+          <br>
+          <Input v-model="testResult" type="textarea" :rows="4" placeholder="请写出你的翻译结果"></Input>
+        </Modal>
       </div>
-      <Modal title="请试译" v-model="testConfirm" :mask-closable="false" @on-ok="submitTestResult" :loading="loading">
-        <p class="bottom-10">试译语段：</p>
-        <p class="bottom-10">{{ testText }}</p>
-        <p class="bottom-10">翻译结果：</p>
-        <br>
-        <Input v-model="testResult" type="textarea" :rows="4" placeholder="请写出你的翻译结果"></Input>
-      </Modal>
+      <div v-else>
+        对不起，暂时没找到已发布的任务哦~
+      </div>
     </div>
     <div id="right" :class="rightFixed === true ? 'isFixed' :''">
       <div class="card" id="chosen"><Card dis-hover>
@@ -152,7 +157,6 @@
     },
     methods: {
       pickup: function (task, assignment) {
-        console.log(task)
         if (task.testText === '') {
           let body = JSON.stringify({task_id: task.id, assignment_order: assignment.order})
           const headers = new Headers({
@@ -326,16 +330,18 @@
         } else if (scrollTop < 80 && this.rightFixed) {
           this.rightFixed = false
         }
-        console.log(scrollTop, offsetTop, this.rightFixed)
       }
     },
     created: function () {
-      // let body = JSON.stringify({taskid: this.$route.params.tid})
+      var url = 'api/GetSquareTasks'
+      if (this.$route.params.keyword !== undefined) {
+        url += '?keyword=' + this.$route.params.keyword
+      }
       const headers = new Headers({
         'Content-Type': 'application/json'
       })
       let that = this
-      fetch('api/GetSquareTasks', {
+      fetch(url, {
         method: 'GET',
         headers,
         credentials: 'include'
