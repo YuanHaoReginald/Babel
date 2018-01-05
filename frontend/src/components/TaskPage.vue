@@ -56,14 +56,16 @@
         </Modal>
       </Card></div>
     </div>
-    <div id="right">
+    <div id="right" :class="rightFixed === true ? 'isFixed' :''">
       <div class="card"><Card dis-hover>
         <h3 id="right-info">任务信息</h3>
         <p>任务状态：{{ status }}</p>
         <p>任务描述：{{ description }}</p>
         <p>任务语言：{{ language }}</p>
+        <p>资质要求：{{ requirementLicense }}</p>
         <p>发布时间：{{ publishTime }}</p>
         <p>截止时间：{{ ddlTime }}</p>
+        <p>要求译者等级：&nbsp;<Rate allow-half disabled v-model="requirementLevel"></Rate></p>
         <p>任务文件：<a :href="DownloadTask(taskFile)">{{ taskFile }}</a></p>
         <Button v-if="status == '待发布'" @click="publishTask"  type="info">立即发布</Button>
       </Card></div>
@@ -83,6 +85,8 @@
         publishTime: '2017-3-1',
         ddlTime: '2017-5-10',
         language: '法语',
+        requirementLicense: '专四',
+        requirementLevel: 3.5,
         taskFile: '',
         employerId: 0,
         assignments: [
@@ -163,7 +167,8 @@
         testText: 'My name is Van, I\'m an artist, I\'m a performance artist. ' +
         'I\'m hired for people to fulfill their fantasies, their deep dark fantasies.',
         testResult: '',
-        currentAssignment: null
+        currentAssignment: null,
+        rightFixed: false
       }
     },
     created: function () {
@@ -181,6 +186,12 @@
           that.description = data['description']
           that.publishTime = Date(data['publishTime'])
           that.ddlTime = Date(data['ddlTime'])
+          if (data['requirementLicense'] === 4) {
+            that.requirementLicense = '专业四级'
+          } else {
+            that.requirementLicense = '专业八级'
+          }
+          that.requirementLevel = data['requirementLevel']
           // that.language = data['language']
           switch (data['language']) {
             case 0:
@@ -355,6 +366,7 @@
             }
           })
         }).catch(function (ex) {
+          console.log(ex)
           alert('Network Error')
         })
       },
@@ -392,7 +404,22 @@
         this.currentAssignment = assignment
         this.testResult = this.currentAssignment.testResult
         this.testConfirm = true
+      },
+      handleScroll () {
+        var scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
+        var offsetTop = document.querySelector('#right').offsetTop
+        if (scrollTop > offsetTop && !this.rightFixed) {
+          this.rightFixed = true
+        } else if (scrollTop < 80 && this.rightFixed) {
+          this.rightFixed = false
+        }
       }
+    },
+    mounted: function () {
+      window.addEventListener('scroll', this.handleScroll)
+    },
+    destroyed: function () {
+      window.removeEventListener('scroll', this.handleScroll)
     }
   }
 </script>
@@ -462,5 +489,9 @@
     color: #495060;
     text-align: left;
   }
-
+  .isFixed {
+    position: fixed;
+    top: 0;
+    z-index: 999;
+  }
 </style>

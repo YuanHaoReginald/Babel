@@ -262,6 +262,8 @@ def GetTaskDetail(request):
             'language': task.languageTarget if task.languageOrigin == 0 else task.languageTarget,
             'fileUrl': task.fileUrl.name.split('/')[-1] if task.fileUrl else '',
             'employerId': task.employer.id,
+            'requirementLevel': task.requirementCreditLevel,
+            'requirementLicense': task.requirementLicense,
             'testText': task.testText,
             'assignment': []
         }
@@ -274,7 +276,7 @@ def GetTaskDetail(request):
             responseDict['assignment'].append({
                 'id': assignment.id,
                 'hasDispute' : len(_dispute) != 0,
-                'disputeResult' : _dispute[0].status,
+                'disputeResult' : _dispute[0].status if len(_dispute) != 0 else 0,
                 'statement' : statement,
                 'order': assignment.order,
                 'description': assignment.description,
