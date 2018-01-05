@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <NavigationBar></NavigationBar>
-    <router-view></router-view>
+    <router-view :key="key"></router-view>
   </div>
 </template>
 
@@ -11,6 +11,11 @@ export default {
   name: 'app',
   components: {
     NavigationBar
+  },
+  computed: {
+    key () {
+      return this.$route.name !== undefined ? this.$route.name + new Date() : this.$route + new Date()
+    }
   }
 }
 </script>

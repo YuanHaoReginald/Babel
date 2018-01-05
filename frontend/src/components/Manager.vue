@@ -95,7 +95,7 @@
           </div>
         </li>
       </ul>
-      <!-- <div class="center" v-if="total !== 0"><Page :total="total" show-elevator></Page></div> -->
+      <BackTop></BackTop>
     </div>
   </div>
 </template>

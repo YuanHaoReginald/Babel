@@ -262,6 +262,8 @@ def GetTaskDetail(request):
             'language': task.languageTarget if task.languageOrigin == 0 else task.languageTarget,
             'fileUrl': task.fileUrl.name.split('/')[-1] if task.fileUrl else '',
             'employerId': task.employer.id,
+            'requirementLevel': task.requirementCreditLevel,
+            'requirementLicense': task.requirementLicense,
             'testText': task.testText,
             'assignment': []
         }
@@ -274,7 +276,7 @@ def GetTaskDetail(request):
             responseDict['assignment'].append({
                 'id': assignment.id,
                 'hasDispute' : len(_dispute) != 0,
-                'disputeResult' : _dispute[0].status,
+                'disputeResult' : _dispute[0].status if len(_dispute) != 0 else 0,
                 'statement' : statement,
                 'order': assignment.order,
                 'description': assignment.description,
@@ -325,8 +327,10 @@ def GetAssignmentDetail(request):
 def GetSquareTasks(request):
     if request.method == 'GET':
         print('-----------------------GetSquareTasks-----------------')
-        # current_user = auth.get_user(request).employer
+        keyword = request.GET.get('keyword')
         taskSet = Task.objects.filter(status=1).order_by('publishTime')
+        if keyword != None:
+            taskSet = taskSet.filter(title__contains=keyword)        
         if taskSet.count() > 50:
             taskSet = taskSet.reverse()[:50]
         responseDict = {'taskList': []}

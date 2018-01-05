@@ -11,7 +11,7 @@
         <div id="taskListTitle"><h2>我的任务</h2></div>
         <div>
           <ul>
-            <li v-for="task in tasklist">
+            <li v-for="task in pageList">
               <Card padding=10 @click.native="checkTaskDetail(task.id)">
                 <p slot="title" id="taskTitle">
                   {{ task.title }}&nbsp;&nbsp;&nbsp;<span v-for="tag in task.tags"><Tag><h4>{{ tag }}</h4></Tag></span>
@@ -59,7 +59,8 @@
             'I am the description.I am the description.I am the description.I am the description.'
           }
         ],
-        page_total_num: 0
+        page_total_num: 0,
+        pageList: []
       }
     },
     mounted: function () {
