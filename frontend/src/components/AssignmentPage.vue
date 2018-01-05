@@ -43,13 +43,18 @@
             <span v-if="assignment.status == '已完成'" class="grey">
               任务评分:&nbsp;&nbsp;<Rate allow-half disbaled v-model="assignment.score"></Rate>
               <span v-if="assignment.hasDispute">
-                <p> 申诉状态：{{assignment.statement}} </p>
+                <p v-if="assignment.disputeResult == 0"> 申诉状态：未完成（发生未知错误） </p>
+                <p v-if="assignment.disputeResult == 1"> 申诉状态：管理员同意了您的申诉，评语：{{assignment.statement}} </p>
+                <p v-if="assignment.disputeResult == 2"> 申诉状态：管理员拒绝了您的申诉，评语：{{assignment.statement}} </p>
               </span>
             </span>
             <span v-if="assignment.status == '纠纷中'">
               <span v-if="!assignment.hasDispute">
-                <Button type="error" @click="argueResult">申请投诉</Button>
+                <Button type="error" @click="modalArgue = true">申请投诉</Button>
                 <Button type="success" @click="acceptResult">接受结果</Button>
+                  <Modal v-model="modalArgue" title="申请投诉" @on-ok="argueResult">
+                      <Input v-model="text" type="textarea" :rows="4" placeholder="请写出你的申诉理由"></Input>
+                  </Modal>
               </span>
               <span v-if="assignment.hasDispute">
                 <p>请耐心等待结果</p>
@@ -103,6 +108,7 @@
         assignment: {
           id: 0,
           hasDispute: false,
+          disputeResult: 0,
           statement: '',
           description: '这个任务需要翻译我给出的pdf文档的第20-40页，注意主要人名的翻' +
           '译要与附录中的统一。完成情况好的话我一定会好评的。',
@@ -134,7 +140,9 @@
         testConfirm: false,
         testText: 'My name is Van, I\'m an artist, I\'m a performance artist. ' +
         'I\'m hired for people to fulfill their fantasies, their deep dark fantasies.',
-        testResult: ''
+        testResult: '',
+        modalArgue: false,
+        text: ''
       }
     },
     created: function () {
@@ -155,6 +163,7 @@
           let assignment = data['assignment']
           that.assignment['id'] = assignment.id
           that.assignment['hasDispute'] = assignment.hasDispute
+          that.assignment['disputeResult'] = assignment.disputeResult
           that.assignment['statement'] = assignment.statement
           that.assignment['translator'] = assignment.translator
           that.assignment['price'] = assignment.price
@@ -229,7 +238,7 @@
         })
       },
       argueResult () {
-        let body = JSON.stringify({assignmentId: this.assignment['id']})
+        let body = JSON.stringify({assignmentId: this.assignment['id'], text: this.text})
         const headers = new Headers({
           'Content-Type': 'application/json'
         })

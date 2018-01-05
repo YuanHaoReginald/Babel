@@ -267,8 +267,15 @@ def GetTaskDetail(request):
         }
         assignment_set = task.assignment_set.all()
         for assignment in assignment_set:
+            _dispute = Dispute.objects.filter(assignment=assignment)
+            statement = ''
+            if len(_dispute) != 0 and _dispute[0].adminStatement:
+                statement = _dispute[0].adminStatement
             responseDict['assignment'].append({
                 'id': assignment.id,
+                'hasDispute' : len(_dispute) != 0,
+                'disputeResult' : _dispute[0].status,
+                'statement' : statement,
                 'order': assignment.order,
                 'description': assignment.description,
                 'translator': assignment.translator.username if assignment.translator else '',
@@ -299,6 +306,7 @@ def GetAssignmentDetail(request):
             'assignment': {
                 'id': assignment.id,
                 'hasDispute' : len(_dispute) != 0,
+                'disputeResult' : _dispute[0].status,
                 'statement' : statement,
                 'description': assignment.description,
                 'translator': assignment.translator.username if assignment.translator else '',
@@ -536,5 +544,5 @@ def ArgueResult(request):
     if request.method == 'POST':
         infoDict = json.loads(request.body.decode())
         assignment = Assignment.objects.get(id=infoDict['assignmentId'])
-        Dispute.objects.create(assignment=assignment, employerStatement=assignment.comment)
+        Dispute.objects.create(assignment=assignment, employerStatement=assignment.comment, translatorStatement=infoDict['text'])
         return JsonResponse({'status': True})
