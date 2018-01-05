@@ -234,7 +234,7 @@ def PickupAssignment(request):
             if _license.licenseType // 10 == task.languageTarget:
                 flag = True
                 break
-        if not Flag:
+        if not flag:
             return JsonResponse({'status': False, 'reason': 'Language License don\'t meet requirements.'})
         # Try Receive Assignment
         with transaction.atomic():

@@ -155,6 +155,7 @@ class UploadAvatarTestCase(TestCase):
 
         myavatar = Mock()
         myavatar.name = 'a.jpg'
+        myavatar.url = 'a.jpg'
         myuser = Mock()
         myuser.username = 'shaoyushan'
         myuser.avatar = myavatar
@@ -166,11 +167,13 @@ class UploadAvatarTestCase(TestCase):
 
 
 class CreateTaskTestCase(TestCase):
-    def test_normal_test(self):
+    def test_normal_test_English(self):
         found = resolve('/CreateTask', urlconf = backend.urls)
         request = Mock(wraps= HttpRequest() , method = 'POST')
+        mytask = Mock()
+        mytask.add = lambda x : True
         request.body = Mock()
-        request.body.decode = Mock(return_value = ' {"title":"a title","description":"a des","language":"French","license":"TOFEL100","level":2.1,"tags":"123","ddlTime":123456.23,"assignments":[{"order":123,"text":"asd"}] }')
+        request.body.decode = Mock(return_value = ' {"tags":[1,2,3],"if_test":"需要","testText":"a small text","title":"a title","description":"a des","language":"English","license":"cet4","level":2.1,"tags":"123","ddlTime":123456.23,"assignments":[{"price":123,"order":123,"text":"asd"}] }')
         with patch.object(auth, 'get_user', return_value = Mock(employer = Mock(creditLevel = 1.1,
                                                                                 experience = 1,
                                                                                 telephone = '123',
@@ -183,8 +186,101 @@ class CreateTaskTestCase(TestCase):
                                                                                 alipayNumber = 'ali',
                                                                                 wechatNumber = 'wechat'), ddlTime = 123.4, languageTarget = 3, requirementCreditLevel = 2.2 )):
                 with patch.object(Assignment.objects,'create', return_value = Mock(task = None, order = 1,description = '1243')):
-                    response = json.loads(found.func(request).content.decode())
-                    self.assertEqual(response['task_id'], 1)
+                    with patch.object(Tag.objects,"get",return_value = mytask):
+                        response = json.loads(found.func(request).content.decode())
+                        self.assertEqual(response['task_id'], 1)
+
+    def test_normal_test_Japanese(self):
+        found = resolve('/CreateTask', urlconf = backend.urls)
+        request = Mock(wraps= HttpRequest() , method = 'POST')
+        mytask = Mock()
+        mytask.add = lambda x : True
+        request.body = Mock()
+        request.body.decode = Mock(return_value = ' {"tags":[1,2,3],"if_test":"需要","testText":"a small text","title":"a title","description":"a des","language":"Japanese","license":"cet4","level":2.1,"tags":"123","ddlTime":123456.23,"assignments":[{"price":123,"order":123,"text":"asd"}] }')
+        with patch.object(auth, 'get_user', return_value = Mock(employer = Mock(creditLevel = 1.1,
+                                                                                experience = 1,
+                                                                                telephone = '123',
+                                                                                alipayNumber = 'ali',
+                                                                                wechatNumber = 'wechat'
+                                                              ))) as MockUser:
+            with patch.object(Task.objects,'create', return_value = Mock(id = 1, title = '123', description = '456', fileType = 0, employer = Mock(creditLevel = 1.1,
+                                                                                experience = 1,
+                                                                                telephone = '123',
+                                                                                alipayNumber = 'ali',
+                                                                                wechatNumber = 'wechat'), ddlTime = 123.4, languageTarget = 3, requirementCreditLevel = 2.2 )):
+                with patch.object(Assignment.objects,'create', return_value = Mock(task = None, order = 1,description = '1243')):
+                    with patch.object(Tag.objects,"get",return_value = mytask):
+                        response = json.loads(found.func(request).content.decode())
+                        self.assertEqual(response['task_id'], 1)
+
+    def test_normal_test_French(self):
+        found = resolve('/CreateTask', urlconf = backend.urls)
+        request = Mock(wraps= HttpRequest() , method = 'POST')
+        mytask = Mock()
+        mytask.add = lambda x : True
+        request.body = Mock()
+        request.body.decode = Mock(return_value = ' {"tags":[1,2,3],"if_test":"需要","testText":"a small text","title":"a title","description":"a des","language":"French","license":"cet4","level":2.1,"tags":"123","ddlTime":123456.23,"assignments":[{"price":123,"order":123,"text":"asd"}] }')
+        with patch.object(auth, 'get_user', return_value = Mock(employer = Mock(creditLevel = 1.1,
+                                                                                experience = 1,
+                                                                                telephone = '123',
+                                                                                alipayNumber = 'ali',
+                                                                                wechatNumber = 'wechat'
+                                                              ))) as MockUser:
+            with patch.object(Task.objects,'create', return_value = Mock(id = 1, title = '123', description = '456', fileType = 0, employer = Mock(creditLevel = 1.1,
+                                                                                experience = 1,
+                                                                                telephone = '123',
+                                                                                alipayNumber = 'ali',
+                                                                                wechatNumber = 'wechat'), ddlTime = 123.4, languageTarget = 3, requirementCreditLevel = 2.2 )):
+                with patch.object(Assignment.objects,'create', return_value = Mock(task = None, order = 1,description = '1243')):
+                    with patch.object(Tag.objects,"get",return_value = mytask):
+                        response = json.loads(found.func(request).content.decode())
+                        self.assertEqual(response['task_id'], 1)
+
+    def test_normal_test_Russian(self):
+        found = resolve('/CreateTask', urlconf = backend.urls)
+        request = Mock(wraps= HttpRequest() , method = 'POST')
+        mytask = Mock()
+        mytask.add = lambda x : True
+        request.body = Mock()
+        request.body.decode = Mock(return_value = ' {"tags":[1,2,3],"if_test":"需要","testText":"a small text","title":"a title","description":"a des","language":"Russian","license":"cet4","level":2.1,"tags":"123","ddlTime":123456.23,"assignments":[{"price":123,"order":123,"text":"asd"}] }')
+        with patch.object(auth, 'get_user', return_value = Mock(employer = Mock(creditLevel = 1.1,
+                                                                                experience = 1,
+                                                                                telephone = '123',
+                                                                                alipayNumber = 'ali',
+                                                                                wechatNumber = 'wechat'
+                                                              ))) as MockUser:
+            with patch.object(Task.objects,'create', return_value = Mock(id = 1, title = '123', description = '456', fileType = 0, employer = Mock(creditLevel = 1.1,
+                                                                                experience = 1,
+                                                                                telephone = '123',
+                                                                                alipayNumber = 'ali',
+                                                                                wechatNumber = 'wechat'), ddlTime = 123.4, languageTarget = 3, requirementCreditLevel = 2.2 )):
+                with patch.object(Assignment.objects,'create', return_value = Mock(task = None, order = 1,description = '1243')):
+                    with patch.object(Tag.objects,"get",return_value = mytask):
+                        response = json.loads(found.func(request).content.decode())
+                        self.assertEqual(response['task_id'], 1)
+
+    def test_normal_test_Spanish(self):
+        found = resolve('/CreateTask', urlconf = backend.urls)
+        request = Mock(wraps= HttpRequest() , method = 'POST')
+        mytask = Mock()
+        mytask.add = lambda x : True
+        request.body = Mock()
+        request.body.decode = Mock(return_value = ' {"tags":[1,2,3],"if_test":"需要","testText":"a small text","title":"a title","description":"a des","language":"Spanish","license":"cet4","level":2.1,"tags":"123","ddlTime":123456.23,"assignments":[{"price":123,"order":123,"text":"asd"}] }')
+        with patch.object(auth, 'get_user', return_value = Mock(employer = Mock(creditLevel = 1.1,
+                                                                                experience = 1,
+                                                                                telephone = '123',
+                                                                                alipayNumber = 'ali',
+                                                                                wechatNumber = 'wechat'
+                                                              ))) as MockUser:
+            with patch.object(Task.objects,'create', return_value = Mock(id = 1, title = '123', description = '456', fileType = 0, employer = Mock(creditLevel = 1.1,
+                                                                                experience = 1,
+                                                                                telephone = '123',
+                                                                                alipayNumber = 'ali',
+                                                                                wechatNumber = 'wechat'), ddlTime = 123.4, languageTarget = 3, requirementCreditLevel = 2.2 )):
+                with patch.object(Assignment.objects,'create', return_value = Mock(task = None, order = 1,description = '1243')):
+                    with patch.object(Tag.objects,"get",return_value = mytask):
+                        response = json.loads(found.func(request).content.decode())
+                        self.assertEqual(response['task_id'], 1)
 
 
 class UploadTaskFileTestCase(TestCase):
@@ -204,10 +300,227 @@ class UploadTaskFileTestCase(TestCase):
                     self.assertEqual(response['url'], 'abc.doc')
 
 
-# class GetEmployerTasksTestCase(TestCase):
-#     def test_normal_test(self):
-#         found = resolve('/GetEmployerTasks', urlconf=backend.urls)
-#         request = Mock(wraps=HttpRequest(), method='GET')
+class GetEmployerTasksTestCase(TestCase):
+    def test_normal_test(self):
+        found = resolve('/GetEmployerTasks', urlconf=backend.urls)
+        request = Mock(wraps=HttpRequest(), method='GET')
+
+        myTag = Mock()
+        myTag.tag = 1
+
+        myTaskTag = [myTag]
+
+        myTask = Mock()
+        myTask.tag_set.all = lambda : myTaskTag
+        myTask.id = 1
+        myTask.title = "test title"
+        myTask.status = 1
+        myTask.publishTime.timestamp = lambda : 112
+        myTask.ddlTime.timestamp = lambda : 114
+        myTask.languageOrigin = 1
+        myTask.languageTarget = 2
+        myTask.description = '123'
+
+
+        myCurrentUser = Mock()
+        myCurrentUser.task_set.all = lambda : [myTask]
+
+        myUser = Mock()
+        myUser.employer = myCurrentUser
+
+        with patch.object(auth,"get_user",return_value = myUser):
+            response = json.loads(found.func(request).content.decode())
+            test_task =  response['taskList'][0]
+            self.assertEqual(test_task['id'], 1)
+
+class GetTranslatorAssignmentsTestCase(TestCase):
+    def test_normal_test(self):
+        found = resolve('/GetTranslatorAssignments', urlconf=backend.urls)
+        request = Mock(wraps=HttpRequest(), method='GET')
+
+        myTag = 1
+
+        myTask = Mock()
+        myTask.tag_set.all = lambda : [myTag]
+        myTask.id = 1
+        myTask.title = "test title"
+        myTask.status = 1
+        myTask.publishTime.timestamp = lambda : 112
+        myTask.ddlTime.timestamp = lambda : 114
+        myTask.languageOrigin = 1
+        myTask.languageTarget = 2
+        myTask.description = '123'
+
+        myAssignment = Mock()
+        myAssignment.task = myTask
+        myAssignment.id = 1
+        myAssignment.status = 1
+        myAssignment.description = '123'
+
+        myCurrentUser = Mock()
+        myCurrentUser.assignment_set.all = lambda : [myAssignment]
+
+        myUser = Mock()
+        myUser.translator = myCurrentUser
+
+        with patch.object(auth,"get_user",return_value = myUser):
+            response = json.loads(found.func(request).content.decode())
+            test_task =  response['assignmentList'][0]
+            self.assertEqual(test_task['id'], 1)
+
+class PickupAssignmentTestCase(TestCase):
+    def test_normal_test_one(self):
+        found = resolve('/PickupAssignment', urlconf=backend.urls)
+        request = Mock(wraps=HttpRequest(), method='POST')
+
+        request.body = Mock()
+        request.body.decode = Mock(return_value='{"task_id":1,"assignment_order":1}')
+
+        myUser = Mock()
+        myCurrentUser = Mock()
+        myCurrentUser.translator = myUser
+        myUser.creditLevel = 1
+
+        myTask = Mock()
+        myTask.requirementCreditLevel = 2
+        myTask.languageTarget = 1
+
+        myAssignment = Mock()
+        myAssignment.status = 1
+
+        with patch.object(auth,'get_user',return_value = myCurrentUser):
+            with patch.object(Task.objects,'get',return_value = myTask):
+                with patch.object(Assignment.objects,'get',return_value = myAssignment):
+                    response = json.loads(found.func(request).content.decode())
+                    self.assertEqual(response['status'], False)
+
+    def test_normal_test_two(self):
+        found = resolve('/PickupAssignment', urlconf=backend.urls)
+        request = Mock(wraps=HttpRequest(), method='POST')
+
+        request.body = Mock()
+        request.body.decode = Mock(return_value='{"task_id":1,"assignment_order":1}')
+
+        myUser = Mock()
+        myCurrentUser = Mock()
+        myCurrentUser.translator = myUser
+        myUser.creditLevel = 3
+        myLicense = Mock()
+        myLicense.licenseType = 4
+        myUser.license_set.filter = lambda adminVerify : [myLicense]
+
+        myTask = Mock()
+        myTask.requirementCreditLevel = 2
+        myTask.languageTarget = 1
+
+        myAssignment = Mock()
+        myAssignment.status = 1
+
+        with patch.object(auth,'get_user',return_value = myCurrentUser):
+            with patch.object(Task.objects,'get',return_value = myTask):
+                with patch.object(Assignment.objects,'get',return_value = myAssignment):
+                    response = json.loads(found.func(request).content.decode())
+                    self.assertEqual(response['status'], False)
+
+    def test_normal_test_three(self):
+        found = resolve('/PickupAssignment', urlconf=backend.urls)
+        request = Mock(wraps=HttpRequest(), method='POST')
+
+        request.body = Mock()
+        request.body.decode = Mock(return_value='{"task_id":1,"assignment_order":1}')
+
+        myUser = Mock()
+        myCurrentUser = Mock()
+        myCurrentUser.translator = myUser
+        myUser.creditLevel = 3
+        myLicense = Mock()
+        myLicense.licenseType = 10
+        myUser.license_set.filter = lambda adminVerify: [myLicense]
+
+        myTask = Mock()
+        myTask.requirementCreditLevel = 2
+        myTask.languageTarget = 1
+
+        myAssignment = Mock()
+        myAssignment.status = 1
+
+        with patch.object(auth, 'get_user', return_value=myCurrentUser):
+            with patch.object(Task.objects, 'get', return_value=myTask):
+                with patch.object(Assignment.objects, 'get', return_value=myAssignment):
+                    response = json.loads(found.func(request).content.decode())
+                    self.assertEqual(response['status'], True)
+
+    def test_normal_test_four(self):
+        found = resolve('/PickupAssignment', urlconf=backend.urls)
+        request = Mock(wraps=HttpRequest(), method='POST')
+
+        request.body = Mock()
+        request.body.decode = Mock(return_value='{"task_id":1,"assignment_order":1}')
+
+        myUser = Mock()
+        myCurrentUser = Mock()
+        myCurrentUser.translator = myUser
+        myUser.creditLevel = 3
+        myLicense = Mock()
+        myLicense.licenseType = 10
+        myUser.license_set.filter = lambda adminVerify: [myLicense]
+
+        myTask = Mock()
+        myTask.requirementCreditLevel = 2
+        myTask.languageTarget = 1
+
+        myAssignment = Mock()
+        myAssignment.status = 2
+
+        with patch.object(auth, 'get_user', return_value=myCurrentUser):
+            with patch.object(Task.objects, 'get', return_value=myTask):
+                with patch.object(Assignment.objects, 'get', return_value=myAssignment):
+                    response = json.loads(found.func(request).content.decode())
+                    self.assertEqual(response['status'], False)
+
+class GetTaskDetailTestCase(TestCase):
+    def test_normal_test(self):
+        found = resolve('/GetTaskDetail', urlconf=backend.urls)
+        request = Mock(wraps=HttpRequest(), method='GET')
+
+        myTask = Mock()
+        myTask.id = 1
+        myTask.title = 'title'
+        myTask.status = 1
+        myTask.description = '123'
+        myTask.publishTime.timestamp = lambda : 1234
+        myTask.ddlTime.timestamp = lambda :567
+        myTask.languageTarget = 1
+        myTask.languageOrigin = 2
+        myTask.fileUrl.name = 'a/jpg'
+        myTask.employer.id = 1
+        myTask.testText = '1234'
+
+        myAssignment = Mock()
+        myAssignment.id = 1
+        myAssignment.order = 1
+        myAssignment.description = '12345'
+        myAssignment.translator.username = 'shao'
+        myAssignment.status = 1
+        myAssignment.scores = 1
+        myAssignment.price = 123
+        myAssignment.testResult = 'test'
+        myAssignment.submission.name = '12/34/56'
+
+        myTask.assignment_set.all = lambda : [myAssignment]
+
+        aDispute = Mock()
+        aDispute.adminStatement = '123456'
+        aDispute.status = 1
+        myDispute = [aDispute]
+
+        with patch.object(request.GET,'get',return_value = 1):
+            with patch.object(Task.objects,'get',return_value = myTask):
+                with patch.object(Dispute.objects,'filter',return_value = myDispute):
+                    response = json.loads(found.func(request).content.decode())
+                    test_task = response['assignment'][0]
+                    self.assertEqual(test_task['id'], 1)
+
 
 class SubmitAssignmentTestCase(TestCase):
     def test_normal_test(self):
