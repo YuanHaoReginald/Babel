@@ -205,7 +205,7 @@ def GetTranslatorAssignments(request):
             _task_tag = task.tag_set.all()
             _temp_tag_list = []
             for tag in _task_tag:
-                _temp_tag_list.append(tag)
+                _temp_tag_list.append(tag.tag)
             responseDict['assignmentList'].append({
                 'id': assignment.id,
                 'status': assignment.status,

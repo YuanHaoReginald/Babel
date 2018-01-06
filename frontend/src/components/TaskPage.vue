@@ -79,93 +79,24 @@
     data () {
       return {
         id: 0,
-        title: '法语文件翻译任务',
-        status: '待发布',
-        description: '我是任务的描述',
-        publishTime: '2017-3-1',
-        ddlTime: '2017-5-10',
-        language: '法语',
-        requirementLicense: '专四',
-        requirementLevel: 3.5,
+        title: '',
+        status: '',
+        description: '',
+        publishTime: '',
+        ddlTime: '',
+        language: '',
+        requirementLicense: '',
+        requirementLevel: 0,
         taskFile: '',
         employerId: 0,
-        assignments: [
-          {
-            id: 1,
-            order: 1,
-            hasDispute: false,
-            disputeResult: 0,
-            statement: '',
-            description: '这个任务需要翻译我给出的pdf文档的第20-40页，注意主要人名的翻' +
-            '译要与附录中的统一。完成情况好的话我一定会好评的。',
-            status: '进行中',
-            translator: '2333',
-            score: 4,
-            price: '20元',
-            submission: '455.txt',
-            note: '',
-            testResult: '我的名字叫Van，我是一个艺术家，表演艺术家。' +
-            '我被人雇来实现他们的幻想，他们内心深处的黑暗幻想。'
-          },
-          {
-            id: 2,
-            order: 2,
-            hasDispute: false,
-            disputeResult: 0,
-            statement: '',
-            description: 'PartII PartII PartII PartII PartII PartII ',
-            status: '已完成',
-            translator: '2333',
-            score: 4,
-            price: '20元',
-            submission: '2333.txt',
-            note: '',
-            testResult: '我的名字叫Van，我是一个艺术家，表演艺术家。' +
-            '我被人雇来实现他们的幻想，他们内心深处的黑暗幻想。'
-          },
-          {
-            id: 30,
-            order: 3,
-            hasDispute: false,
-            disputeResult: 0,
-            statement: '',
-            description: '这个任务需要翻译我给出的pdf文档的第20-40页，注意主要人名的翻' +
-            '译要与附录中的统一。完成情况好的话我一定会好评的。',
-            status: '试译中',
-            translator: '2333',
-            score: 4,
-            price: '20元',
-            submission: '455.txt',
-            note: '',
-            testResult: '我的名字叫Van，我是一个艺术家，表演艺术家。' +
-            '我被人雇来实现他们的幻想，他们内心深处的黑暗幻想。'
-          },
-          {
-            id: 4,
-            order: 4,
-            hasDispute: false,
-            disputeResult: 0,
-            statement: '',
-            description: '这个任务需要翻译我给出的pdf文档的第20-40页，注意主要人名的翻' +
-            '译要与附录中的统一。完成情况好的话我一定会好评的。',
-            status: '待领取',
-            translator: '2333',
-            score: 4,
-            price: '20元',
-            submission: '455.txt',
-            note: '',
-            testResult: '我的名字叫Van，我是一个艺术家，表演艺术家。' +
-            '我被人雇来实现他们的幻想，他们内心深处的黑暗幻想。'
-          }
-        ],
+        assignments: [],
         modalConfirm: false,
         testConfirm: false,
         confirm: 'accept',
         valueCustomText: 0,
         loading: true,
         text: '',
-        testText: 'My name is Van, I\'m an artist, I\'m a performance artist. ' +
-        'I\'m hired for people to fulfill their fantasies, their deep dark fantasies.',
+        testText: '',
         testResult: '',
         currentAssignment: null,
         rightFixed: false
