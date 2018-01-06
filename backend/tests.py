@@ -746,6 +746,89 @@ class AcceptAssignmentTestCase(TestCase):
             response = json.loads(found.func(request).content.decode())
             self.assertEqual(response['status'], True)
 
+class FileDownloadTestCase(TestCase):
+    def test_normal_test(self):
+        found = resolve('/FileDownload', urlconf=backend.urls)
+        request = Mock(wraps=HttpRequest(), method='GET')
 
+        filenameAndType = 'all.jpg'
+        myres = {'Content-Type':'application/octet-stream','Content-Disposition':'attachment;filename="{0}"'}
 
+        with patch.object(request.GET,'get',return_value = filenameAndType):
+            with patch.object(http,'StreamingHttpResponse',return_value = myres):
+                response = found.func(request)
+                self.assertEqual(response['Content-Type'], 'application/octet-stream')
 
+class UploadLicenseTestCase(TestCase):
+    def test_cet4(self):
+        found = resolve('/UploadLicense', urlconf=backend.urls)
+        request = Mock(wraps=HttpRequest(), method='POST')
+
+        myUser = Mock()
+        myUser.translator = None
+
+        mylfile = Mock()
+        mylfile.name = 'a.jpg'
+
+        myLicense = Mock()
+        myLicense.name = 'a/b'
+
+        with patch.object(auth,'get_user',return_value = myUser):
+            with patch.object(request.FILES,'get',return_value = mylfile):
+                with patch.object(request.POST,'get',return_value = 'cet4'):
+                    with patch.object(myLicense.licenseImage,'save',return_value = 1):
+                        with patch.object(License.objects,'create',return_value= myLicense):
+                            response = json.loads(found.func(request).content.decode())
+                            self.assertEqual(response['url'], "b")
+
+    def test_cet8(self):
+        found = resolve('/UploadLicense', urlconf=backend.urls)
+        request = Mock(wraps=HttpRequest(), method='POST')
+
+        myUser = Mock()
+        myUser.translator = None
+
+        mylfile = Mock()
+        mylfile.name = 'a.jpg'
+
+        myLicense = Mock()
+        myLicense.name = 'a/b'
+
+        with patch.object(auth,'get_user',return_value = myUser):
+            with patch.object(request.FILES,'get',return_value = mylfile):
+                with patch.object(request.POST,'get',return_value = 'cet8'):
+                    with patch.object(myLicense.licenseImage,'save',return_value = 1):
+                        with patch.object(License.objects,'create',return_value= myLicense):
+                            response = json.loads(found.func(request).content.decode())
+                            self.assertEqual(response['url'], "b")
+
+class ResponseTestResultTestCase(TestCase):
+    def test_normal_test_2(self):
+        found = resolve('/ResponseTestResult', urlconf=backend.urls)
+        request = Mock(wraps=HttpRequest(), method='POST')
+
+        request.body = Mock()
+        request.body.decode = Mock(return_value=' {"assignment_id":1,"result":123,"statement":"haha"}')
+
+        myAssignment = Mock()
+        myAssignment.status = 2
+        myAssignment.translator = 1
+
+        with patch.object(Assignment.objects,'get',return_value = myAssignment):
+            response = json.loads(found.func(request).content.decode())
+            self.assertEqual(response, 0)
+
+    def test_normal_test_1(self):
+        found = resolve('/ResponseTestResult', urlconf=backend.urls)
+        request = Mock(wraps=HttpRequest(), method='POST')
+
+        request.body = Mock()
+        request.body.decode = Mock(return_value=' {"assignment_id":1,"result":123,"statement":"haha"}')
+
+        myAssignment = Mock()
+        myAssignment.status = 1
+        myAssignment.translator = 1
+
+        with patch.object(Assignment.objects,'get',return_value = myAssignment):
+            response = json.loads(found.func(request).content.decode())
+            self.assertEqual(response, 0)
