@@ -495,6 +495,8 @@ class GetTaskDetailTestCase(TestCase):
         myTask.fileUrl.name = 'a/jpg'
         myTask.employer.id = 1
         myTask.testText = '1234'
+        myTask.requirementCreditLevel = 1
+        myTask.requirementLicense = 'CET4'
 
         myAssignment = Mock()
         myAssignment.id = 1
@@ -520,6 +522,101 @@ class GetTaskDetailTestCase(TestCase):
                     response = json.loads(found.func(request).content.decode())
                     test_task = response['assignment'][0]
                     self.assertEqual(test_task['id'], 1)
+
+class GetAssignmentDetailTestCase(TestCase):
+    def test_normal_test(self):
+        found = resolve('/GetAssignmentDetail', urlconf=backend.urls)
+        request = Mock(wraps=HttpRequest(), method='GET')
+
+        aDispute = Mock()
+        aDispute.adminStatement = '123456'
+        aDispute.status = 1
+        myDispute = [aDispute]
+
+        myTask = Mock()
+        myTask.id = 1
+        myTask.title = 'title'
+        myTask.status = 1
+        myTask.description = '123'
+        myTask.publishTime.timestamp = lambda : 1234
+        myTask.ddlTime.timestamp = lambda :567
+        myTask.languageTarget = 1
+        myTask.languageOrigin = 2
+        myTask.fileUrl.name = 'a/jpg'
+        myTask.employer.id = 1
+        myTask.testText = '1234'
+        myTask.employer.username = 'abc'
+        myTask.employer.avatar.url = 'hhh'
+
+        myAssignment = Mock()
+        myAssignment.id = 1
+        myAssignment.order = 1
+        myAssignment.description = '12345'
+        myAssignment.translator.username = 'shao'
+        myAssignment.status = 1
+        myAssignment.scores = 1
+        myAssignment.price = 123
+        myAssignment.testResult = 'test'
+        myAssignment.submission.name = '12/34/56'
+        myAssignment.task = myTask
+
+        with patch.object(request.GET,'get',return_value = 1):
+            with patch.object(Assignment.objects,'get',return_value = myAssignment):
+                with patch.object(Dispute.objects,'filter',return_value = myDispute):
+                    response = json.loads(found.func(request).content.decode())
+                    test_task = response['assignment']
+                    self.assertEqual(test_task['id'], 1)
+
+# a problem...
+class GetSquareTasksTestCase(TestCase):
+    def test_normal_test(self):
+        found = resolve('/GetSquareTasks', urlconf=backend.urls)
+        request = Mock(wraps=HttpRequest(), method='GET')
+
+        myTag = Mock()
+        myTag.tag = 1
+
+        myAssignment = Mock()
+        myAssignment.id = 1
+        myAssignment.order = 1
+        myAssignment.description = '12345'
+        myAssignment.translator.username = 'shao'
+        myAssignment.status = 1
+        myAssignment.scores = 1
+        myAssignment.price = 123
+        myAssignment.testResult = 'test'
+        myAssignment.submission.name = '12/34/56'
+
+        myTask = Mock()
+        myTask.id = 1
+        myTask.title = 'title'
+        myTask.status = 1
+        myTask.description = '123'
+        myTask.publishTime.timestamp = lambda : 1234
+        myTask.ddlTime.timestamp = lambda :567
+        myTask.languageTarget = 1
+        myTask.languageOrigin = 2
+        myTask.fileUrl.name = 'a/jpg'
+        myTask.employer.id = 1
+        myTask.testText = '1234'
+        myTask.employer.username = 'abc'
+        myTask.employer.avatar.url = 'hhh'
+        myTask.tag_set.all = lambda : [myTag]
+        myTask.assignment_set.all = lambda : [myAssignment]
+
+        myTaskSet =  [myTask]
+        #myTaskSet.count = lambda : 5
+
+        taskSetUnorder = Mock()
+        taskSetUnorder.order_by = lambda str : myTaskSet
+
+        with patch.object(request.GET,'get', return_value = None):
+            with patch.object(Task.objects,'filter',return_value = taskSetUnorder):
+                #with patch.object(myTaskSet,'count'):
+                    response = json.loads(found.func(request).content.decode())
+                    test_task = response['taskList'][0]
+                    self.assertEqual(test_task['id'], 1)
+
 
 
 class SubmitAssignmentTestCase(TestCase):

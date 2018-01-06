@@ -330,7 +330,7 @@ def GetSquareTasks(request):
         keyword = request.GET.get('keyword')
         taskSet = Task.objects.filter(status=1).order_by('publishTime')
         if keyword != None:
-            taskSet = taskSet.filter(title__contains=keyword)        
+            taskSet = taskSet.filter(title__contains = keyword)
         if taskSet.count() > 50:
             taskSet = taskSet.reverse()[:50]
         responseDict = {'taskList': []}
