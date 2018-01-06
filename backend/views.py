@@ -1,6 +1,7 @@
 from django.contrib import auth
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django import http
 from django.http import HttpResponse, JsonResponse, StreamingHttpResponse
 from .models import *
 from django.core import serializers
@@ -234,7 +235,7 @@ def PickupAssignment(request):
             if _license.licenseType // 10 == task.languageTarget:
                 flag = True
                 break
-        if not Flag:
+        if not flag:
             return JsonResponse({'status': False, 'reason': 'Language License don\'t meet requirements.'})
         # Try Receive Assignment
         with transaction.atomic():
@@ -331,7 +332,7 @@ def GetSquareTasks(request):
         keyword = request.GET.get('keyword')
         taskSet = Task.objects.filter(status=1).order_by('publishTime')
         if keyword != None:
-            taskSet = taskSet.filter(title__contains=keyword)        
+            taskSet = taskSet.filter(title__contains = keyword)
         if taskSet.count() > 50:
             taskSet = taskSet.reverse()[:50]
         responseDict = {'taskList': []}
@@ -476,7 +477,7 @@ def FileDownload(request):
         downloadType = request.GET.get('type')
         root = 'C:/Users/yw/Desktop/Babel/media/' + downloadType
         filename = request.GET.get('filename')
-        response = StreamingHttpResponse(fileIterator(root + '/' + filename))
+        response = http.StreamingHttpResponse(fileIterator(root + '/' + filename))
         response['Content-Type'] = 'application/octet-stream'
         response['Content-Disposition'] = 'attachment;filename="{0}"'.format(filename)
         return response
@@ -486,10 +487,15 @@ def UploadLicense(request):
         lfile = request.FILES.get('license')
         ltype = request.POST.get('type')
         language = request.POST.get('language')
+
         if ltype == 'cet4':
             ltype = 4
         elif ltype == 'cet8':
             ltype = 8
+        else:
+            pass
+
+
         if language == 'English':
             ltype += 10
         elif language == 'Japanese':
@@ -500,6 +506,9 @@ def UploadLicense(request):
             ltype += 40
         elif language == 'Spanish':
             ltype += 50
+        else:
+            pass
+
         user = auth.get_user(request)
         _license = License.objects.create(licenseType = ltype, belonger = user.translator)
         _license.licenseImage.save('licenses/' + lfile.name, lfile)
