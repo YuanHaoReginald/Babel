@@ -5,7 +5,7 @@ from .models import *
 from django.core.urlresolvers import resolve
 from django.contrib import auth
 from django.contrib.auth import authenticate, login, logout
-from unittest.mock import Mock,patch
+from unittest.mock import Mock,patch,MagicMock
 from django.http import HttpRequest
 import backend.urls
 import json
@@ -585,7 +585,7 @@ class GetSquareTasksTestCase(TestCase):
         myAssignment.scores = 1
         myAssignment.price = 123
         myAssignment.testResult = 'test'
-        myAssignment.submission.name = '12/34/56'
+        myAssignment.submission.url = '12/34/56'
 
         myTask = Mock()
         myTask.id = 1
@@ -604,8 +604,9 @@ class GetSquareTasksTestCase(TestCase):
         myTask.tag_set.all = lambda : [myTag]
         myTask.assignment_set.all = lambda : [myAssignment]
 
-        myTaskSet =  [myTask]
-        #myTaskSet.count = lambda : 5
+        myTaskSet = MagicMock()
+        myTaskSet.__iter__.return_value = [myTask]
+        myTaskSet.count = lambda : 5
 
         taskSetUnorder = Mock()
         taskSetUnorder.order_by = lambda str : myTaskSet
