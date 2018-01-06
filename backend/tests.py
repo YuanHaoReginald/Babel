@@ -619,7 +619,6 @@ class GetSquareTasksTestCase(TestCase):
                     self.assertEqual(test_task['id'], 1)
 
 
-
 class SubmitAssignmentTestCase(TestCase):
     def test_normal_test(self):
         found = resolve('/SubmitAssignment', urlconf=backend.urls)
@@ -684,3 +683,69 @@ class VerifyLicenseTestCase(TestCase):
         with patch.object(License.objects,'get',return_value = mylicense):
             response = json.loads(found.func(request).content.decode())
             self.assertEqual(response['status'], True)
+
+class GetManagerTestCase(TestCase):
+    def test_normal_test(self):
+        found = resolve('/GetManager', urlconf=backend.urls)
+        request = Mock(wraps=HttpRequest(), method='GET')
+
+        myDispute = Mock()
+        myDispute.id = 1
+        myDispute.assignment.description = 'assignment name'
+        myDispute.translatorStatement = 'statement'
+        myDispute.employerStatement = 'statement'
+        myDisputeSet = MagicMock()
+        myDisputeSet.count = lambda : 5
+        myDisputeSet.__iter__.return_value = [myDispute]
+
+        myLicense = Mock()
+        myLicense.id = 1
+        myLicense.licenseType = 'CET4'
+        myLicense.licenseImage.url = 'a.jpg'
+        myLicenseSet = MagicMock()
+        myLicenseSet.count = lambda :5
+        myLicenseSet.__iter__.return_value = [myLicense]
+
+        with patch.object(Dispute.objects,'filter',return_value = myDisputeSet):
+            with patch.object(License.objects,'filter',return_value = myLicenseSet):
+                response = json.loads(found.func(request).content.decode())
+                #test_license = response['licenseList'][0]
+                test_dispute = response['DisputeList'][0]
+                self.assertEqual(test_dispute['id'], 1)
+
+class AcceptAssignmentTestCase(TestCase):
+    def test_case_accept(self):
+        found = resolve('/AcceptAssignment', urlconf=backend.urls)
+        request = Mock(wraps=HttpRequest(), method='POST')
+
+        request.body = Mock()
+        request.body.decode = Mock(return_value=' {"assignmentid":1,"result":123,"acceptance":"accept"}')
+
+        myAssignment = Mock()
+        myAssignment.scores = 1
+        myAssignment.status = 1
+        myAssignment.comment = '123'
+
+        with patch.object(Assignment.objects,'get',return_value = myAssignment):
+            response = json.loads(found.func(request).content.decode())
+            self.assertEqual(response['status'], True)
+
+    def test_case_reject(self):
+        found = resolve('/AcceptAssignment', urlconf=backend.urls)
+        request = Mock(wraps=HttpRequest(), method='POST')
+
+        request.body = Mock()
+        request.body.decode = Mock(return_value=' {"assignmentid":1,"result":123,"acceptance":"reject"}')
+
+        myAssignment = Mock()
+        myAssignment.scores = 1
+        myAssignment.status = 1
+        myAssignment.comment = '123'
+
+        with patch.object(Assignment.objects,'get',return_value = myAssignment):
+            response = json.loads(found.func(request).content.decode())
+            self.assertEqual(response['status'], True)
+
+
+
+
