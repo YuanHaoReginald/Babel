@@ -34,9 +34,6 @@ const router = new Router({
     {
       path: '/signup/:utype',
       name: 'signup',
-      meta: {
-        requireAuth: true
-      },
       component: SignUpSimple
     },
     {

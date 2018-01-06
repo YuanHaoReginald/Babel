@@ -108,47 +108,11 @@
         checking: 'argues_notSolved',
         total: 100,
         argues: {
-          notSolved: [
-            {
-              id: 1,
-              status: '待审核',
-              assignment_name: 'name',
-              argument_translator: '我觉得没问题',
-              argument_employer: '我觉得翻译很差不能给这么多',
-              result: null,
-              reason: ''
-            },
-            {
-              id: 2,
-              status: '待审核',
-              assignment_name: 'name',
-              argument_translator: '大家加油',
-              argument_employer: '最胖',
-              result: null,
-              reason: ''
-            }
-          ],
+          notSolved: [],
           solved: []
         },
         licenses: {
-          notVerified: [
-            {
-              id: 2,
-              status: '待审核',
-              type: '专业四级',
-              language: '法语',
-              url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTinVcxgZ5o4TUaUzgfoUKGIuHMOCSnopg6lPs_WEjVZgZ7QBfc',
-              result: null
-            },
-            {
-              id: 20,
-              status: '待审核',
-              type: '专业八级',
-              language: '法语',
-              url: 'http://www.cxyym.com/wp-content/uploads/2016/04/030a3bb51ba6ef4e0f7e73798a246655.png',
-              result: null
-            }
-          ],
+          notVerified: [],
           verified: []
         }
       }

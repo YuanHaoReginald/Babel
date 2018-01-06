@@ -24,11 +24,11 @@
     name: 'userinfo',
     data () {
       return {
-        username: '王小明',
-        email: 'abcdefg@163.com',
+        username: '',
+        email: '',
         headSrc: '',
-        level: 4,
-        experienceNumber: 60,
+        level: 0,
+        experienceNumber: 0,
         maxExperience: 200
       }
     },

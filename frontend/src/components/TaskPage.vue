@@ -302,7 +302,6 @@
         })
       },
       responseTestResult: function (result) {
-        console.log(this.currentAssignment, result)
         let body = JSON.stringify({assignment_id: this.currentAssignment.id, result: result})
         const headers = new Headers({
           'Content-Type': 'application/json'
@@ -315,14 +314,15 @@
         .then(function (response) {
           return response.json().then(function (data) {
             if (result) {
-              this.currentAssignment.status = '进行中'
+              that.currentAssignment.status = '进行中'
             } else {
-              this.currentAssignment.status = '待领取'
-              this.currentAssignment.translator = ''
+              that.currentAssignment.status = '待领取'
+              that.currentAssignment.translator = ''
               that.testConfirm = false
             }
           })
         }).catch(function (ex) {
+          console.log(ex)
           alert('Network Error')
         })
       },
@@ -331,7 +331,6 @@
         this.modalConfirm = true
       },
       callTestConfirm: function (assignment) {
-        console.log(assignment)
         this.currentAssignment = assignment
         this.testResult = this.currentAssignment.testResult
         this.testConfirm = true

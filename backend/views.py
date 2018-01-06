@@ -524,7 +524,7 @@ def ResponseTestResult(request):
             assignment.status = 2
         else:
             assignment.status = 1
-            assignment.translator = NULL
+            assignment.translator = None
         assignment.save()
         return HttpResponse(0)
 

@@ -64,22 +64,20 @@
         ],
         assignmentlist: [
           {
-            title: '中法信件翻译任务',
-            publishTime: '2017-3-1',
-            ddlTime: '2017-5-10',
-            tags: ['art', 'math'],
-            language: 'French',
-            description: 'I am the description.I am the description.I am the description.' +
-            'I am the description.I am the description.I am the description.I am the description.'
+            title: '',
+            publishTime: '',
+            ddlTime: '',
+            tags: [],
+            language: '',
+            description: ''
           },
           {
-            title: 'title',
-            publishTime: 'publishTime',
-            ddlTime: 'ddlTime',
-            tags: ['art', 'history'],
-            language: 'English',
-            description: 'I am the description.I am the description.I am the description.' +
-            'I am the description.I am the description.I am the description.I am the description.'
+            title: '',
+            publishTime: '',
+            ddlTime: '',
+            tags: [],
+            language: '',
+            description: ''
           }
         ],
         pageList: []
