@@ -37,28 +37,7 @@
     name: 'tasks',
     data () {
       return {
-        tasklist: [
-          {
-            title: '中法信件翻译任务',
-            status: '进行中',
-            publishTime: '2017-3-1',
-            ddlTime: '2017-5-10',
-            tags: ['art', 'math'],
-            language: 'French',
-            description: 'I am the description.I am the description.I am the description.' +
-            'I am the description.I am the description.I am the description.I am the description.'
-          },
-          {
-            title: 'title',
-            status: '待发布',
-            publishTime: 'publishTime',
-            ddlTime: 'ddlTime',
-            tags: ['art', 'math'],
-            language: 'English',
-            description: 'I am the description.I am the description.I am the description.' +
-            'I am the description.I am the description.I am the description.I am the description.'
-          }
-        ],
+        tasklist: [],
         page_total_num: 0,
         pageList: []
       }

@@ -4,7 +4,7 @@
       <div class="card">
         <Card dis-hover padding="0">
           <div id="task-info">
-            <h2 id="task-title">{{ title }}<br></h2>
+            <h2 id="task-title" @click="checkTaskDetail">{{ title }}<br></h2>
             <br>
             <div class="grey">
               发布者:&nbsp;<Avatar v-bind:src="owner.img_src" />
@@ -95,28 +95,27 @@
     name: 'taskpage',
     data () {
       return {
-        title: '法语文件翻译任务',
+        id: 0,
+        title: '',
         owner: {
-          name: 'name2333',
-          img_src: 'https://i.loli.net/2017/08/21/599a521472424.jpg'
+          name: '',
+          img_src: ''
         },
-        description: '这是我比较着急的任务，主要是翻译一篇法语的论文。这是我' +
-        '比较着急的任务，主要是翻译一篇法语的论文。这是我比较着急的任务，主要是翻译一篇法语的论文。',
-        publishTime: '2017-3-1',
-        ddlTime: '2017-5-10',
-        language: '法语',
+        description: '',
+        publishTime: '',
+        ddlTime: '',
+        language: '',
         assignment: {
           id: 0,
           hasDispute: false,
           disputeResult: 0,
           statement: '',
-          description: '这个任务需要翻译我给出的pdf文档的第20-40页，注意主要人名的翻' +
-          '译要与附录中的统一。完成情况好的话我一定会好评的。',
-          status: '待领取',
-          translator: '2333',
-          score: 4,
-          price: '20元',
-          submission: '/2333/455'
+          description: '',
+          status: '',
+          translator: '',
+          score: 0,
+          price: '',
+          submission: ''
         },
         recommendation: [
           {
@@ -138,8 +137,7 @@
         file: null,
         loadingStatus: false,
         testConfirm: false,
-        testText: 'My name is Van, I\'m an artist, I\'m a performance artist. ' +
-        'I\'m hired for people to fulfill their fantasies, their deep dark fantasies.',
+        testText: '',
         testResult: '',
         modalArgue: false,
         text: ''
@@ -155,6 +153,7 @@
         credentials: 'include'})
       .then(function (response) {
         return response.json().then(function (data) {
+          that.id = data['id']
           that.title = data['title']
           that.description = data['description']
           that.publishTime = Date(data['publishTime'])
@@ -256,6 +255,9 @@
         }).catch(function (ex) {
           alert('Network Error')
         })
+      },
+      checkTaskDetail: function () {
+        this.$router.push('/task/' + this.id)
       }
     }
   }

@@ -204,7 +204,7 @@ def GetTranslatorAssignments(request):
             _task_tag = task.tag_set.all()
             _temp_tag_list = []
             for tag in _task_tag:
-                _temp_tag_list.append(tag)
+                _temp_tag_list.append(tag.tag)
             responseDict['assignmentList'].append({
                 'id': assignment.id,
                 'status': assignment.status,
@@ -300,6 +300,7 @@ def GetAssignmentDetail(request):
             statement = _dispute[0].adminStatement
         task = assignment.task
         responseDict = {
+            'id': task.id,
             'title': task.title,
             'description': task.description,
             'publishTime': task.publishTime.timestamp(),
@@ -308,7 +309,7 @@ def GetAssignmentDetail(request):
             'assignment': {
                 'id': assignment.id,
                 'hasDispute' : len(_dispute) != 0,
-                'disputeResult' : _dispute[0].status,
+                'disputeResult' : _dispute[0].status if len(_dispute) != 0 else 0,
                 'statement' : statement,
                 'description': assignment.description,
                 'translator': assignment.translator.username if assignment.translator else '',
@@ -370,7 +371,6 @@ def SubmitAssignment(request):
     if request.method == 'POST':
         file = request.FILES.get('file')
         assignmentId = request.POST.get('assignmentid')
-        print(assignmentId)
         assignment = Assignment.objects.get(id = assignmentId)
         assignment.submission.save('assignments/' + file.name, file)
     return JsonResponse({'url': assignment.submission.name.split('/')[-1]})
@@ -523,7 +523,7 @@ def ResponseTestResult(request):
             assignment.status = 2
         else:
             assignment.status = 1
-            assignment.translator = NULL
+            assignment.translator = None
         assignment.save()
         return HttpResponse(0)
 
