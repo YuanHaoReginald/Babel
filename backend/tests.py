@@ -832,3 +832,58 @@ class ResponseTestResultTestCase(TestCase):
         with patch.object(Assignment.objects,'get',return_value = myAssignment):
             response = json.loads(found.func(request).content.decode())
             self.assertEqual(response, 0)
+
+class SubmitTestResultTestCase(TestCase):
+    def test_normal_test(self):
+        found = resolve('/SubmitTestResult', urlconf = backend.urls)
+        request = Mock(wraps=HttpRequest(), method = 'POST')
+
+        request.body = Mock()
+        request.body.decode = Mock(return_value=' {"assignment_order":123,"testResult":"haha","task_id":1}')
+
+        myUser = Mock()
+        myUser.username = 'shaoyushan'
+        myTranslator = Mock()
+        myTranslator.translator = myUser
+
+        myAssignment = Mock()
+        myAssignment.status = 1
+        myAssignment.translator = myUser
+        myAssignment.testResult = '123'
+
+        with patch.object(auth,'get_user',return_value = myTranslator):
+            with patch.object(Task.objects,'get',return_value = 1):
+                with patch.object(Assignment.objects,'get',return_value = myAssignment):
+                    response = json.loads(found.func(request).content.decode())
+                    self.assertEqual(response['translator'], 'shaoyushan')
+
+class AcceptResultTestCase(TestCase):
+    def test_normal_test(self):
+        found = resolve('/AcceptResult', urlconf=backend.urls)
+        request = Mock(wraps=HttpRequest(), method='POST')
+
+        request.body = Mock()
+        request.body.decode = Mock(return_value=' {"assignmentId":123,"testResult":"haha","task_id":1}')
+
+        myAssignment = Mock()
+        myAssignment.status = 1
+
+        with patch.object(Assignment.objects,'get',return_value = myAssignment):
+            response = json.loads(found.func(request).content.decode())
+            self.assertEqual(response['status'], True)
+
+class ArgueResultTestCase(TestCase):
+    def test_normal_test(self):
+        found = resolve('/AcceptResult', urlconf=backend.urls)
+        request = Mock(wraps=HttpRequest(), method='POST')
+
+        request.body = Mock()
+        request.body.decode = Mock(return_value=' {"assignmentId":123,"testResult":"haha","task_id":1}')
+
+        myAssignment = Mock()
+        myAssignment.status = 1
+
+        with patch.object(Assignment.objects, 'get', return_value=myAssignment):
+            with patch.object(Dispute.objects,'create',return_value = 1 ):
+                response = json.loads(found.func(request).content.decode())
+                self.assertEqual(response['status'], True)
