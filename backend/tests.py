@@ -338,7 +338,8 @@ class GetTranslatorAssignmentsTestCase(TestCase):
         found = resolve('/GetTranslatorAssignments', urlconf=backend.urls)
         request = Mock(wraps=HttpRequest(), method='GET')
 
-        myTag = 1
+        myTag = Mock()
+        myTag.tag = 1
 
         myTask = Mock()
         myTask.tag_set.all = lambda : [myTag]
