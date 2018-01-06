@@ -1,6 +1,7 @@
 from django.contrib import auth
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django import http
 from django.http import HttpResponse, JsonResponse, StreamingHttpResponse
 from .models import *
 from django.core import serializers
@@ -103,7 +104,7 @@ def UserModify(request):
         responseDict = {'telephone': user.telephone,
                          'wechatNumber': user.wechatNumber,
                          'alipayNumber': user.alipayNumber,
-                         'language': 'French',
+                         'language': '',
                          'avatar': user.avatar.url if user.avatar else ''}
         return JsonResponse(responseDict)
 
@@ -114,7 +115,7 @@ def UploadAvatar(request):
         fileExtension = avatar.name.split('.')[-1]
         user.avatar.delete()
         user.avatar.save('avatars/' + user.username + '.' + fileExtension, avatar)
-    return JsonResponse({'url': user.avatar.name})
+    return JsonResponse({'url': user.avatar.url})
 
 def CreateTask(request):
     if request.method == 'POST':
@@ -154,6 +155,8 @@ def CreateTask(request):
                                    requirementCreditLevel = taskLevel,
                                    requirementLicense = taskLicense,
                                    testText = taskTestText)
+        for tag in taskTags:
+            Tag.objects.get(tag=tag).tasks.add(task)
         for assignment in taskAssignments:
             Assignment.objects.create(task = task,
                                       order = assignment['order'],
@@ -167,7 +170,6 @@ def UploadTaskFile(request):
         taskId = request.POST.get('id')
         task = Task.objects.get(id = taskId)
         task.fileUrl.save('tasks/' + file.name, file)
-        print(55)
     return JsonResponse({'url': task.fileUrl.name})
 
 
@@ -180,7 +182,7 @@ def GetEmployerTasks(request):
             _task_tag = task.tag_set.all()
             _temp_tag_list = []
             for tag in _task_tag:
-                _temp_tag_list.append(tag)
+                _temp_tag_list.append(tag.tag)
             responseDict['taskList'].append({
                 'id': task.id,                
                 'title': task.title,
@@ -203,7 +205,7 @@ def GetTranslatorAssignments(request):
             _task_tag = task.tag_set.all()
             _temp_tag_list = []
             for tag in _task_tag:
-                _temp_tag_list.append(tag)
+                _temp_tag_list.append(tag.tag)
             responseDict['assignmentList'].append({
                 'id': assignment.id,
                 'status': assignment.status,
@@ -224,12 +226,26 @@ def PickupAssignment(request):
         assignmentOrder = infoDict['assignment_order']
         task = Task.objects.get(id = taskId)
         assignment = Assignment.objects.get(task = task, order = assignmentOrder)
+        # Check Translator Qualification Review
+        if user.creditLevel < task.requirementCreditLevel:
+            return JsonResponse({'status': False, 'reason': 'Level don\'t meet requirements.'})
+        licenseSet = user.license_set.filter(adminVerify=1)
+        flag = False
+        for _license in licenseSet:
+            if _license.licenseType // 10 == task.languageTarget:
+                flag = True
+                break
+        if not flag:
+            return JsonResponse({'status': False, 'reason': 'Language License don\'t meet requirements.'})
+        # Try Receive Assignment
         with transaction.atomic():
             if assignment.status == 1:
                 assignment.translator = user
                 assignment.status = 2
                 assignment.save()
-            return JsonResponse({'translator': assignment.translator.username})
+                return JsonResponse({'status': True})
+            else:
+                return JsonResponse({'status': False, 'reason': 'Assignment has been picked up by others.'})
     
 def GetTaskDetail(request):
     if request.method == 'GET':
@@ -247,13 +263,22 @@ def GetTaskDetail(request):
             'language': task.languageTarget if task.languageOrigin == 0 else task.languageTarget,
             'fileUrl': task.fileUrl.name.split('/')[-1] if task.fileUrl else '',
             'employerId': task.employer.id,
+            'requirementLevel': task.requirementCreditLevel,
+            'requirementLicense': task.requirementLicense,
             'testText': task.testText,
             'assignment': []
         }
         assignment_set = task.assignment_set.all()
         for assignment in assignment_set:
+            _dispute = Dispute.objects.filter(assignment=assignment)
+            statement = ''
+            if len(_dispute) != 0 and _dispute[0].adminStatement:
+                statement = _dispute[0].adminStatement
             responseDict['assignment'].append({
                 'id': assignment.id,
+                'hasDispute' : len(_dispute) != 0,
+                'disputeResult' : _dispute[0].status if len(_dispute) != 0 else 0,
+                'statement' : statement,
                 'order': assignment.order,
                 'description': assignment.description,
                 'translator': assignment.translator.username if assignment.translator else '',
@@ -276,6 +301,7 @@ def GetAssignmentDetail(request):
             statement = _dispute[0].adminStatement
         task = assignment.task
         responseDict = {
+            'id': task.id,
             'title': task.title,
             'description': task.description,
             'publishTime': task.publishTime.timestamp(),
@@ -284,6 +310,7 @@ def GetAssignmentDetail(request):
             'assignment': {
                 'id': assignment.id,
                 'hasDispute' : len(_dispute) != 0,
+                'disputeResult' : _dispute[0].status if len(_dispute) != 0 else 0,
                 'statement' : statement,
                 'description': assignment.description,
                 'translator': assignment.translator.username if assignment.translator else '',
@@ -302,16 +329,18 @@ def GetAssignmentDetail(request):
 def GetSquareTasks(request):
     if request.method == 'GET':
         print('-----------------------GetSquareTasks-----------------')
-        # current_user = auth.get_user(request).employer
-        taskSet = Task.objects.order_by('publishTime')
-        if taskSet.count() > 5:
-            taskSet = taskSet.reverse()[:5]
+        keyword = request.GET.get('keyword')
+        taskSet = Task.objects.filter(status=1).order_by('publishTime')
+        if keyword != None:
+            taskSet = taskSet.filter(title__contains = keyword)
+        if taskSet.count() > 50:
+            taskSet = taskSet.reverse()[:50]
         responseDict = {'taskList': []}
         for task in taskSet:
             _task_tag = task.tag_set.all()
             _temp_tag_list = []
             for tag in _task_tag:
-                _temp_tag_list.append(tag)
+                _temp_tag_list.append(tag.tag)
 
             assignmentSet = task.assignment_set.all()
             _temp_assignment = []
@@ -332,7 +361,7 @@ def GetSquareTasks(request):
                 'publishTime': task.publishTime.timestamp(),
                 'ddlTime': task.ddlTime.timestamp(),
                 'tags': _temp_tag_list,
-                'language': task.languageOrigin if task.languageOrigin == 0 else task.languageTarget,
+                'language': task.languageTarget if task.languageOrigin == 0 else task.languageTarget,
                 'description': task.description,
                 'testText': task.testText,
                 'assignment': _temp_assignment
@@ -343,10 +372,9 @@ def SubmitAssignment(request):
     if request.method == 'POST':
         file = request.FILES.get('file')
         assignmentId = request.POST.get('assignmentid')
-        print(assignmentId)
         assignment = Assignment.objects.get(id = assignmentId)
         assignment.submission.save('assignments/' + file.name, file)
-    return JsonResponse({'url': assignment.submission.name})
+    return JsonResponse({'url': assignment.submission.name.split('/')[-1]})
 
 def PublishTask(request):
     if request.method == 'POST':
@@ -449,7 +477,7 @@ def FileDownload(request):
         downloadType = request.GET.get('type')
         root = 'C:/Users/yw/Desktop/Babel/media/' + downloadType
         filename = request.GET.get('filename')
-        response = StreamingHttpResponse(fileIterator(root + '/' + filename))
+        response = http.StreamingHttpResponse(fileIterator(root + '/' + filename))
         response['Content-Type'] = 'application/octet-stream'
         response['Content-Disposition'] = 'attachment;filename="{0}"'.format(filename)
         return response
@@ -459,10 +487,15 @@ def UploadLicense(request):
         lfile = request.FILES.get('license')
         ltype = request.POST.get('type')
         language = request.POST.get('language')
+
         if ltype == 'cet4':
             ltype = 4
         elif ltype == 'cet8':
             ltype = 8
+        else:
+            pass
+
+
         if language == 'English':
             ltype += 10
         elif language == 'Japanese':
@@ -473,10 +506,13 @@ def UploadLicense(request):
             ltype += 40
         elif language == 'Spanish':
             ltype += 50
+        else:
+            pass
+
         user = auth.get_user(request)
         _license = License.objects.create(licenseType = ltype, belonger = user.translator)
         _license.licenseImage.save('licenses/' + lfile.name, lfile)
-    return JsonResponse({'url': user.avatar.name})
+    return JsonResponse({'url': _license.name.split('/')[-1]})
 
 def ResponseTestResult(request):
     if request.method == 'POST':
@@ -488,7 +524,7 @@ def ResponseTestResult(request):
             assignment.status = 2
         else:
             assignment.status = 1
-            assignment.translator = NULL
+            assignment.translator = None
         assignment.save()
         return HttpResponse(0)
 
@@ -521,5 +557,5 @@ def ArgueResult(request):
     if request.method == 'POST':
         infoDict = json.loads(request.body.decode())
         assignment = Assignment.objects.get(id=infoDict['assignmentId'])
-        Dispute.objects.create(assignment=assignment, employerStatement=assignment.comment)
+        Dispute.objects.create(assignment=assignment, employerStatement=assignment.comment, translatorStatement=infoDict['text'])
         return JsonResponse({'status': True})

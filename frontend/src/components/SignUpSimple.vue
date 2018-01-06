@@ -3,16 +3,16 @@
     <div class="container">
     <div class="title"><h2>加入巴别塔</h2></div>
       <Form ref="formCustom" :model="formCustom" :rules="ruleCustom" :label-width="80">
-        <FormItem label="Username" prop="username">
+        <FormItem label="用户名" prop="username">
           <Input type="username" v-model="formCustom.username"></Input>
         </FormItem>
-        <FormItem label="Password" prop="passwd">
+        <FormItem label="密码" prop="passwd">
           <Input type="password" v-model="formCustom.passwd"></Input>
         </FormItem>
-        <FormItem label="Confirm" prop="passwdCheck">
+        <FormItem label="确认密码" prop="passwdCheck">
           <Input type="password" v-model="formCustom.passwdCheck"></Input>
         </FormItem>
-        <FormItem label="Email" prop="email">
+        <FormItem label="邮箱" prop="email">
           <Input type="text" v-model="formCustom.email"></Input>
         </FormItem>
         <FormItem>

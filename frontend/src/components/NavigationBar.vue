@@ -5,7 +5,7 @@
       <Row>
         <Col span="2" @click.native="toWebmain"><h2>Babel</h2></Col>
         <Col span="10" offset="1">
-        <Input v-model="search" icon="search"> </Input>
+        <Input v-model="search" icon="search" @click.native="searchTask"> </Input>
         </Col>
         <Col span="3"offset="8" v-if="this.$store.state.online">
         <Submenu name="3">
@@ -70,6 +70,11 @@
           this.$router.push({path: '/square'})
         } else {
           this.$router.push({path: '/'})
+        }
+      },
+      searchTask: function () {
+        if (this.search.trim() !== '') {
+          this.$router.push({name: 'search', params: {keyword: this.search.trim()}})
         }
       }
     }

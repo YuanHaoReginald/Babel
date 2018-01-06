@@ -11,7 +11,7 @@
         <div id="taskListTitle"><h2>我的任务</h2></div>
         <div>
           <ul>
-            <li v-for="task in tasklist">
+            <li v-for="task in pageList">
               <Card padding=10 @click.native="checkTaskDetail(task.id)">
                 <p slot="title" id="taskTitle">
                   {{ task.title }}&nbsp;&nbsp;&nbsp;<span v-for="tag in task.tags"><Tag><h4>{{ tag }}</h4></Tag></span>
@@ -25,7 +25,7 @@
         </div>
       </Card>
       <div id="pages">
-        <Page :total="page_total_num"></Page>
+        <Page :total="page_total_num" page-size="5" show-elevator @on-change="setPageList"></Page>
       </div>
     </div>
   </div>
@@ -37,30 +37,9 @@
     name: 'tasks',
     data () {
       return {
-        tasklist: [
-          {
-            title: '中法信件翻译任务',
-            status: '进行中',
-            publishTime: '2017-3-1',
-            ddlTime: '2017-5-10',
-            tags: ['art', 'math'],
-            language: 'French',
-            description: 'I am the description.I am the description.I am the description.' +
-            'I am the description.I am the description.I am the description.I am the description.'
-          },
-          {
-            title: 'title',
-            status: '待发布',
-            publishTime: 'publishTime',
-            ddlTime: 'ddlTime',
-            tags: ['art', 'math'],
-            language: 'English',
-            description: 'I am the description.I am the description.I am the description.' +
-            'I am the description.I am the description.I am the description.I am the description.'
-          }
-        ],
-        page_total_num: 500,
-        page_current_num: 1
+        tasklist: [],
+        page_total_num: 0,
+        pageList: []
       }
     },
     mounted: function () {
@@ -97,6 +76,8 @@
               description: task.description
             })
           }
+          that.page_total_num = that.tasklist.length
+          that.setPageList(1)
         })
       }).catch(function (ex) {
         alert('Network Error')
@@ -105,6 +86,10 @@
     methods: {
       checkTaskDetail: function (taskid) {
         this.$router.push('/task/' + taskid)
+      },
+      setPageList (page) {
+        this.pageList.splice(0, this.pageList.length)
+        this.pageList = this.tasklist.slice((page - 1) * 5, page * 5)
       }
     }
   }

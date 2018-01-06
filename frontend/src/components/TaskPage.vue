@@ -20,6 +20,15 @@
                     <Button type="primary" @click="pickup(a)" v-if="a.status == '待领取' && !isowner">领取任务</Button>
                     <span v-if="a.status == '已完成'">任务评分:&nbsp;<Rate allow-half disabled v-model="a.score"><span class="orange">{{ a.score }}</span></Rate></span>
                   </div>
+                  <span v-if="a.status == '纠纷中' && isowner">
+                    <p v-if="!a.hasDispute">请耐心等待翻译者回应</p>
+                    <p v-if="a.hasDispute">请耐心等待管理员处理</p>
+                  </span>
+                  <span v-if="a.status == '已完成' && isowner && a.hasDispute">
+                    <p v-if="a.disputeResult == 0"> 申诉状态：未完成（发生未知错误） </p>
+                    <p v-if="a.disputeResult == 1"> 申诉状态：管理员同意了翻译者的申诉，评语：{{a.statement}} </p>
+                    <p v-if="a.disputeResult == 2"> 申诉状态：管理员拒绝了翻译者的申诉，评语：{{a.statement}} </p>
+                  </span>
                 </Col>
               </Row>
             </Card>
@@ -47,14 +56,16 @@
         </Modal>
       </Card></div>
     </div>
-    <div id="right">
+    <div id="right" :class="rightFixed === true ? 'isFixed' :''">
       <div class="card"><Card dis-hover>
         <h3 id="right-info">任务信息</h3>
         <p>任务状态：{{ status }}</p>
         <p>任务描述：{{ description }}</p>
         <p>任务语言：{{ language }}</p>
+        <p>资质要求：{{ requirementLicense }}</p>
         <p>发布时间：{{ publishTime }}</p>
         <p>截止时间：{{ ddlTime }}</p>
+        <p>要求译者等级：&nbsp;<Rate allow-half disabled v-model="requirementLevel"></Rate></p>
         <p>任务文件：<a :href="DownloadTask(taskFile)">{{ taskFile }}</a></p>
         <Button v-if="status == '待发布'" @click="publishTask"  type="info">立即发布</Button>
       </Card></div>
@@ -68,81 +79,27 @@
     data () {
       return {
         id: 0,
-        title: '法语文件翻译任务',
-        status: '待发布',
-        description: '我是任务的描述',
-        publishTime: '2017-3-1',
-        ddlTime: '2017-5-10',
-        language: '法语',
+        title: '',
+        status: '',
+        description: '',
+        publishTime: '',
+        ddlTime: '',
+        language: '',
+        requirementLicense: '',
+        requirementLevel: 0,
         taskFile: '',
         employerId: 0,
-        assignments: [
-          {
-            id: 1,
-            order: 1,
-            description: '这个任务需要翻译我给出的pdf文档的第20-40页，注意主要人名的翻' +
-            '译要与附录中的统一。完成情况好的话我一定会好评的。',
-            status: '进行中',
-            translator: '2333',
-            score: 4,
-            price: '20元',
-            submission: '455.txt',
-            note: '',
-            testResult: '我的名字叫Van，我是一个艺术家，表演艺术家。' +
-            '我被人雇来实现他们的幻想，他们内心深处的黑暗幻想。'
-          },
-          {
-            id: 2,
-            order: 2,
-            description: 'PartII PartII PartII PartII PartII PartII ',
-            status: '已完成',
-            translator: '2333',
-            score: 4,
-            price: '20元',
-            submission: '2333.txt',
-            note: '',
-            testResult: '我的名字叫Van，我是一个艺术家，表演艺术家。' +
-            '我被人雇来实现他们的幻想，他们内心深处的黑暗幻想。'
-          },
-          {
-            id: 30,
-            order: 3,
-            description: '这个任务需要翻译我给出的pdf文档的第20-40页，注意主要人名的翻' +
-            '译要与附录中的统一。完成情况好的话我一定会好评的。',
-            status: '试译中',
-            translator: '2333',
-            score: 4,
-            price: '20元',
-            submission: '455.txt',
-            note: '',
-            testResult: '我的名字叫Van，我是一个艺术家，表演艺术家。' +
-            '我被人雇来实现他们的幻想，他们内心深处的黑暗幻想。'
-          },
-          {
-            id: 4,
-            order: 4,
-            description: '这个任务需要翻译我给出的pdf文档的第20-40页，注意主要人名的翻' +
-            '译要与附录中的统一。完成情况好的话我一定会好评的。',
-            status: '待领取',
-            translator: '2333',
-            score: 4,
-            price: '20元',
-            submission: '455.txt',
-            note: '',
-            testResult: '我的名字叫Van，我是一个艺术家，表演艺术家。' +
-            '我被人雇来实现他们的幻想，他们内心深处的黑暗幻想。'
-          }
-        ],
+        assignments: [],
         modalConfirm: false,
         testConfirm: false,
         confirm: 'accept',
         valueCustomText: 0,
         loading: true,
         text: '',
-        testText: 'My name is Van, I\'m an artist, I\'m a performance artist. ' +
-        'I\'m hired for people to fulfill their fantasies, their deep dark fantasies.',
+        testText: '',
         testResult: '',
-        currentAssignment: null
+        currentAssignment: null,
+        rightFixed: false
       }
     },
     created: function () {
@@ -160,6 +117,12 @@
           that.description = data['description']
           that.publishTime = Date(data['publishTime'])
           that.ddlTime = Date(data['ddlTime'])
+          if (data['requirementLicense'] === 4) {
+            that.requirementLicense = '专业四级'
+          } else {
+            that.requirementLicense = '专业八级'
+          }
+          that.requirementLevel = data['requirementLevel']
           // that.language = data['language']
           switch (data['language']) {
             case 0:
@@ -199,6 +162,9 @@
             let tmp = []
             tmp['id'] = assignment.id
             tmp['order'] = assignment.order
+            tmp['hasDispute'] = assignment.hasDispute
+            tmp['disputeResult'] = assignment.disputeResult
+            tmp['statement'] = assignment.statement
             tmp['description'] = assignment.description
             tmp['translator'] = assignment.translator
             switch (assignment.status) {
@@ -331,11 +297,11 @@
             }
           })
         }).catch(function (ex) {
+          console.log(ex)
           alert('Network Error')
         })
       },
       responseTestResult: function (result) {
-        console.log(this.currentAssignment, result)
         let body = JSON.stringify({assignment_id: this.currentAssignment.id, result: result})
         const headers = new Headers({
           'Content-Type': 'application/json'
@@ -348,14 +314,15 @@
         .then(function (response) {
           return response.json().then(function (data) {
             if (result) {
-              this.currentAssignment.status = '进行中'
+              that.currentAssignment.status = '进行中'
             } else {
-              this.currentAssignment.status = '待领取'
-              this.currentAssignment.translator = ''
+              that.currentAssignment.status = '待领取'
+              that.currentAssignment.translator = ''
               that.testConfirm = false
             }
           })
         }).catch(function (ex) {
+          console.log(ex)
           alert('Network Error')
         })
       },
@@ -364,11 +331,25 @@
         this.modalConfirm = true
       },
       callTestConfirm: function (assignment) {
-        console.log(assignment)
         this.currentAssignment = assignment
         this.testResult = this.currentAssignment.testResult
         this.testConfirm = true
+      },
+      handleScroll () {
+        var scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
+        var offsetTop = document.querySelector('#right').offsetTop
+        if (scrollTop > offsetTop && !this.rightFixed) {
+          this.rightFixed = true
+        } else if (scrollTop < 80 && this.rightFixed) {
+          this.rightFixed = false
+        }
       }
+    },
+    mounted: function () {
+      window.addEventListener('scroll', this.handleScroll)
+    },
+    destroyed: function () {
+      window.removeEventListener('scroll', this.handleScroll)
     }
   }
 </script>
@@ -438,5 +419,9 @@
     color: #495060;
     text-align: left;
   }
-
+  .isFixed {
+    position: fixed;
+    top: 0;
+    z-index: 999;
+  }
 </style>

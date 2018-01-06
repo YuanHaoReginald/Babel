@@ -6,6 +6,7 @@
           <MenuItem name="1" @click.native="switchTo('argues_notSolved')">
             <Icon type="document-text"></Icon>
             尚未处理
+            <Badge :count="argues.notSolved.length" class="todos"></Badge>
           </MenuItem>
           <MenuItem name="2" @click.native="switchTo('argues_solved')">
             <Icon type="document-text"></Icon>
@@ -16,6 +17,7 @@
           <MenuItem name="3" @click.native="switchTo('licenses_notVerified')">
             <Icon type="document-text"></Icon>
             尚未处理
+            <Badge :count="licenses.notVerified.length" class="todos"></Badge>
           </MenuItem>
           <MenuItem name="4" @click.native="switchTo('licenses_verified')">
             <Icon type="document-text"></Icon>
@@ -93,7 +95,7 @@
           </div>
         </li>
       </ul>
-      <div class="center" v-if="total !== 0"><Page :total="total" show-elevator></Page></div>
+      <BackTop></BackTop>
     </div>
   </div>
 </template>
@@ -106,47 +108,11 @@
         checking: 'argues_notSolved',
         total: 100,
         argues: {
-          notSolved: [
-            {
-              id: 1,
-              status: '待审核',
-              assignment_name: 'name',
-              argument_translator: '我觉得没问题',
-              argument_employer: '我觉得翻译很差不能给这么多',
-              result: null,
-              reason: ''
-            },
-            {
-              id: 2,
-              status: '待审核',
-              assignment_name: 'name',
-              argument_translator: '大家加油',
-              argument_employer: '最胖',
-              result: null,
-              reason: ''
-            }
-          ],
+          notSolved: [],
           solved: []
         },
         licenses: {
-          notVerified: [
-            {
-              id: 2,
-              status: '待审核',
-              type: '专业四级',
-              language: '法语',
-              url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTinVcxgZ5o4TUaUzgfoUKGIuHMOCSnopg6lPs_WEjVZgZ7QBfc',
-              result: null
-            },
-            {
-              id: 20,
-              status: '待审核',
-              type: '专业八级',
-              language: '法语',
-              url: 'http://www.cxyym.com/wp-content/uploads/2016/04/030a3bb51ba6ef4e0f7e73798a246655.png',
-              result: null
-            }
-          ],
+          notVerified: [],
           verified: []
         }
       }
@@ -172,7 +138,7 @@
       setArgue: function (argue, result) {
         argue.status = '已审核'
         argue.result = result
-        this.argues.solved[this.argues.solved.length] = argue
+        this.argues.solved.splice(0, 0, argue)
         for (var i = 0; i < this.argues.notSolved.length; ++i) {
           if (this.argues.notSolved[i] === argue) {
             this.argues.notSolved.splice(i, 1)
@@ -200,7 +166,7 @@
       setLicense: function (license, result) {
         license.status = '已审核'
         license.result = result
-        this.licenses.verified[this.licenses.verified.length] = license
+        this.licenses.verified.splice(0, 0, license)
         for (var i = 0; i < this.licenses.notVerified.length; ++i) {
           if (this.licenses.notVerified[i] === license) {
             this.licenses.notVerified.splice(i, 1)
@@ -348,5 +314,9 @@
   }
   .type_text {
     font-size: 15px;
+  }
+  .todos {
+    margin: 0 0 0 0;
+    float: right;
   }
 </style>

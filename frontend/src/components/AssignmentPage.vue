@@ -4,7 +4,7 @@
       <div class="card">
         <Card dis-hover padding="0">
           <div id="task-info">
-            <h2 id="task-title">{{ title }}<br></h2>
+            <h2 id="task-title" @click="checkTaskDetail">{{ title }}<br></h2>
             <br>
             <div class="grey">
               发布者:&nbsp;<Avatar v-bind:src="owner.img_src" />
@@ -41,21 +41,26 @@
               </div>
             </span>
             <span v-if="assignment.status == '已完成'" class="grey">
-              任务评分:&nbsp;&nbsp;<Rate v-model="assignment.score"></Rate>
+              任务评分:&nbsp;&nbsp;<Rate allow-half disbaled v-model="assignment.score"></Rate>
               <span v-if="assignment.hasDispute">
-                <p> 申诉状态：{{assignment.statement}} </p>
+                <p v-if="assignment.disputeResult == 0"> 申诉状态：未完成（发生未知错误） </p>
+                <p v-if="assignment.disputeResult == 1"> 申诉状态：管理员同意了您的申诉，评语：{{assignment.statement}} </p>
+                <p v-if="assignment.disputeResult == 2"> 申诉状态：管理员拒绝了您的申诉，评语：{{assignment.statement}} </p>
               </span>
             </span>
             <span v-if="assignment.status == '纠纷中'">
               <span v-if="!assignment.hasDispute">
-                <Button type="error" @click="argueResult">申请投诉</Button>
+                <Button type="error" @click="modalArgue = true">申请投诉</Button>
                 <Button type="success" @click="acceptResult">接受结果</Button>
+                  <Modal v-model="modalArgue" title="申请投诉" @on-ok="argueResult">
+                      <Input v-model="text" type="textarea" :rows="4" placeholder="请写出你的申诉理由"></Input>
+                  </Modal>
               </span>
               <span v-if="assignment.hasDispute">
                 <p>请耐心等待结果</p>
               </span>
             </span>
-            <span v-if="assignment.status == '待评分'" class="grey">任务评分:&nbsp;&nbsp;<Rate disabled v-model="assignment.score"></Rate></span>
+            <span v-if="assignment.status == '待评分'" class="grey">任务评分:&nbsp;&nbsp;<Rate allow-half disabled v-model="assignment.score"></Rate></span>
             <Modal title="试译" v-model="testConfirm" :mask-closable="false" :loading="loading">
               <p class="bottom-10">试译语段：</p>
               <p class="bottom-10">{{ testText }}</p>
@@ -90,27 +95,27 @@
     name: 'taskpage',
     data () {
       return {
-        title: '法语文件翻译任务',
+        id: 0,
+        title: '',
         owner: {
-          name: 'name2333',
-          img_src: 'https://i.loli.net/2017/08/21/599a521472424.jpg'
+          name: '',
+          img_src: ''
         },
-        description: '这是我比较着急的任务，主要是翻译一篇法语的论文。这是我' +
-        '比较着急的任务，主要是翻译一篇法语的论文。这是我比较着急的任务，主要是翻译一篇法语的论文。',
-        publishTime: '2017-3-1',
-        ddlTime: '2017-5-10',
-        language: '法语',
+        description: '',
+        publishTime: '',
+        ddlTime: '',
+        language: '',
         assignment: {
           id: 0,
           hasDispute: false,
+          disputeResult: 0,
           statement: '',
-          description: '这个任务需要翻译我给出的pdf文档的第20-40页，注意主要人名的翻' +
-          '译要与附录中的统一。完成情况好的话我一定会好评的。',
-          status: '待领取',
-          translator: '2333',
-          score: 4,
-          price: '20元',
-          submission: '/2333/455'
+          description: '',
+          status: '',
+          translator: '',
+          score: 0,
+          price: '',
+          submission: ''
         },
         recommendation: [
           {
@@ -132,9 +137,10 @@
         file: null,
         loadingStatus: false,
         testConfirm: false,
-        testText: 'My name is Van, I\'m an artist, I\'m a performance artist. ' +
-        'I\'m hired for people to fulfill their fantasies, their deep dark fantasies.',
-        testResult: ''
+        testText: '',
+        testResult: '',
+        modalArgue: false,
+        text: ''
       }
     },
     created: function () {
@@ -147,6 +153,7 @@
         credentials: 'include'})
       .then(function (response) {
         return response.json().then(function (data) {
+          that.id = data['id']
           that.title = data['title']
           that.description = data['description']
           that.publishTime = Date(data['publishTime'])
@@ -155,6 +162,7 @@
           let assignment = data['assignment']
           that.assignment['id'] = assignment.id
           that.assignment['hasDispute'] = assignment.hasDispute
+          that.assignment['disputeResult'] = assignment.disputeResult
           that.assignment['statement'] = assignment.statement
           that.assignment['translator'] = assignment.translator
           that.assignment['price'] = assignment.price
@@ -229,7 +237,7 @@
         })
       },
       argueResult () {
-        let body = JSON.stringify({assignmentId: this.assignment['id']})
+        let body = JSON.stringify({assignmentId: this.assignment['id'], text: this.text})
         const headers = new Headers({
           'Content-Type': 'application/json'
         })
@@ -247,6 +255,9 @@
         }).catch(function (ex) {
           alert('Network Error')
         })
+      },
+      checkTaskDetail: function () {
+        this.$router.push('/task/' + this.id)
       }
     }
   }
