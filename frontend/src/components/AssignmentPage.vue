@@ -4,7 +4,7 @@
       <div class="card">
         <Card dis-hover padding="0">
           <div id="task-info">
-            <h2 id="task-title">{{ title }}<br></h2>
+            <h2 id="task-title" @click="checkTaskDetail">{{ title }}<br></h2>
             <br>
             <div class="grey">
               发布者:&nbsp;<Avatar v-bind:src="owner.img_src" />
@@ -95,6 +95,7 @@
     name: 'taskpage',
     data () {
       return {
+        id: 0,
         title: '法语文件翻译任务',
         owner: {
           name: 'name2333',
@@ -155,6 +156,7 @@
         credentials: 'include'})
       .then(function (response) {
         return response.json().then(function (data) {
+          that.id = data['id']
           that.title = data['title']
           that.description = data['description']
           that.publishTime = Date(data['publishTime'])
@@ -256,6 +258,9 @@
         }).catch(function (ex) {
           alert('Network Error')
         })
+      },
+      checkTaskDetail: function () {
+        this.$router.push('/task/' + this.id)
       }
     }
   }
