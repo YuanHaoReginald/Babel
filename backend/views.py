@@ -81,7 +81,6 @@ def GetUserInfo(request):
             responseDict['avatar'] = user.avatar.url
         return JsonResponse(responseDict)
 
-##### 18/1/2 2:18 ###
 
 # sign up more
 def UserModify(request):
